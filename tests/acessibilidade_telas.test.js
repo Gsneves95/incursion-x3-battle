@@ -61,11 +61,14 @@ const ESTADOS = {
   'Provações — confirmação de troca': `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:5000,faixa:{chave:'semideus',nome:'Semideus'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:'hades',progresso:{hades:{ativadaEm:0,obj:[{seq:1},{vol:5},{vol:3,seqA:4,seqB:2},{vol:2}]}},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();(function(){var c=document.querySelector('.pvc--disponivel[data-carta]');if(c){provPrevia=c.dataset.carta;provTrocaConfirm=c.dataset.carta;render();}})();`,
   'Provações — faixa acima espiada (aba)': `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:60,faixa:{chave:'suplicante',nome:'Suplicante'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();(function(){var c=faixaAtualIdx();var alvo=c+2;provFaixaAba=alvo;faixasEspiadas.add(alvo);render();})();`,
   'Provações — sem conexão': `contaAtual=null;provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();`,
-  // §362: BATALHA — 10 estados no canvas 780×360 (design do dono).
+  // §362/§363: BATALHA — estados no canvas 780×360 (design do dono); §363 inclui a leitura de habilidade longa (campo curto).
   'Batalha — meu turno': BTBOOT,
   'Batalha — turno do oponente': BTBOOT + `st.ativo=1;IA_LADO=0;armado=null;detalhe=null;render();`,
   'Batalha — habilidade armada (desc + longa)': BTBOOT + `armar(st.lados[0].units[1].uid,'milagre');`,
   'Batalha — habilidade lida': BTBOOT + `lerHabilidade(st.lados[0].units[2].uid,'habilidade');`,
+  // §363: ler uma habilidade de descrição LONGA deixa o painel alto → a fileira encolhe; a barra de vida vira faixa sobre a
+  // base do retrato (hpOverlay) p/ o campo não transbordar sobre o painel (regressão do §363 — guarda nos dois modos).
+  'Batalha — habilidade longa lida': BTBOOT + `lerHabilidade(st.lados[0].units[0].uid,'milagre');`,
   'Batalha — deus inspecionado': BTBOOT + `infoUnidade(st.lados[1].units[0].uid);`,
   'Batalha — efeito': BTBOOT + `st.lados[0].units[1].efeitos=[{type:'vulneravel',v:6,dur:2,origem:st.lados[1].units[0].uid}];infoEfeito(st.lados[0].units[1].uid,0);`,
   'Batalha — resumo da CPU': BTBOOT + `foco=null;resumoTurno=[{turno:st.turno,tipo:'acao',origem:'poseidon',slot:'milagre'},{turno:st.turno,tipo:'dano',origem:'poseidon',alvo:'hades',valor:14}];render();`,
@@ -73,6 +76,10 @@ const ESTADOS = {
   'Batalha — confirmar encerrar sem agir': BTBOOT + `ov='confirmEnc';render();`,
   'Batalha — caixa de energia com 6 tipos': BTBOOT + `infoUnidade(st.lados[0].units[0].uid);`,
 };
+// §363: os mesmos 10 estados da batalha também no modo RECOLHIDO (painel em barra fina; as ações de LER reabrem o painel).
+for (const [nome, setup] of Object.entries(ESTADOS)) {
+  if (/^Batalha/.test(nome)) ESTADOS[nome + ' · recolhido'] = 'painelRecolhido=true;' + setup;
+}
 
 (async () => {
   const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
@@ -154,6 +161,27 @@ const ESTADOS = {
       ok(kind.temPassiva, `§362b: o painel do deus traz a passiva`);
       await ctx.close();
     }
+  }
+
+  // §363 — habilidades maiores (altura da fileira) + painel recolhível (retratos/habilidades crescem).
+  console.log('\n== §363 — habilidades maiores + painel recolhível ==');
+  {
+    const roster = `st=montarProvacao({aliados:['isis','ares','nuwa'],inimigos:['khnum','ganesha','ymir'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;`;
+    const boot = rec => `painelRecolhido=${rec};` + roster + `ir('batalha',{},{substituir:true});render();{var g=document.getElementById('gsplash');if(g)g.remove();}`;
+    const med = async (setup) => {
+      const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+      const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+      const r = await page.evaluate(([b, s]) => { eval(b); eval(s); const H = el => Math.round(el.getBoundingClientRect().height);
+        return { ret: Math.min(...[...document.querySelectorAll('.bt-portrait--ally')].map(H)), sk: Math.min(...[...document.querySelectorAll('.bt-skill')].map(H)),
+          panel: H(document.querySelector('.b5-painel')), barra: !!document.querySelector('.b5-barra') }; }, [BASE, setup]);
+      await ctx.close(); return r;
+    };
+    const ab = await med(boot(false)), re = await med(boot(true));
+    ok(ab.sk >= 68, `§363 item2: ABERTO habilidade ≥68px (${ab.sk})`);
+    ok(!ab.barra && ab.panel >= 60 && ab.panel <= 72, `§363 item2: ABERTO o painel mantém a altura do §362d (~67, veio ${ab.panel})`);
+    ok(re.barra && re.panel <= 48, `§363 item3a: RECOLHIDO o painel vira barra fina (~44, veio ${re.panel})`);
+    ok(re.ret >= 64, `§363 item3b: RECOLHIDO retrato ≥64px (${re.ret})`);
+    ok(re.sk >= 76, `§363 item3b: RECOLHIDO habilidade ≥76px (${re.sk})`);
   }
 
   await browser.close();

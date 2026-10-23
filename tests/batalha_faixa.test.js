@@ -206,14 +206,15 @@ const CAIXAS=[
   // cada retrato, das colunas de efeito e da CENA são IDÊNTICAS (±1px); 3 efeitos sem "+N" e tocáveis (≥40). §362d: a cena
   // (.b5-cena, camada larga) cobre ≥60% do centro (fim das habilidades → retrato inimigo) e o ANÚNCIO não intersecta as
   // colunas de efeitos.
-  const BOOT6=`st=montarProvacao({aliados:['hades','nuwa','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;ir('batalha',{},{substituir:true});render();`;
+  const BOOT6=(rec)=>`st=montarProvacao({aliados:['hades','nuwa','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;painelRecolhido=${rec};ir('batalha',{},{substituir:true});render();`;
   const EFF6=`st.lados[0].units[0].efeitos=[{type:'vulneravel',v:6,dur:2},{type:'atordoado',dur:1},{type:'dmgDown',v:4,dur:2}];st.lados[1].units[0].efeitos=[{type:'medo',dur:2},{type:'silenceClass',dur:1},{type:'dmgUp',v:5,dur:3}];render();`;
   const sobre=(a,c)=> Math.min(a[0]+a[2],c[0]+c[2])-Math.max(a[0],c[0])>1 && Math.min(a[1]+a[3],c[1]+c[3])-Math.max(a[1],c[1])>1;
+  for(const MO of [{rec:false,lbl:'aberto'},{rec:true,lbl:'recolhido'}])
   for(const E of [{w:780,h:360},{w:1846,h:852}]){
     const caixas=async(comEfeito)=>{
       const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:1});
       const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
-      await page.evaluate(BOOT6); if(comEfeito) await page.evaluate(EFF6); await page.waitForTimeout(80);
+      await page.evaluate(BOOT6(MO.rec)); if(comEfeito) await page.evaluate(EFF6); await page.waitForTimeout(80);
       const m=await page.evaluate(()=>{ const R=el=>{const r=el.getBoundingClientRect();return [Math.round(r.x),Math.round(r.y),Math.round(r.width),Math.round(r.height)];};
         const effs=[...document.querySelectorAll('.bt-eff')];
         const an=[...document.querySelectorAll('.b5-cena .cin')].find(e=>/TURNO/.test(e.textContent));
@@ -226,19 +227,20 @@ const CAIXAS=[
     };
     const a=await caixas(false), b=await caixas(true);
     const eq=(x,y)=>x.length===y.length&&x.every((v,i)=>v.every((n,j)=>Math.abs(n-y[i][j])<=1));
-    ok(eq(a.skills,b.skills), `§362c @${E.w}×${E.h}: as caixas das habilidades são idênticas com/sem efeitos`);
-    ok(eq(a.allyP,b.allyP), `§362c @${E.w}×${E.h}: os retratos aliados são idênticos com/sem efeitos`);
-    ok(eq(a.foeP,b.foeP), `§362c @${E.w}×${E.h}: os retratos inimigos são idênticos com/sem efeitos`);
-    ok(eq([a.cena],[b.cena]), `§362d @${E.w}×${E.h}: a CENA é idêntica com/sem efeitos (${JSON.stringify(a.cena)} × ${JSON.stringify(b.cena)})`);
-    ok(eq(a.effcol,b.effcol), `§362c @${E.w}×${E.h}: as colunas de efeito são idênticas com/sem efeitos`);
-    ok(b.nEff===6 && b.nMais===0, `§362c @${E.w}×${E.h}: 3 efeitos no aliado + 3 no inimigo aparecem sem "+N" (${b.nEff} ícones, +N ${b.nMais})`);
-    ok(b.effMin>=40, `§362c @${E.w}×${E.h}: cada efeito é tocável ≥40 (menor ${b.effMin})`);
+    const T=`${MO.lbl} @${E.w}×${E.h}`;
+    ok(eq(a.skills,b.skills), `§362c/§363 ${T}: as caixas das habilidades são idênticas com/sem efeitos`);
+    ok(eq(a.allyP,b.allyP), `§362c/§363 ${T}: os retratos aliados são idênticos com/sem efeitos`);
+    ok(eq(a.foeP,b.foeP), `§362c/§363 ${T}: os retratos inimigos são idênticos com/sem efeitos`);
+    ok(eq([a.cena],[b.cena]), `§362d/§363 ${T}: a CENA é idêntica com/sem efeitos (${JSON.stringify(a.cena)} × ${JSON.stringify(b.cena)})`);
+    ok(eq(a.effcol,b.effcol), `§362c/§363 ${T}: as colunas de efeito são idênticas com/sem efeitos`);
+    ok(b.nEff===6 && b.nMais===0, `§362c ${T}: 3 efeitos no aliado + 3 no inimigo aparecem sem "+N" (${b.nEff} ícones, +N ${b.nMais})`);
+    ok(b.effMin>=40, `§362c ${T}: cada efeito é tocável ≥40 (menor ${b.effMin})`);
     // §362d: a cena larga cobre ≥60% do centro (do fim das habilidades aliadas ao começo do retrato inimigo)
     const skRight=Math.max(...a.skills.filter(s=>s[0]<a.foeP[0][0]).map(s=>s[0]+s[2]), ...a.allyP.map(p=>p[0]+p[2]));
     const foeLeft=Math.min(...a.foeP.map(p=>p[0]));
-    ok(a.cena[2] >= 0.60*(foeLeft-skRight), `§362d @${E.w}×${E.h}: a CENA cobre ≥60% do centro (${a.cena[2]}px de ${Math.round(foeLeft-skRight)}px)`);
-    // §362d: o anúncio não intersecta nenhuma coluna de efeitos
-    ok(b.anun && !b.effcol.some(c=>sobre(b.anun,c)), `§362d @${E.w}×${E.h}: o anúncio não intersecta as colunas de efeitos`);
+    ok(a.cena[2] >= 0.60*(foeLeft-skRight), `§362d ${T}: a CENA cobre ≥60% do centro (${a.cena[2]}px de ${Math.round(foeLeft-skRight)}px)`);
+    // §362d: o anúncio não intersecta nenhuma coluna de efeitos (quando há faixa livre p/ exibi-lo)
+    ok(!b.anun || !b.effcol.some(c=>sobre(b.anun,c)), `§362d ${T}: o anúncio não intersecta as colunas de efeitos`);
   }
 
   await browser.close();

@@ -43,11 +43,12 @@ function _instSkill(o){
   if(o.cdNow>0) return {title:'Em recarga', sub:'Pronta em '+o.cdNow+' turno(s).', color:'#9AA4B8'};
   if(!o.disponivel && o.motivo==='sem_energia') return {title:'Energia insuficiente', sub:'Troque ou acumule.', color:'#E8343C'};
   if(o.alvoNome) return {title:'Alvo: '+o.alvoNome, sub:'Marcada neste turno.', color:'#4BE38A'};
-  if(o.alvo==='todosInimigos') return {title:'Todos os inimigos', sub:'Toque um inimigo.', color:'#F0B43C'};
+  // §363: instruções genéricas de alvo ficam em 1 linha (sem sub redundante) — a faixa de meio encolheu com a seta/habilidades maiores.
+  if(o.alvo==='todosInimigos') return {title:'Todos os inimigos', sub:'', color:'#F0B43C'};
   const p=(o.passos&&o.passos[0])||'';
-  if(p==='aliado') return {title:'Toque um aliado', sub:'Selecione um aliado.', color:'#F0B43C'};
-  if(!p) return {title:'Toque para confirmar', sub:'Use neste turno.', color:'#F0B43C'};
-  return {title:'Toque um inimigo', sub:'Selecione um inimigo.', color:'#F0B43C'};
+  if(p==='aliado') return {title:'Toque um aliado', sub:'', color:'#F0B43C'};
+  if(!p) return {title:'Toque para confirmar', sub:'', color:'#F0B43C'};
+  return {title:'Toque um inimigo', sub:'', color:'#F0B43C'};
 }
 
 /* ---------- MODELOS (reaproveitam o §333b; meio = 2 células; inst = instrução; dir = cancelar | minis) ---------- */
@@ -231,20 +232,42 @@ function _painelMinis(m, P){
     const anel=a.slot==='defesa'?'#D6DAE2':COR(u.elem);
     const sel=selSlot&&a.slot===selSlot;
     const sombra = sel?`inset 0 0 0 2px #FFE7A0,0 0 0 2px #C9A44C,0 0 14px rgba(240,180,60,.7)`:`inset 0 0 0 1.5px ${anel}`;
-    return `<div class="b5-skill bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}" style="position:relative;width:${sz}px;height:${sz}px;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra}">
+    return `<div class="b5-skill bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}" style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra}">
       ${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}
       <span class="b5-mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:${anel};pointer-events:none">${H(mono(a))}</span></div>`;
   }).join('');
   return `<div class="bt-panel__minis" style="display:flex;flex-direction:column;gap:4px;padding:0 8px;min-width:0">
     <div class="cin bt-panel__minilab" style="font-size:${P.rotulo||12}px;font-weight:700;letter-spacing:.03em;color:#F0B43C">${H(lab)}</div>
-    <div style="display:flex;gap:3px">${minis}</div></div>`;
+    <div style="display:flex;gap:2px">${minis}</div></div>`;
 }
-// o PAINEL de baixo (grade 840 | 564 | resto). view.js injeta nada — tudo em px de design.
+// §363: BARRA FINA (painel recolhido) — a seta ▲ reabre; armado mostra nome+instrução+CANCELAR (e USAR p/ confirmar sem
+// alvo, §336); o resumo da CPU mostra "RESUMO · …"; senão, uma dica discreta do turno.
+function _barraFinaHTML(g){
+  const m=g.m;
+  const seta=`<button id="bfold" class="b5-hover" title="Abrir painel" aria-label="Abrir painel" style="width:44px;height:100%;flex:none;display:flex;align-items:center;justify-content:center;border:0;background:none;cursor:pointer;color:#F0B43C;font-size:18px">▲</button>`;
+  let meio;
+  if(m.armado){
+    const inst=m.inst||{};
+    const conf = m.prontoConfirmar ? `<button id="bconf" class="b5-hover" role="button" tabindex="0" style="height:40px;min-width:40px;flex:none;padding:0 12px;border:0;border-radius:5px;background:linear-gradient(180deg,#FBE29A,#C9962F);color:#2A1A04;font-weight:700;font-size:13px;cursor:pointer">USAR</button>` : '';
+    const cancel = `<button id="bcanc" class="b5-hover bt-cancel" style="height:40px;min-width:40px;flex:none;padding:0 12px;border:0;border-radius:5px;background:linear-gradient(180deg,#0C1020,#05070E);box-shadow:inset 0 0 0 2px #C9A44C;color:#F4F1EA;font-weight:700;font-size:13px;letter-spacing:.03em;cursor:pointer">CANCELAR</button>`;
+    meio=`<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;line-height:1.15;overflow:hidden">
+      <div class="cin bt-panel__titulo" style="font-weight:700;font-size:13px;color:#F0B43C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'')}</div>
+      <div class="bt-panel__miratit" style="font-size:12px;color:#D5DAE4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(inst.title||'')}</div></div>${conf}${cancel}`;
+  } else if(m.tipo==='resumo'){
+    meio=`<div style="flex:1;min-width:0;display:flex;align-items:center;font-size:13px;font-weight:600;color:#E4E8F0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'Resumo')}</div>`;
+  } else {
+    const t = ehMeuTurno()? 'Seu turno' : 'Turno do oponente';
+    meio=`<div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden"><span class="cin" style="color:#F0B43C">${H(t)}</span><span style="color:#8f88b0">toque ▲ para abrir o painel</span></div>`;
+  }
+  return `<section class="b5-painel b5-barra" style="flex:none;height:${g.panelH}px;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:0 6px 0 2px;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">${seta}${meio}</section>`;
+}
+// o PAINEL de baixo. §363: recolhido → barra fina; aberto → painel + SETA (▼) de recolher na coluna fixa da direita.
 function painelBaixoHTML(g){
   g=g||btGeoBatalha(); const m=g.m, P=_P(), pc=g.painel;
-  // §362b: altura FIXA = a que o conteúdo pede (btGeo); o campo recebe o resto. Colunas adaptativas (info larga ao armar).
-  return `<section class="b5-painel bt-panel" style="flex:none;height:${g.panelH}px;box-sizing:border-box;display:grid;grid-template-columns:${pc.info}px ${pc.meio}px minmax(0,1fr);align-items:stretch;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
-    ${_col1HTML(m,P)}${_col2HTML(m,P)}${_col3HTML(m,P)}
+  if(g.recolhido) return _barraFinaHTML(g);
+  const seta=`<button id="bfold" class="b5-hover" title="Recolher painel" aria-label="Recolher painel" style="width:40px;height:100%;display:flex;align-items:center;justify-content:center;border:0;border-left:1px solid rgba(201,164,76,.28);background:none;cursor:pointer;color:#F0B43C;font-size:16px">▼</button>`;
+  return `<section class="b5-painel bt-panel" style="flex:none;height:${g.panelH}px;box-sizing:border-box;display:grid;grid-template-columns:${pc.info}px ${pc.meio}px minmax(0,1fr) 40px;align-items:stretch;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
+    ${_col1HTML(m,P)}${_col2HTML(m,P)}${_col3HTML(m,P)}${seta}
   </section>`;
 }
 
@@ -262,4 +285,6 @@ function ligarPainel(){
   const bcf=q('#bconf'); if(bcf){ bcf.onclick=()=>{ if(typeof confirmar==='function') confirmar(); };
     bcf.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(typeof confirmar==='function') confirmar(); } }; }
   const be=q('#bend'); if(be)be.onclick=()=>encerrarTurno();
+  // §363: a SETA recolhe/abre o painel (estado lembrado em localStorage, via view.js).
+  const bfd=q('#bfold'); if(bfd)bfd.onclick=()=>{ painelRecolhido=!painelRecolhido; if(typeof salvarRecolhido==='function') salvarRecolhido(); render(); };
 }

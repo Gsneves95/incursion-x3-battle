@@ -62,16 +62,17 @@ const FX_COR={ bom:{bg:'linear-gradient(180deg,#3CD873,#169447)',ring:'rgba(160,
   defesa:{bg:'linear-gradient(180deg,#3E8BFF,#1C56C8)',ring:'rgba(150,200,255,.8)'} };
 const HP_GRAD='linear-gradient(180deg,#5BEA8C,#22A855 60%,#1C8A47)';
 
-/* ---------- §362b: barra de vida ABAIXO do retrato (FORA da arte) — largura do retrato, texto ≥12 ---------- */
-function btHp(u, g){
-  const w=g.S, h=g.vida;
+/* ---------- §362b/§363: barra de vida — ABAIXO do retrato (FORA da arte) em repouso; quando a fileira fica curta demais
+   (g.hpOverlay: ler habilidade de descrição longa), vira uma FAIXA SOBRE a base do retrato (toque ≥40, texto ≥12). ---------- */
+function btHp(u, g, overlay){
+  const h=g.vida;
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
   const fill = u.vivo?`<div style="position:absolute;left:0;top:0;bottom:0;width:${pct}%;background:${HP_GRAD}"></div>`:'';
   const sh = u.shield?`<div style="position:absolute;top:0;right:0;height:100%;width:${Math.min(100,u.shield/u.maxHp*100)}%;background:#9fd8ff;opacity:.55"></div>`:'';
-  return `<div class="bt-hp" style="position:relative;width:${w}px;height:${h}px;flex:none;border-radius:3px;overflow:hidden;background:#0B1A10;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none">
-    ${fill}${sh}
-    <div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#F4FFF6;text-shadow:0 1px 2px rgba(0,0,0,.8)">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>
-  </div>`;
+  const lab = `<div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#F4FFF6;text-shadow:0 1px 2px rgba(0,0,0,.85)">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>`;
+  // SOBRE a base do retrato: largura total, fundo mais escuro (a arte aparece atrás), ancorada embaixo.
+  if(overlay) return `<div class="bt-hp bt-hp--ov" style="position:absolute;left:0;right:0;bottom:0;height:${h}px;overflow:hidden;background:rgba(6,16,10,.72);box-shadow:inset 0 0 0 1px rgba(0,0,0,.55);pointer-events:none">${fill}${sh}${lab}</div>`;
+  return `<div class="bt-hp" style="position:relative;width:${g.S}px;height:${h}px;flex:none;border-radius:3px;overflow:hidden;background:#0B1A10;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none">${fill}${sh}${lab}</div>`;
 }
 /* ---------- indicador de níveis (reusa o motor; §320) — discreto, no canto do retrato ---------- */
 function btNiv(u){
@@ -119,8 +120,10 @@ function btUnidadeAliada(u, meu, g){
   const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
     ${u.vivo?btNiv(u):''}
+    ${g.hpOverlay?btHp(u,g,true):''}
   </div>`;
-  const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
+  const bloco = g.hpOverlay ? `<div style="flex:none">${portrait}</div>`
+    : `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
   const skills=`<div style="display:flex;gap:4px;flex:none">${acoesDe(st,u).map(a=>btSkill(u,a,meu,g)).join('')}</div>`;
   // §362c: ordem do aliado — retrato · 4 habilidades · COLUNA DE EFEITOS (entre as habilidades e a cena), sempre reservada.
   return `<div style="display:flex;align-items:center;gap:${g.gap}px">${bloco}${skills}${btEfeitosCol(u,g,'me')}</div>`;
@@ -188,8 +191,10 @@ function btUnidadeInimiga(u, g){
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
     ${u.vivo?btNiv(u):''}
     ${mira}
+    ${g.hpOverlay?btHp(u,g,true):''}
   </div>`;
-  const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
+  const bloco = g.hpOverlay ? `<div style="flex:none">${portrait}</div>`
+    : `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
   // §362c: ordem do inimigo — COLUNA DE EFEITOS (à esquerda do retrato, sempre reservada) · retrato.
   return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:${g.gap}px">${btEfeitosCol(u,g,'foe')}${bloco}</div>`;
 }
@@ -231,9 +236,11 @@ function btCenaHTML(g){
   const larga = /^cena\//.test(src);
   // §347: object-position POR CENA (grava em data/layout_batalha.json) p/ o rosto ficar inteiro e fora do anúncio de turno.
   const objPos = larga ? (meu ? (cn.objPosMeu || '50% 50%') : (cn.objPosOpo || '50% 50%')) : '50% 12%';
+  // §363: CENA DISCRETA — a arte de turno fica ESCURECIDA e menos saturada (não compete com as habilidades); a vinheta
+  // reforça o escuro. O anúncio fica legível por cima (texto claro + sombra, sobre fundo escuro).
   const art = src ? `<div class="b5-art" style="position:absolute;left:${cn.left}px;right:${cn.right}px;top:0;bottom:0;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 ${cn.mask[0]}%,#000 ${cn.mask[1]}%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 ${cn.mask[0]}%,#000 ${cn.mask[1]}%,transparent 100%)">
-      <img src="${H(src)}" alt="" style="object-position:${objPos}" onerror="this.style.display='none'">
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,14,.55) 0%,rgba(4,6,14,0) 16%,rgba(4,6,14,0) 70%,rgba(4,6,14,.6) 100%);pointer-events:none"></div>
+      <img src="${H(src)}" alt="" style="object-position:${objPos};filter:brightness(.45) saturate(.6)" onerror="this.style.display='none'">
+      <div style="position:absolute;inset:0;background:radial-gradient(70% 90% at 50% 40%,rgba(4,6,14,.25),rgba(4,6,14,.72));pointer-events:none"></div>
     </div>` : '';
   const [ow,oh]=cn.ornato; const lw=cn.linha;
   // §362: o ornato de sol do dono é desenhado no tamanho original (190×92) e ESCALADO p/ caber em `oh` (canvas 780).
@@ -250,16 +257,23 @@ function btCenaHTML(g){
     <span style="position:absolute;left:20px;top:85px;width:150px;height:1.5px;background:${acento};opacity:.9"></span>
   </div>`;
   const ornato=`<div style="width:${ow}px;height:${oh}px;display:flex;align-items:flex-end;justify-content:center;overflow:visible"><div style="transform:scale(${(oh/92).toFixed(3)});transform-origin:center bottom">${ornatoInner}</div></div>`;
-  const linha=(mt)=>`<div style="width:${lw}px;height:1px;margin-top:${mt}px;background:linear-gradient(90deg,rgba(0,0,0,0),${acento} 30%,${acento} 70%,rgba(0,0,0,0))"></div>`;
-  // §362: âncora no FUNDO da cena (metade de baixo) — o rosto (topo) fica livre; cabe mesmo quando o painel cresce.
-  const anuncio=`<div style="position:absolute;left:${ins}px;right:${ins}px;bottom:6px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
+  // §363: o anúncio fica na FAIXA CENTRAL LIVRE (g.freeBand, entre as colunas de efeitos). Com habilidades maiores a faixa
+  // encolhe: o TÍTULO se auto-ajusta à faixa (≥12) e o anúncio só aparece se couber (recolhido/faixa estreita → só a arte
+  // escura). Sem subtítulo (a faixa não comporta; a instrução vive no painel/barra). Texto claro + sombra = legível (§4.5:1).
+  const fb = (g&&g.freeBand!=null)?g.freeBand:999;
+  const maxW = Math.max(1, ...titulo.split(' ').map(w=>w.length));
+  const fitFont = Math.floor(fb/(maxW*0.62));
+  const tf = Math.max(12, Math.min(cn.titulo||16, fitFont));
+  const mostra = fb >= (ow+6) && fitFont >= 12;
+  const lwFit = Math.min(lw, Math.max(0, fb-4));
+  const linha=(mt)=>`<div style="width:${lwFit}px;height:1px;margin-top:${mt}px;background:linear-gradient(90deg,rgba(0,0,0,0),${acento} 30%,${acento} 70%,rgba(0,0,0,0))"></div>`;
+  const anuncio = mostra ? `<div style="position:absolute;left:${ins}px;right:${ins}px;bottom:6px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
     ${ornato}
     ${linha(1)}
-    <div class="cin" style="margin-top:4px;font-weight:700;font-size:${cn.titulo}px;line-height:1.05;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 2px 0 rgba(40,24,4,.85),0 4px 16px rgba(0,0,0,.9)">${titulo}</div>
-    <div style="margin-top:2px;font-size:${cn.sub}px;font-weight:600;color:#F2F4F8;text-shadow:0 2px 10px rgba(0,0,0,.95)">${sub}</div>
+    <div class="cin" style="margin-top:4px;font-weight:700;font-size:${tf}px;line-height:1.05;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 2px 0 rgba(40,24,4,.85),0 4px 16px rgba(0,0,0,.95)">${titulo}</div>
     ${linha(5)}
     <div style="width:8px;height:8px;margin-top:-4px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px ${acento};background:#070A14"></div>
-  </div>`;
+  </div>` : '';
   return `<div style="position:absolute;inset:0;overflow:hidden">${art}${anuncio}</div>`;
 }
 
@@ -292,9 +306,12 @@ function motivoIndisponivel(u,a){
   return 'Travada (Selado / Silêncio, ou uso único já gasto)';
 }
 // §329: a LEITURA agora mora toda no PAINEL de baixo (painel.js) via o `detalhe`. Aqui só montamos o `detalhe`.
+// §363: uma ação de LER (tocar retrato/efeito/miniatura) com o painel RECOLHIDO o ABRE sozinho p/ mostrar o conteúdo.
+function _abrePainelLer(){ if(typeof painelRecolhido!=='undefined' && painelRecolhido){ painelRecolhido=false; if(typeof salvarRecolhido==='function') salvarRecolhido(); } }
 function lerHabilidade(uid,slot){
   const u=todas().find(x=>x.uid===uid); if(!u)return;
   const a=acoesDe(st,u).find(x=>x.slot===slot); if(!a)return;
+  _abrePainelLer();
   const nv=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,slot):1;
   if(typeof foco!=='undefined') foco=uid;
   detalhe={kind:'skill', uid:u.uid, nome:a.nome, nv:nv, chave:'skill-'+u.key+'-'+a.slot, mono:mono(a), cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),
@@ -312,6 +329,7 @@ function _passivaAgora(u){
 }
 function infoUnidade(uid){
   const u=todas().find(x=>x.uid===uid); if(!u)return;
+  _abrePainelLer();
   const g=_catPartida()[u.key]||{};
   if(typeof foco!=='undefined') foco=uid;
   const agora=g.passiva?_passivaAgora(u):'';
@@ -324,6 +342,7 @@ function infoUnidade(uid){
 function infoEfeito(uid, idx){
   const u=todas().find(x=>x.uid===uid); if(!u)return;
   const tags=tagsDe(u); const t=tags[idx]||tags[0]; if(!t)return;
+  _abrePainelLer();
   if(typeof foco!=='undefined') foco=uid;
   // §333: quem APLICOU o efeito (e.origem), quando o motor souber — vira "aplicado por X" nos dados do painel.
   let aplicadoPor='';

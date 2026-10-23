@@ -2,7 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §362d · BATALHA: a cena volta a ser larga, passando por baixo das colunas de efeitos
+## ★ §363 · BATALHA: cena discreta, habilidades maiores e o painel de baixo recolhível
+- A **arte de turno** virou **fundo discreto**: escurecida/dessaturada (`brightness(.45) saturate(.6)`) + vinheta; o anúncio
+  (SEU TURNO / TURNO DO OPONENTE) segue legível por cima. PROVA (`cena_discreta`, Chromium+sharp): luminância da cena **<**
+  a dos 12 botões de habilidade, nos dois turnos (24<82 meu; 24<57 oponente).
+- As **HABILIDADES ocupam a altura inteira da fileira** (quadradas); o espaço sai da cena, não do painel (que mantém a altura
+  do §362d). Aberto a habilidade é **62–71px** (varia com a passiva do deus em foco: Hades 62; passivas curtas 71 — sempre
+  > §362d e ≥40). **Recolhido** é uniforme: retrato **64px**, habilidade **79px**. Quando ler uma habilidade de descrição
+  longa deixa o campo curto (fileira < retrato+vida), a **barra de vida vira faixa sobre a base do retrato** (`hpOverlay`) p/
+  o campo não transbordar sobre o painel — toque ≥40, texto ≥12, painel sem corte.
+- **PAINEL RECOLHÍVEL:** a seta ▼ (toque ≥40) recolhe o painel a uma **barra fina (44px)** e o campo cresce; a barra ▲ reabre.
+  Recolhido+armado a barra mostra nome + instrução curta + CANCELAR (e o `#bconf` do §336); tocar retrato/efeito/miniatura
+  **abre** o painel; estado lembrado em `localStorage`; oponente/menu/confirmar-encerrar/resumo-CPU funcionam nos dois modos.
+- A geometria é `btGeoBatalha()` (view.js): `recolhido`→`panelH=BARRA`, seta reserva 40 no painel aberto, `skill=rowH`.
+  PROVAS: auditoria a=b=c=d=0 nos 10 estados **nos dois modos**; tamanhos (`acessibilidade_telas`); jsdom recolher/armar/
+  abrir/lembrar (`painel_recolhe`); caixas idênticas c/s efeitos **em cada modo** (`batalha_faixa`). Capturas `docs/telas/363-*`
+  + `363-comparacao.png`. Suíte + build verdes.
+
+## §362d · BATALHA: a cena volta a ser larga, passando por baixo das colunas de efeitos
 - No §362c, sem efeitos, a coluna reservada deixava duas faixas vazias e a cena virava um retângulo estreito (~180px).
   Agora a **CENA é uma CAMADA LARGA** (`.b5-cena`, absoluta, z-index 0) do fim das habilidades dos aliados ao começo do
   retrato do inimigo, **passando POR BAIXO das colunas de efeitos**; o centro do grid é só um espaçador (nada se mexe). A

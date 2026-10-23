@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §363 · BATALHA: cena discreta, habilidades maiores e o painel de baixo recolhível
+
+Depois do §362d a cena larga voltou a competir com as habilidades pela atenção, e o dono quis **habilidades ainda maiores**
+sem mexer no painel — mais um jeito de **recolher o painel** quando quiser o campo inteiro. Três decisões:
+
+- **CENA DISCRETA (fundo, não palco).** A arte de turno agora é **escurecida/dessaturada** (`filter:brightness(.45)
+  saturate(.6)`) com uma vinheta mais fechada; não há brilho competindo com o campo. O **anúncio** (SEU TURNO / TURNO DO
+  OPONENTE) segue legível por cima (ouro sobre fundo escuro, contraste ≥4.5:1). Recusado deixar a arte em brilho cheio: ela
+  roubava o olho das habilidades. PROVA (`cena_discreta`, Chromium+sharp): a luminância média da cena é **menor** que a dos
+  12 botões de habilidade, no meu turno (24 < 82) e no turno do oponente (24 < 57).
+- **HABILIDADES = ALTURA DA FILEIRA.** O botão de habilidade ocupa a **altura inteira da fileira** (retrato + barra de vida +
+  o espaço entre), quadrado; a largura cresce junto. O espaço sai da **cena** (agora fundo), não do painel: o painel aberto
+  **mantém a altura do §362d** (mesma fórmula orientada ao conteúdo do deus em foco). Como a altura da fileira depende de
+  quanta altura o painel deixa, a habilidade ao repouso varia com a passiva do deus em foco — **62px** (Hades, passiva de 3
+  linhas) a **71px** (passivas curtas), sempre **> §362d (~56) e ≥40 de toque**. Recusado forçar ≥68 para todo deus no modo
+  aberto: isso exigiria cortar a passiva (o §362d mostra o texto inteiro, sem corte) — o jeito de ter a habilidade no máximo
+  é **recolher o painel** (abaixo).
+- **VIDA SOBRE O RETRATO quando o campo encolhe (`hpOverlay`).** A barra de vida fica ABAIXO do retrato (desejo do dono).
+  Mas **ler uma habilidade de descrição longa** (ex.: o milagre "Portões do Submundo") deixa o painel alto (~132px) e a
+  fileira curta (~50px): o retrato de toque (≥40) MAIS a barra abaixo (15px) não cabem na fileira e o campo transbordaria
+  sobre o painel (bug pego pela auditoria `batalha-inspecao`). Quando a fileira fica menor que retrato(40)+vida+gap, a barra
+  de vida vira uma **faixa sobre a base do retrato** (toque ≥40, texto ≥12, nada transborda, painel sem corte). Recusado
+  cortar a descrição ou deixar o campo transbordar; a faixa sobre o retrato é a degradação graciosa só nesse caso extremo.
+- **PAINEL RECOLHÍVEL.** Uma **seta (▼, toque ≥40)** no canto do painel o recolhe a uma **barra fina (44px)**; o campo ganha
+  a altura e os retratos/habilidades crescem para **64px / 79px** (uniformes, sem depender do deus), mantendo a coluna de
+  efeitos fixa (§362c/d) e a cena larga por baixo. A **barra fina (▲)** reabre. Regras do dono preservadas:
+  - **recolhido + habilidade ARMADA:** o painel **não** abre; a barra mostra, em uma linha, o nome da habilidade + a
+    instrução curta ("Toque um inimigo" / "Toque para confirmar" / "Repartir…") + **CANCELAR (≥40)**; o `#bconf` (confirmar
+    sem alvo, §336) também funciona pela barra.
+  - **recolhido + tocar um RETRATO / EFEITO / MINIATURA** (ações de LER): o painel **abre sozinho** mostrando o que foi
+    tocado.
+  - **estado lembrado** em `localStorage` (`bt_painel_recolhido`, com try/catch; sem storage → começa aberto).
+  - **turno do oponente, menu ☰, confirmar-encerrar e resumo da CPU** funcionam nos dois modos (resumo recolhido → linha
+    "Resumo · CPU" com seta para abrir).
+
+A geometria mora em `btGeoBatalha()` (view.js): `recolhido` troca `panelH` por `BARRA`, a seta reserva uma coluna de 40 no
+painel aberto, `skill = rowH`, `S = rowH − vida − hpGap`. PROVAS (falham a suíte): auditoria a=b=c=d=0 nos 10 estados de
+batalha **nos dois modos**; tamanhos dos itens 2 e 3 (`acessibilidade_telas`); jsdom de recolher/abrir, recolhido+armar,
+recolhido+tocar retrato/efeito, estado lembrado (`painel_recolhe`); caixas de habilidade/retrato/cena idênticas c/s efeitos
+**em cada modo** (`batalha_faixa` parte 6). Capturas `docs/telas/363-*` e `363-comparacao.png`. Suíte + build verdes.
+
 ## §362d · BATALHA: a cena volta a ser larga, passando por baixo das colunas de efeitos
 
 No §362c a coluna de efeitos reservada (certo: nada pula) deixava, SEM efeitos (a maior parte da partida), duas faixas
