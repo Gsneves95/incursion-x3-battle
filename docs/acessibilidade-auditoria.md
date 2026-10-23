@@ -29,26 +29,26 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 | 11 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
 | 12 | Campanha — ato de escolha | 38 (38) | 6 | 0 | 0 | **4.6** | `357-campanha-escolha-780x360.png` |
 | 13 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
-| 14 | Provações | 51 (51) | 1 | 0 | 0 | **5.1** | `357-provacoes-780x360.png` |
-| 15 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
-| 16 | Batalha — confirmação de sair | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-sair-780x360.png` |
-| 17 | Batalha — confirmação de desistir | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-desistir-780x360.png` |
-| 18 | Em breve (marcador) | 1 (1) | 1 | 0 | 3 | **6.7** | `357-embreve-780x360.png` |
-| 19 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
-| 20 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
-| 21 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
-| 22 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
-| 23 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
-| 24 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
-| 25 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
-| 26 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
-| 27 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
-| 28 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
-| 29 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
-| 30 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
-| 31 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
-| 32 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
-| 33 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
+| 14 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
+| 15 | Batalha — confirmação de sair | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-sair-780x360.png` |
+| 16 | Batalha — confirmação de desistir | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-desistir-780x360.png` |
+| 17 | Em breve (marcador) | 1 (1) | 1 | 0 | 3 | **6.7** | `357-embreve-780x360.png` |
+| 18 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
+| 19 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
+| 20 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
+| 21 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
+| 22 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
+| 23 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
+| 24 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
+| 25 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
+| 26 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
+| 27 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
+| 28 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
+| 29 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
+| 30 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 31 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
+| 32 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
+| 33 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
 
 ## Detalhe por tela
 
@@ -140,7 +140,7 @@ Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=11, b=9, c=0, d=0
 
 **a) 10 piores textos pequenos** (px real):
 
-- `#bmenubuild` — **5.49px** ⚠<11 — "build 2026-10-22 20:20 UTC"
+- `#bmenubuild` — **5.49px** ⚠<11 — "build 2026-10-23 12:34 UTC"
 - `#bcontinuar` — **8.45px** ⚠<11 — "CONTINUAR"
 - `span` — **8.45px** ⚠<11 — "🔊"
 - `span.cin` — **8.45px** ⚠<11 — "SOM"
@@ -154,7 +154,7 @@ Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=11, b=9, c=0, d=0
 **b) 10 piores toques** (menor lado):
 
 - `input.b5-range` — **92.5×2.5** — ""
-- `#bmenubuild` — **148.7×6.8** — "build 2026-10-22 20:20 UTC"
+- `#bmenubuild` — **148.7×6.8** — "build 2026-10-23 12:34 UTC"
 - `#bcontinuar` — **148.7×24.5** — "CONTINUAR"
 - `#bhelp` — **148.7×24.5** — "COMO JOGAR"
 - `#blog` — **148.7×24.5** — "REGISTRO"
@@ -492,27 +492,6 @@ Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=0. (texto
 
 - `button.mperfil` — **98.7×33.6** — "Jogador"
 
-### Provações — nota 5.1
-
-Print: `docs/telas/357-provacoes-780x360.png`. Contagens: a=51, b=1, c=0, d=0. (textos visíveis: 53; tocáveis: 16.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.mcat__f` — **7.6px** ⚠<11 — "3 objetivos · ranque Suplicante"
-- `span.mcat__m` — **7.6px** ⚠<11 — "Nezha matou o filho do Rei Dragão e o en"
-- `span.mcat__f` — **7.6px** ⚠<11 — "3 objetivos · ranque Oráculo"
-- `span.mcat__m` — **7.6px** ⚠<11 — "A cobra de fogo e o guardião protegem o "
-- `span.mcat__f` — **7.61px** ⚠<11 — "3 objetivos · ranque Adepto"
-- `span.mcat__m` — **7.61px** ⚠<11 — "Amantes — a beleza e a guerra atadas."
-- `span.mcat__f` — **7.61px** ⚠<11 — "2 objetivos · ranque Semideus"
-- `span.mcat__m` — **7.61px** ⚠<11 — "A seca e a morte vêm quando a chuva falh"
-- `span.mcat__f` — **7.61px** ⚠<11 — "4 objetivos · ranque Sacerdote"
-- `span.mcat__m` — **7.61px** ⚠<11 — "A irmã que se trancou na caverna fugindo"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **50.9×30.4** — "‹ INÍCIO"
-
 ### Campanha — ato de história (sintético) — nota 5.4
 
 Print: `docs/telas/357-campanha-historia-780x360.png`. Contagens: a=22, b=2, c=0, d=1. (textos visíveis: 27; tocáveis: 9.)
@@ -674,6 +653,12 @@ _Sem achados._
 ### Composição (desafios) — nota 10
 
 Print: `docs/telas/357-composicao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 34; tocáveis: 5.)
+
+_Sem achados._
+
+### Provações — nota 10
+
+Print: `docs/telas/357-provacoes-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 26; tocáveis: 7.)
 
 _Sem achados._
 

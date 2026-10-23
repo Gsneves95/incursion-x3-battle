@@ -1,4 +1,4 @@
-// §349 — A TELA DE PROVAÇÕES (renderMissoes, rota 'provacoes') no modelo do dono: TELA FIXA 1846×852 escalada,
+// §349/§361 — A TELA DE PROVAÇÕES (renderMissoes, rota 'provacoes') no modelo do dono: CANVAS FIXO 780×360 escalado por fit(),
 // painel esquerdo (ATIVA ou PRÉVIA) + área direita "DEUSES PARA DESBLOQUEAR" (pílulas + busca + grade de cartões
 // do montador, agrupada por faixa). Regras das Provações (§313/§314/§316) intactas. Prova os estados do cartão, a
 // prévia, a ativação/confirmação, os filtros/busca, o espiar, o elo com a ficha, e o encaixe no Chromium (os filhos
@@ -69,7 +69,7 @@ console.log('\n== 4. painel ATIVA: retrato + nome + selo + panteão/ranque + mot
   ok(!!$('.pa__objs .ob--done .ob__ck.is-on'), 'objetivo cumprido fica marcado (verde)');
   w.eval(C_RICO);
   ok(!!pa.querySelector('#btrocar') && /Trocar Provação/i.test(txt(pa.querySelector('#btrocar'))), 'rodapé: "Trocar Provação"');
-  ok(/1 vaga ativa · mais vagas na Loja/i.test(txt(pa.querySelector('.pa__slot'))), 'rodapé: "1 vaga ativa · mais vagas na Loja"');
+  ok(/1 vaga · Loja/i.test(txt(pa.querySelector('.pa__slot'))), 'rodapé: "N vaga · Loja p/ +" (§361: compacto no 780×360)');
 }
 
 // ---- 5. PAINEL VAZIO ----
@@ -78,22 +78,18 @@ w.eval(C_VAZIO);
 ok(!!$('.pa--vazio') && /nenhuma provaç/i.test(txt($('.pa--vazio'))) && /escolha uma na lista/i.test(txt($('.pa--vazio'))), 'sem ativa: "Nenhuma Provação ativa — escolha uma na lista"');
 w.eval(C_RICO);
 
-// ---- 6. GRADE: pílulas + busca + contagens ----
-console.log('\n== 6. filtros (pílulas) + busca + "X de Y conquistados" ==');
+// ---- 6. GRADE: filtros de estado (compactos, sem contagem) + busca ----
+console.log('\n== 6. filtros de estado (pílulas) + busca (§361: linha compacta) ==');
 {
   const c = w.eval("JSON.stringify(_provContagens())"); const C = JSON.parse(c);
   const pill = f => $(`[data-filtro="${f}"]`);
-  ok(new RegExp('Todas\\s*' + C.todas).test(txt(pill('todas'))), `pílula Todas = ${C.todas} (real)`);
-  ok(new RegExp('Dispon.*' + C.disponiveis).test(txt(pill('disponiveis'))), `pílula Disponíveis = ${C.disponiveis}`);
-  ok(new RegExp('Pausadas\\s*' + C.pausadas).test(txt(pill('pausadas'))), `pílula Pausadas = ${C.pausadas}`);
-  ok(new RegExp('Conquistadas\\s*' + C.conquistadas).test(txt(pill('conquistadas'))), `pílula Conquistadas = ${C.conquistadas}`);
-  ok(new RegExp(C.conquistadas + ' de ' + C.total + ' conquistados').test(txt($('.pv2-conta'))), `"${C.conquistadas} de ${C.total} conquistados"`);
-  // filtrar por Conquistadas → só cartões conquistados
+  ok(/Todas/.test(txt(pill('todas'))) && /Dispon/.test(txt(pill('disponiveis'))) && /Pausadas/.test(txt(pill('pausadas'))) && /Conquistadas/.test(txt(pill('conquistadas'))), 'as 4 pílulas de estado estão presentes (nomes)');
+  // filtrar por Conquistadas → só cartões conquistados (varre todas as faixas)
   w.eval("provFiltro='conquistadas'; render();");
   ok($$('.pvc').length === C.conquistadas && $$('.pvc--conquistada').length === C.conquistadas, 'filtro "Conquistadas" mostra só os conquistados');
-  // busca por nome (ignora acento): "atena"
+  // busca por nome (ignora acento): "atena" — varre TODAS as faixas (§361)
   w.eval("provFiltro='todas'; provBusca='atena'; render();");
-  ok($$('.pvc[data-deus]').length === 1 && $('.pvc[data-deus="atena"]'), 'busca "atena" reduz a 1 cartão');
+  ok($$('.pvc[data-deus]').length === 1 && $('.pvc[data-deus="atena"]'), 'busca "atena" reduz a 1 cartão (varre todas as faixas)');
   w.eval("provBusca='ATENA'; render();");
   ok($$('.pvc[data-deus="atena"]').length === 1, 'busca é insensível a maiúsculas/acentos');
   w.eval("provBusca=''; provFiltro='todas'; render();");
@@ -104,7 +100,7 @@ console.log('\n== 7. cartões: disponivel · pausada · ativa · conquistada · 
 {
   const nomeVis = sel => { const el = $(sel + ' .pvc__n'); return el && txt(el).length > 0; };
   ok(!!$('.pvc--disponivel [data-ativar]') && nomeVis('.pvc--disponivel'), 'DISPONÍVEL: botão ATIVAR + nome visível');
-  ok(!!$('.pvc--pausada .pvc__pausa') && !!$('.pvc--pausada [data-ativar]') && nomeVis('.pvc--pausada'), 'PAUSADA: selo "Pausada · %" + RETOMAR + nome');
+  ok(!!$('.pvc--pausada .pvc__pct') && !!$('.pvc--pausada [data-ativar]') && nomeVis('.pvc--pausada'), 'PAUSADA: "%" na linha do nome + RETOMAR + nome');
   ok(/RETOMAR/i.test(txt($('.pvc--pausada [data-ativar]'))), 'PAUSADA: o botão é RETOMAR');
   ok(!!$('.pvc--ativa .pvc__flag--ativa') && nomeVis('.pvc--ativa'), 'ATIVA: moldura + selo "Ativa" + nome');
   ok(!!$('.pvc--conquistada .pvc__flag--conq') && /Conquistado/i.test(txt($('.pvc--conquistada'))) && nomeVis('.pvc--conquistada'), 'CONQUISTADA: "✓ Conquistado" (sem botão)');
@@ -112,26 +108,30 @@ console.log('\n== 7. cartões: disponivel · pausada · ativa · conquistada · 
   // TRAVADA: espiar uma faixa acima
   const cur = w.eval("faixaAtualIdx()");
   w.eval(`(function(){ var c=faixaAtualIdx(); (MISSOES.faixas||[]).forEach(function(f,fi){ if(fi>c) faixasEspiadas.add(fi); }); render(); })();`);
-  ok(!!$('.pvc--travada .pvc__lock') && !!$('.pvc--travada .pvc__rank') && nomeVis('.pvc--travada'), 'TRAVADA: cadeado + "Ranque <faixa>" + nome visível, sem botão');
+  ok(!!$('.pvc--travada .pvc__rank') && /🔒/.test(txt($('.pvc--travada .pvc__rank'))) && nomeVis('.pvc--travada'), 'TRAVADA: cadeado + faixa (🔒 na linha de ação) + nome visível, sem botão');
   ok(!$('.pvc--travada [data-ativar]'), 'TRAVADA não tem botão');
   w.eval("faixasEspiadas.clear(); render();");
 }
 
-// ---- 8. FAIXA acima recolhida + espiar ----
-console.log('\n== 8. faixa acima recolhida ("faltam X") · tocar espia ==');
+// ---- 8. §361: ABAS de faixa — "Todas" + uma por faixa; acima da atual com cadeado/"faltam"; tocar espia ----
+console.log('\n== 8. §361: abas de faixa (cadeado/"faltam" nas de cima; tocar espia; "Todas" primeiro) ==');
 {
-  const fech = $('.pv2-fx--fechada');
-  ok(!!fech && /faltam \d+ pontos/i.test(txt(fech)), 'faixa ACIMA fechada com "(faltam X pontos)"');
-  const fi = fech.dataset.fxespiar; const antes = $$('.pvc').length;
-  w.eval(`[...document.querySelectorAll('[data-fxespiar]')].find(b=>b.dataset.fxespiar===${JSON.stringify(fi)}).click();`);
-  ok($$('.pvc').length > antes, 'TOCAR na faixa fechada a abre para espiar (mais cartões aparecem)');
-  w.eval("faixasEspiadas.clear(); render();");
+  w.eval("provFaixaAba='todas'; faixasEspiadas.clear(); render();");
+  ok($('.pv2-abas .pv2-aba').dataset.aba === 'todas' && /Todas/.test(txt($('.pv2-abas .pv2-aba'))), '"Todas" é a primeira aba');
+  ok($$('.pv2-abas .pv2-aba').length === (w.eval("(MISSOES.faixas||[]).length") + 1), 'uma aba por faixa + "Todas"');
+  const lock = $('.pv2-aba--lock');
+  ok(!!lock && /faltam \d+ pts/i.test(txt(lock)) && /🔒/.test(txt(lock)), 'aba de faixa ACIMA traz cadeado + "faltam N pts"');
+  const fi = lock.dataset.aba;
+  w.eval(`[...document.querySelectorAll('[data-aba]')].find(b=>b.dataset.aba===${JSON.stringify(fi)}).click();`);
+  ok($$('.pvc--travada').length > 0 && $('.pv2-aba.is-on').dataset.aba === fi, 'TOCAR na aba acima a seleciona e ESPIA (mostra os cartões travados)');
+  w.eval("provFaixaAba='todas'; faixasEspiadas.clear(); render();");
 }
 
 // ---- 9. PRÉVIA: tocar num cartão → painel mostra aquela Provação; "Voltar à ativa" volta ----
 console.log('\n== 9. prévia: tocar no cartão abre a prévia; "Voltar à ativa" volta ==');
 {
-  const card = $('.pvc--disponivel [data-carta]'); const k = card.dataset.carta;
+  w.eval(C_RICO);   // §361: o cartão inteiro é o toque (data-carta no .pvc), não um filho
+  const card = $('.pvc--disponivel[data-carta]'); const k = card.dataset.carta;
   w.eval(`[...document.querySelectorAll('[data-carta]')].find(b=>b.dataset.carta===${JSON.stringify(k)}).click();`);
   ok(/Prévia/i.test(txt($('.pa__rot'))), 'o painel vira PRÉVIA');
   ok($('.pa[data-deus]').dataset.deus === k, 'a prévia é do deus tocado');
@@ -155,7 +155,7 @@ console.log('\n== 10. ativar/confirmar/cancelar ==');
   const btn = $('.pvc--disponivel [data-ativar][data-troca="1"]'); const k = btn.dataset.ativar;
   ok(!!btn, 'com ativa: o ATIVAR é marcado como troca');
   w.eval(`[...document.querySelectorAll('[data-ativar]')].find(b=>b.dataset.ativar===${JSON.stringify(k)}).click();`);
-  const conf = $('.pa__conf');
+  const conf = $('.pa__confwrap');
   ok(!!conf && /fica pausado/i.test(txt(conf)) && !!conf.querySelector('[data-troca-ok]') && !!conf.querySelector('[data-troca-no]'), 'confirmação no painel: "…fica pausado" + SIM/NÃO');
   w.eval("document.querySelector('[data-troca-no]').click();");
   ok(!$('.pa__conf'), 'NÃO cancela (nada enviado)');
@@ -192,45 +192,61 @@ ok(w.eval("_obTexto({tipo:'v',lista:['zeus','brigid'],n:8},false)") === '8 vitó
 if (falhas) { console.log(`\n== ${passes} ok, ${falhas} FALHAS (jsdom) ==`); process.exit(1); }
 console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×852 e 780×360) ==`);
 
-// ================= §349/§348b — ENCAIXE: enche a tela, colunas dentro (≤830), sem sobrepor, nada corta =================
+// ================= §349/§361 — ENCAIXE no canvas 780×360: enche a tela; o painel esquerdo NÃO rola (objetivos
+//   inteiros, até 4); a grade mostra ≥2 fileiras inteiras; o botão ATIVAR é proporcional (≤70% do cartão, toque ≥40);
+//   as abas de faixa têm ≥40px; painel e grade não se sobrepõem; nada corta. Mede em 780×360 e em 1846×852 (fit p/ cima). =
 (async () => {
   const { chromium } = require('playwright');
   function acharChromium() { try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop(); const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } catch (e) {} return undefined; }
   const distAbs = 'file://' + path.resolve(__dirname, '..', 'dist', 'incursion.html');
-  const RICO = C_RICO;
-  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
+  // ATIVA com o MÁXIMO de objetivos (4 = hades), ranque alto p/ a grade cheia
+  const RICO = `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:5000,faixa:{chave:'semideus',nome:'Semideus'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:'hades',progresso:{hades:{ativadaEm:0,obj:[{seq:1},{vol:5},{vol:3,seqA:4,seqB:2},{vol:2}]}},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();`;
+  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
   let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
-  for (const [W, H] of [[1846, 852], [780, 360]]) {
+  for (const [W, H] of [[780, 360], [1846, 852]]) {
     const page = await (await browser.newContext({ viewport: { width: W, height: H } })).newPage();
     await page.goto(distAbs, { waitUntil: 'load' });
     const r = await page.evaluate((RICO) => {
       eval(RICO); const g = document.getElementById('gsplash'); if (g) g.remove();
       const fix = document.getElementById('provfix'), fb = fix.getBoundingClientRect();
-      const esc = fb.height / 852;
+      const esc = fb.width / 780;
       const pw = fb.width / innerWidth, ph = fb.height / innerHeight;
-      const designBot = el => Math.round((el.getBoundingClientRect().bottom - fb.top) / esc);
-      // fundo (y de design) das CAIXAS de coluna (a grade rola por dentro, não conta)
-      let botMax = 0, pior = '';
-      ['.pa', '.pv2-dir', '.pv2-esq', '.pv2-cab', '.pv2-filtros'].forEach(s => { const el = fix.querySelector(s); if (el) { const b = designBot(el); if (b > botMax) { botMax = b; pior = s; } } });
-      // sobreposição painel × direita
+      // o PAINEL não rola: os objetivos cabem (scrollHeight ≈ clientHeight)
+      const objs = fix.querySelector('.pa__objs');
+      const painelRola = objs ? (objs.scrollHeight > objs.clientHeight + 2) : false;
+      const nObjs = fix.querySelectorAll('.pa__objs .ob').length;
+      // fileiras inteiras de cartão na grade
+      const grade = fix.querySelector('.pv2-grade'); const gr = grade.getBoundingClientRect(); const rows = {};
+      grade.querySelectorAll('.pvc').forEach(c => { const b = c.getBoundingClientRect(); if (b.bottom <= gr.bottom + 0.5 && b.top >= gr.top - 0.5) rows[Math.round(b.top)] = 1; });
+      const fileiras = Object.keys(rows).length;
+      // botão ATIVAR: proporção da largura do cartão + toque mínimo
+      let btnPct = 0, btnMin = 1e9;
+      const bt = fix.querySelector('.pvc__btn'); if (bt) { const br = bt.getBoundingClientRect(), cr = bt.closest('.pvc').getBoundingClientRect(); btnPct = br.width / cr.width; btnMin = Math.min(br.width, br.height); }
+      // abas de faixa ≥40 (min do lado menor, na escala do desenho)
+      let abaMin = 1e9; fix.querySelectorAll('.pv2-aba').forEach(a => { const r = a.getBoundingClientRect(); abaMin = Math.min(abaMin, r.height / esc, r.width / esc); });
+      // sobreposição painel × grade
       const pa = fix.querySelector('.pv2-esq').getBoundingClientRect(), dir = fix.querySelector('.pv2-dir').getBoundingClientRect();
       const overlap = pa.right > dir.left + 1;
-      // overflow horizontal da grade
-      const grade = fix.querySelector('.pv2-grade'); const over = grade.scrollWidth - grade.clientWidth;
-      // texto cortado nos títulos/nomes
+      const over = grade.scrollWidth - grade.clientWidth;
+      // nada do painel/abas/filtros sai da viewport; nada corta nos textos-chave
+      const fits = fb.left >= -0.5 && fb.top >= -0.5 && fb.right <= innerWidth + 0.5 && fb.bottom <= innerHeight + 0.5;
       let clips = [];
-      fix.querySelectorAll('.pv2-titulo,.pa__nome,.pa__sub,.pa__slot,.pv2-dir__t,.pv2-conta,.pvc__n,.pv2-fx__n,.ob__t').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className.split(' ')[0]); });
-      return { pw, ph, botMax, pior, overlap, over, clips: [...new Set(clips)].slice(0, 6) };
+      fix.querySelectorAll('.pv2-titulo,.pa__nome,.pa__sub,.pa__slot,.pvc__n,.pv2-aba__n,.ob__t').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className.split(' ')[0]); });
+      return { pw, ph, esc: +esc.toFixed(3), painelRola, nObjs, fileiras, btnPct: +(btnPct * 100).toFixed(0), btnMin: +btnMin.toFixed(1), abaMin: +abaMin.toFixed(1), overlap, over, fits, clips: [...new Set(clips)].slice(0, 6) };
     }, RICO);
-    ok2(Math.min(r.pw, r.ph) >= 0.98, `§349 @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
-    ok2(r.botMax <= 830, `§349 @${W}×${H}: as colunas terminam em y≤830 (pior ${r.botMax} em ${r.pior})`);
-    ok2(!r.overlap, `§349 @${W}×${H}: painel e grade não se sobrepõem`);
-    ok2(r.over <= 2, `§349 @${W}×${H}: a grade não rola na horizontal (over ${r.over}; absorvido pelo padding de 8px, overflow-x:hidden)`);
-    ok2(r.clips.length === 0, `§349 @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);
+    ok2(Math.min(r.pw, r.ph) >= 0.98, `§361 @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
+    ok2(r.fits, `§361 @${W}×${H}: a tela fixa cabe na viewport`);
+    ok2(r.nObjs === 4 && !r.painelRola, `§361 @${W}×${H}: o painel (4 objetivos) NÃO rola — cabe inteiro (objs=${r.nObjs}, rola=${r.painelRola})`);
+    ok2(r.fileiras >= 2, `§361 @${W}×${H}: a grade mostra ≥2 fileiras inteiras (veio ${r.fileiras})`);
+    ok2(r.btnPct <= 70 && r.btnMin >= 39.5, `§361 @${W}×${H}: ATIVAR proporcional (${r.btnPct}% ≤70%) e toque ≥40 (menor ${r.btnMin})`);
+    ok2(r.abaMin >= 39.5, `§361 @${W}×${H}: as abas de faixa têm ≥40px (menor ${r.abaMin})`);
+    ok2(!r.overlap, `§361 @${W}×${H}: painel e grade não se sobrepõem`);
+    ok2(r.over <= 2, `§361 @${W}×${H}: a grade não rola na horizontal (over ${r.over})`);
+    ok2(r.clips.length === 0, `§361 @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);
     await page.close();
   }
   await browser.close();
   if (cf) { console.log(`\n== ${cf} FALHA(S) de encaixe (Chromium) ==`); process.exit(1); }
-  console.log('\n== TELA DE PROVAÇÕES §349 OK (jsdom + Chromium) ==');
+  console.log('\n== TELA DE PROVAÇÕES §349/§361 OK (jsdom + Chromium) ==');
   process.exit(0);
 })().catch(e => { console.error(e.message || e); process.exit(1); });

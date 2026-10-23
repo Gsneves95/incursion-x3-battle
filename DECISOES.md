@@ -6,6 +6,45 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §361 · PROVAÇÕES acessíveis (queixas do dono + auditoria) — canvas 780×360
+
+**As queixas (print do celular):** "as fontes estão muito pequenas e o botão de ATIVAR está muito grande. Os dropbox de
+nível (para ver as provações avançadas) estão muito pequenos." A tela (`renderMissoes`, rota 'provacoes', §349) estava na
+tela fixa **1846×852** — px minúsculos ao caber num S24 deitado. Agora entra no canvas **780×360** (grupo `fixaPeq`; `fit()`
+escala p/ cima), estilo do guia. **Auditoria: nota 5.1 → 10** (a=b=c=d=0 em todo estado).
+
+**PAINEL ESQUERDO (296px) sem rolar, com os 4 objetivos (o máximo do jogo) inteiros:** o espaço é apertado (304px de
+altura), então: o retrato encolheu p/ 44px; o **motivo virou 1 linha** (`data-clamp`); o rótulo "Objetivos" saiu; a
+marcação dos objetivos ficou 15px; e — a decisão central — **a confirmação de troca SUBSTITUI o bloco de objetivos** (um
+`.pa__confwrap` centralizado com "Trocar? … fica pausado [SIM][NÃO]") em vez de empilhar abaixo (empilhar estourava o
+painel, que não pode rolar). Assim cabem retrato+nome+selo+panteão·faixa+motivo+4 objetivos (marcação+barra atual/meta)+
+rodapé (Trocar+vagas), tudo sem rolagem.
+
+**ABAS DE FAIXA no topo da grade (as "listas fechadas" minúsculas do §349 saíram):** uma aba por faixa + **"Todas"** como
+primeira, cada uma ≥40px com nome e contagem; as faixas ACIMA da atual com **cadeado + "faltam N pts"**; **tocar numa aba de
+cima ESPIA** (mostra os travados — o `faixasEspiadas` de hoje). São 8 faixas + "Todas" = 9 abas; como 9 abas não cabem numa
+linha de 40px sem rolar (e rolagem fora da lista é proibida), as abas **quebram em 2 linhas** (`flex-wrap`). Estado de
+exibição por `provFaixaAba` ('todas' | índice). Buscar/filtrar por estado **varre TODAS as faixas** (não se perde o alcance
+do §349). Os filtros de estado (Todas·Disponíveis·Pausadas·Conquistadas) + busca ficam numa linha compacta (as contagens
+saíram das pílulas — já vivem nas abas de faixa; o "X de Y" saiu p/ caber).
+
+**CARTÃO: botão proporcional e nada encobrindo o nome.** Grade de **3 colunas** (cartões ~146px — o nome inteiro cabe, até
+"Mula sem Cabeça"; a 4 colunas truncava, eixo d1). O botão **ATIVAR/RETOMAR é do tamanho do conteúdo (~42% da largura, não
+100%)** com toque ≥40. **Os selos absolutos sobre a arte saíram** (raridade, "Pausada·%", cadeado): num cartão baixo (80px)
+eles cobriam o nome (eixos d4/d6). Agora o estado vive na **linha de ação** (botão, ou "Ativa"/"✓ Conquistado"/"🔒 Faixa") e
+o "·%" da pausada vai na linha do nome. O cartão inteiro é o toque da prévia (`data-carta` no `.pvc`, `role=button`); o
+rodapé é `pointer-events:none` (o clique cai no cartão, o texto não fica "encoberto" por uma camada de toque — d6), menos o
+botão (`pointer-events:auto` + `stopPropagation`). A grade mostra **≥2 fileiras inteiras** sem rolar (o resto rola — a grade
+é a única lista rolável).
+
+**NADA DE FUNÇÃO SE PERDE:** ativar com confirmação, retomar, prévia, voltar à ativa, espiar faixa, retrato→ficha, "Trocar
+Provação", pendente do servidor, offline — todos seguem. Testes migrados: `missoes_tela` mede **780×360** (painel não rola /
+≥2 fileiras / ATIVAR ≤70% e toque≥40 / abas ≥40) no lugar das medidas antigas de 1846×852; as abas substituíram o teste das
+faixas fechadas; os seletores dos selos viraram os da linha de ação. `acessibilidade_telas` ganhou os 5 estados exigindo
+a=b=c=d=0 (ativa 4-obj, prévia, confirmação, faixa espiada, offline).
+
+---
+
 ## §360 · DESAFIOS + COMPOSIÇÃO acessíveis (as piores notas da auditoria) — canvas 780×360
 
 **O alvo:** na auditoria §357, a **rota 'desafios'** (= `renderProvacoes`, a grade de deuses do §339) tirou **3.3** e a

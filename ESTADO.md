@@ -2,7 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §360 · DESAFIOS + COMPOSIÇÃO acessíveis (780×360) — as piores notas viraram 10
+## ★ §361 · PROVAÇÕES acessíveis (780×360) — queixas do dono + auditoria (5.1 → 10)
+- QUEIXAS DO DONO: fontes pequenas, botão ATIVAR grande demais, "dropbox" de nível minúsculos. A tela (`renderMissoes`,
+  rota 'provacoes', §349) saiu da tela fixa 1846×852 e entrou no canvas **780×360** (grupo `fixaPeq`; `fit()` escala p/ cima).
+  **Auditoria: nota 5.1 → 10** (a=b=c=d=0 em todos os 5 estados medidos).
+- PAINEL ESQUERDO (296px) NÃO rola, com os **4 objetivos** (máximo do jogo) inteiros: retrato 44, motivo 1 linha, sem o
+  rótulo "Objetivos", marcação 15px, e a **confirmação de troca SUBSTITUI os objetivos** (não empilha — o painel não rola).
+- ABAS DE FAIXA no topo da grade (substituem as listas fechadas minúsculas): "Todas" + uma por faixa, ≥40px, com nome e
+  contagem; as de cima com **cadeado + "faltam N pts"**; tocar numa aba de cima **ESPIA** os travados. 9 abas → quebram em 2
+  linhas (rolagem fora da lista é proibida). `provFaixaAba`. Buscar/filtrar varre todas as faixas (alcance do §349 mantido).
+  Filtros de estado + busca numa linha compacta (contagens saíram das pílulas → vivem nas abas).
+- CARTÃO: grade de **3 colunas** (o nome inteiro cabe, até "Mula sem Cabeça"); botão **ATIVAR proporcional (~42%, não 100%)**,
+  toque ≥40. Os **selos absolutos sobre a arte saíram** (cobriam o nome num cartão de 80px — d4/d6): o estado vai na linha de
+  ação; o "·%" da pausada, na linha do nome. Cartão inteiro = toque da prévia (rodapé pointer-events:none; botão auto). A
+  grade mostra **≥2 fileiras inteiras** sem rolar.
+- NADA SE PERDE: ativar/confirmar/retomar/prévia/voltar/espiar/retrato→ficha/Trocar/pendente/offline intactos. Testes:
+  `missoes_tela` migrado p/ 780×360 (painel não rola/≥2 fileiras/ATIVAR≤70%+toque≥40/abas≥40; abas no lugar das faixas
+  fechadas); `acessibilidade_telas` +5 estados exigindo a=b=c=d=0. Capturas `docs/telas/361-*`. Suíte + build verdes.
+
+## §360 · DESAFIOS + COMPOSIÇÃO acessíveis (780×360) — as piores notas viraram 10
 - AS DUAS PIORES da auditoria §357 subiram para **nota 10** (a=b=c=d=0 em todo estado): rota **'desafios'**
   (`renderProvacoes`, grade de deuses §339) **3.3 → 10**; rota **'composicao'** (`renderDesafios`, lista §351) **3.1 → 10**.
   Saíram da tela fixa 1846×852 e entraram no canvas **780×360** (grupo `fixaPeq`; `fit()` escala p/ cima). Visual do dono fica.
