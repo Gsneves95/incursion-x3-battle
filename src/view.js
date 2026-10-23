@@ -133,12 +133,13 @@ function btGeoBatalha(){
   let S = Math.floor((fieldH - 2*rowGap)/3) - vida - hpGap;
   S = Math.max(40, Math.min(64, S));
   const skill=S, eff=40, gap=6;
-  const efAlly = st.lados[ladoExibido()].units.some(u=>u.vivo && tagsDe(u).length);
-  const efFoe  = st.lados[1-ladoExibido()].units.some(u=>u.vivo && tagsDe(u).length);
-  const skillsW = 4*skill + 3*4, effW = 3*eff + 2*4;
-  const aliados  = 10 + S + gap + skillsW + (efAlly?(gap+effW):0);
-  const inimigos = S + (efFoe?(gap+effW):0) + 10;
-  return { m, panelH, fieldH, S, skill, vida, rowGap, eff, gap,
+  // §362c: a COLUNA DE EFEITOS é SEMPRE reservada (mesma largura com ou sem efeitos) p/ a tela não "pular" quando efeitos
+  // entram/saem. Cabe 3 efeitos de 40 em 1 linha (sem "+N", sem roubar altura do retrato). Aliados: depois das 4
+  // habilidades; inimigos: à esquerda do retrato. A largura sai da CENA (1fr), nunca dos retratos/habilidades.
+  const skillsW = 4*skill + 3*4, effW = 3*eff + 2*3;   // 3 efeitos (40) + 2 gaps de 3 = 126
+  const aliados  = 10 + S + gap + skillsW + gap + effW;
+  const inimigos = effW + gap + S + 10;
+  return { m, panelH, fieldH, S, skill, vida, rowGap, eff, gap, effW,
            cols:{ aliados, inimigos }, painel:{ info, meio, col3, img, lines, armado } };
 }
 function renderBatalha(){

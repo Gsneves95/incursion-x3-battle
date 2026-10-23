@@ -198,6 +198,35 @@ const CAIXAS=[
     }
   }
 
+  // ---- (6) §362c: os EFEITOS não mexem no layout — coluna de efeitos SEMPRE reservada ----
+  // Comparando o MEU TURNO sem efeitos com o mesmo + 3 efeitos num aliado e num inimigo: as caixas de cada botão de
+  // habilidade, de cada retrato e da CENA são IDÊNTICAS (±1px). Os 3 efeitos aparecem sem "+N" e tocáveis (≥40).
+  const BOOT6=`st=montarProvacao({aliados:['hades','nuwa','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;ir('batalha',{},{substituir:true});render();`;
+  const EFF6=`st.lados[0].units[0].efeitos=[{type:'vulneravel',v:6,dur:2},{type:'atordoado',dur:1},{type:'dmgDown',v:4,dur:2}];st.lados[1].units[0].efeitos=[{type:'medo',dur:2},{type:'silenceClass',dur:1},{type:'dmgUp',v:5,dur:3}];render();`;
+  for(const E of [{w:780,h:360},{w:1846,h:852}]){
+    const caixas=async(comEfeito)=>{
+      const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:1});
+      const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+      await page.evaluate(BOOT6); if(comEfeito) await page.evaluate(EFF6); await page.waitForTimeout(80);
+      const m=await page.evaluate(()=>{ const R=el=>{const r=el.getBoundingClientRect();return [Math.round(r.x),Math.round(r.y),Math.round(r.width),Math.round(r.height)];};
+        const camp=document.querySelector('.b5-campo');
+        const effs=[...document.querySelectorAll('.bt-eff')];
+        return { skills:[...document.querySelectorAll('.bt-skill')].map(R), allyP:[...document.querySelectorAll('.bt-portrait--ally')].map(R),
+          foeP:[...document.querySelectorAll('.bt-portrait--foe')].map(R), cena:R(camp.children[1]),
+          nEff:effs.length, nMais:document.querySelectorAll('.bt-eff--mais').length,
+          effMin:effs.length?Math.min(...effs.map(e=>{const r=e.getBoundingClientRect();return Math.min(r.width,r.height);})):0 }; });
+      await ctx.close(); return m;
+    };
+    const a=await caixas(false), b=await caixas(true);
+    const eq=(x,y)=>x.length===y.length&&x.every((v,i)=>v.every((n,j)=>Math.abs(n-y[i][j])<=1));
+    ok(eq(a.skills,b.skills), `§362c @${E.w}×${E.h}: as caixas das habilidades são idênticas com/sem efeitos`);
+    ok(eq(a.allyP,b.allyP), `§362c @${E.w}×${E.h}: os retratos aliados são idênticos com/sem efeitos`);
+    ok(eq(a.foeP,b.foeP), `§362c @${E.w}×${E.h}: os retratos inimigos são idênticos com/sem efeitos`);
+    ok(a.cena.every((n,i)=>Math.abs(n-b.cena[i])<=1), `§362c @${E.w}×${E.h}: a CENA é idêntica com/sem efeitos (${JSON.stringify(a.cena)} × ${JSON.stringify(b.cena)})`);
+    ok(b.nEff===6 && b.nMais===0, `§362c @${E.w}×${E.h}: 3 efeitos no aliado + 3 no inimigo aparecem sem "+N" (${b.nEff} ícones, +N ${b.nMais})`);
+    ok(b.effMin>=40, `§362c @${E.w}×${E.h}: cada efeito é tocável ≥40 (menor ${b.effMin})`);
+  }
+
   await browser.close();
   console.log(falhas===0?'\n>>> BATALHA_LAYOUT OK':`\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas?1:0);

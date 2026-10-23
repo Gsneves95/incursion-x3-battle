@@ -412,13 +412,13 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(/\+8/.test(p3.ptxt), `§329: tocar o efeito mostra a magnitude +8 no painel ("${p3.ptxt.slice(0, 80)}")`);
     ok(p3.titles.filter(t => /[+−]\d/.test(t)).length >= 2, `§329: os ícones numéricos carregam o número (${JSON.stringify(p3.titles)})`);
 
-    // GUARDA 4 (§335) — o StatusEffects do design mostra ATÉ 3 ícones (24px + número); com mais de 3, o excedente
-    // colapsa no "+N" (2 ícones + "+N" = 3 células). A linha não estoura na horizontal.
+    // GUARDA 4 (§335/§362c) — o StatusEffects mostra ATÉ 3 ícones; com mais de 3, o excedente colapsa no "+N" (2 ícones +
+    // "+N" = 3 células). §362c: os efeitos vivem na COLUNA FIXA `.bt-effcol` (sempre reservada); a linha não estoura.
     const medeGrade = async (efeitos) => gp.evaluate((efeitos) => {
       const u = st.lados[1].units[1]; u.efeitos = efeitos; render();
       const foeUid = u.uid;
       const effs = [...document.querySelectorAll(`.bt-eff[data-eff^="${foeUid}|"]`)];
-      const grid = effs.length ? effs[0].closest('.bt-eff-grid') : null;
+      const grid = effs.length ? effs[0].closest('.bt-effcol') : null;
       const rb = grid ? grid.getBoundingClientRect() : null;
       const vw = document.documentElement.clientWidth;
       return { fora: rb ? (rb.left < -0.5 || rb.right > vw + 0.5) : true, n: effs.length, temMais: effs.some(e => e.classList.contains('bt-eff--mais')) };

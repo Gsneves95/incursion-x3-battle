@@ -81,22 +81,30 @@ function btNiv(u){
   const c=(n)=>`<span style="color:${n>1?'#F0DC9A':'#8f88b0'}">${n}</span>`;
   return `<div class="b5-niv bt-portrait__niv cin" style="position:absolute;left:3px;top:3px;display:flex;gap:2px;padding:0 3px;border-radius:3px;background:rgba(6,5,16,.82);font-weight:800;font-size:12px;line-height:1.3;pointer-events:none">${c(nv.basico)}${c(nv.habilidade)}${c(nv.milagre)}</div>`;
 }
-/* ---------- §362b: ícones de efeito — TIRA ao lado das habilidades (não rouba altura do retrato). Cada efeito é um
-   botão ≥40×40 (toque), com o chip colorido menor + número; até 3 lado a lado, resto "+N". '' quando não há efeito. --- */
-function btEfeitos(u, g){
+/* ---------- §362c: ícones de efeito numa COLUNA FIXA (sempre reservada — ver btEfeitosCol). Cada efeito é um botão
+   40×40 (toque; ícone + número EMPILHADOS p/ a célula ficar quadrada de 40, 1 linha); 3 cabem sem "+N". Mais que 3 →
+   os 2 primeiros + "+N" (toca → lista no painel). A COLUNA tem altura só do conteúdo (40), centrada na fileira: não
+   rouba altura do retrato; a largura (reservada sempre) sai da cena. ---------- */
+function btEfeitos(u){
   const tags=u.vivo?tagsDe(u):[]; if(!tags.length) return '';
-  const sz=(g&&g.eff)||40, valor=12, max=3;
+  const sz=40, valor=12, max=3;
   const vis = tags.length<=max ? tags : tags.slice(0, max-1);
   const resto = tags.length - vis.length;
-  const ic=Math.round(sz*0.55);   // chip visual menor que a área de toque
-  const cel=(t,i)=>{ const fc=FX_COR[t.cat]||FX_COR.bom;
-    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="height:${sz}px;min-width:${sz}px;display:flex;align-items:center;justify-content:center;gap:2px;border:0;background:none;padding:0 3px;cursor:pointer">
+  const ic=Math.round(sz*0.52);   // chip visual menor que a área de toque
+  const cel=(t,i)=>{ const fc=FX_COR[t.cat]||FX_COR.bom; const num = t.num || (t.dur!=null?String(t.dur):'');
+    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="width:${sz}px;height:${sz}px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:0;background:none;padding:0;cursor:pointer">
       <span style="display:flex;align-items:center;justify-content:center;width:${ic}px;height:${ic}px;flex:none;border-radius:4px;background:${fc.bg};box-shadow:inset 0 0 0 1px ${fc.ring};font-size:${Math.round(ic*0.6)}px">${t.icone}</span>
-      ${t.num?`<span style="font-size:${valor}px;font-weight:600;color:#F2F4F8">${H(t.num)}</span>`:(t.dur!=null?`<span style="font-size:${valor}px;font-weight:600;color:#F2F4F8">${t.dur}</span>`:'')}
+      ${num?`<span style="font-size:${valor}px;font-weight:600;line-height:1;color:#F2F4F8">${H(num)}</span>`:''}
     </button>`; };
   let cels=vis.map(cel).join('');
-  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="min-width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;border:0;background:none;font-size:${valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
-  return `<div class="bt-eff-grid" style="display:flex;align-items:center;gap:4px">${cels}</div>`;
+  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="width:${sz}px;height:${sz}px;flex:none;display:flex;align-items:center;justify-content:center;border:0;background:none;font-size:${valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
+  return cels;
+}
+/* §362c: a COLUNA de efeitos — SEMPRE presente, largura FIXA (g.effW), mesma em toda fileira e estado (vazia ou cheia),
+   p/ as habilidades/retratos/cena não mexerem quando efeitos entram/saem. side='me' alinha à esquerda; 'foe' à direita. */
+function btEfeitosCol(u, g, side){
+  const just = side==='foe' ? 'flex-end' : 'flex-start';
+  return `<div class="bt-effcol" style="width:${g.effW}px;flex:none;align-self:stretch;display:flex;align-items:center;justify-content:${just};gap:3px">${btEfeitos(u)}</div>`;
 }
 /* ---------- §362b: retrato do ALIADO (vida em barra ABAIXO) + tira de efeitos + 4 habilidades. SEM "P" (a passiva vem
    ao tocar o retrato); retrato e habilidades MAIORES (btGeo). ---------- */
@@ -113,10 +121,9 @@ function btUnidadeAliada(u, meu, g){
     ${u.vivo?btNiv(u):''}
   </div>`;
   const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
-  const fx=btEfeitos(u,g);
-  const fxCol=fx?`<div style="display:flex;align-items:center;flex:none">${fx}</div>`:'';
   const skills=`<div style="display:flex;gap:4px;flex:none">${acoesDe(st,u).map(a=>btSkill(u,a,meu,g)).join('')}</div>`;
-  return `<div style="display:flex;align-items:center;gap:${g.gap}px">${bloco}${fxCol}${skills}</div>`;
+  // §362c: ordem do aliado — retrato · 4 habilidades · COLUNA DE EFEITOS (entre as habilidades e a cena), sempre reservada.
+  return `<div style="display:flex;align-items:center;gap:${g.gap}px">${bloco}${skills}${btEfeitosCol(u,g,'me')}</div>`;
 }
 /* ---------- bolinhas de CUSTO (pílula escura embaixo do botão) ---------- */
 function btCustoPips(cost){
@@ -183,9 +190,8 @@ function btUnidadeInimiga(u, g){
     ${mira}
   </div>`;
   const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
-  const fx=btEfeitos(u,g);
-  const fxCol=fx?`<div style="display:flex;align-items:center;flex:none">${fx}</div>`:'';
-  return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:${g.gap}px">${fxCol}${bloco}</div>`;
+  // §362c: ordem do inimigo — COLUNA DE EFEITOS (à esquerda do retrato, sempre reservada) · retrato.
+  return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:${g.gap}px">${btEfeitosCol(u,g,'foe')}${bloco}</div>`;
 }
 /* ---------- deus em foco (compat: usado por outros pontos) ---------- */
 function unidadeFoco(){

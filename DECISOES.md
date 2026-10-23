@@ -6,6 +6,32 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §362c · BATALHA: os efeitos não mexem no layout (coluna de efeitos sempre reservada)
+
+No §362b a tira de efeitos entrava ANTES das habilidades e só existia quando havia efeito: ao entrar/sair um efeito (a cada
+turno) as 4 habilidades pulavam p/ a direita, as fileiras desalinhavam e a CENA encolhia. Conserto:
+
+- **COLUNA DE EFEITOS FIXA, reservada SEMPRE** (mesma largura em toda fileira e estado, com ou sem efeito), em
+  `campo.js btEfeitosCol()` com largura `g.effW` (de `view.js btGeoBatalha`): **aliados** → DEPOIS das 4 habilidades
+  (entre elas e a cena); **inimigos** → à ESQUERDA do retrato. Dentro, os ícones (`btEfeitos`) são botões **40×40**
+  (ícone + número EMPILHADOS p/ a célula ficar quadrada de 40), em 1 LINHA: **3 efeitos cabem sem "+N"** (`effW = 3·40 +
+  2·3 = 126`); mais que 3 → 2 + "+N" (toca → lista no painel). A coluna tem só 40 de altura (centrada na fileira): **não
+  rouba altura do retrato**; a largura (sempre reservada) **sai da CENA (1fr), nunca dos retratos/habilidades**.
+- **As 4 habilidades ficam na MESMA coluna** nas 3 fileiras (a coluna de efeitos vem depois, sempre reservada).
+- **A CENA tem SEMPRE a mesma caixa** (as colunas aliado/inimigo são fixas → a do meio, 1fr, é constante), com a máscara
+  do §335. Como a cena ficou mais estreita (as duas colunas de efeitos reservadas saíram dela), o anúncio de turno foi
+  re-escalado p/ CABER sem cobrir o rosto (§347): `cena.titulo` 24→16, `ornato` [96,48]→[72,32], `linha` 250→150 — o
+  "TURNO DO OPONENTE" não quebra feio e o rosto (topo) segue livre (frac ≥0.33).
+- Os tamanhos mínimos do §362b seguem (repouso retrato ≥56 / habilidade ≥52; descrição mais longa ≥46/≥44): a coluna de
+  efeitos só tira da cena.
+
+PROVA NOVA (`batalha_faixa`, 780×360 e 1846×852): comparando o MEU TURNO sem efeitos com o mesmo + 3 efeitos num aliado e
+num inimigo, as caixas de CADA habilidade, de CADA retrato e da CENA são **idênticas (±1px)**; os 3 efeitos aparecem **sem
+"+N" e tocáveis (≥40)**. A auditoria segue a=b=c=d=0 nos estados da batalha. Capturas `docs/telas/362c-meu-turno-*` e
+`362c-3efeitos-*`.
+
+---
+
 ## §362b · BATALHA: retratos e habilidades MAIORES com o painel embaixo (opção A do dono)
 
 Depois do §362, os retratos e botões de habilidade tinham encolhido p/ ~44px (no §330 o dono pediu que CRESCESSEM; chegaram

@@ -2,7 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §362b · BATALHA: retratos e habilidades MAIORES com o painel embaixo (opção A do dono)
+## ★ §362c · BATALHA: os efeitos não mexem no layout (coluna de efeitos sempre reservada)
+- No §362b a tira de efeitos empurrava as habilidades e encolhia a cena quando um efeito entrava/saía (a cada turno a tela
+  "pulava"). Agora há uma **COLUNA DE EFEITOS FIXA, reservada SEMPRE** (mesma largura com/sem efeito): **aliados** depois
+  das 4 habilidades, **inimigos** à esquerda do retrato. Ícones 40×40 (ícone+número empilhados) em 1 linha — **3 cabem sem
+  "+N"** (`effW=126`); a coluna tem 40 de altura (não rouba altura do retrato) e a largura **sai da cena, nunca dos
+  retratos/habilidades**.
+- As 4 habilidades ficam na MESMA coluna nas 3 fileiras; a CENA tem SEMPRE a mesma caixa (máscara §335). Como a cena ficou
+  mais estreita, o anúncio de turno foi re-escalado p/ caber sem cobrir o rosto (§347): `cena.titulo` 16, `ornato` [72,32].
+- Tamanhos mínimos do §362b seguem (repouso ≥56/≥52; descrição mais longa ≥46/≥44). PROVA (`batalha_faixa`): meu turno
+  sem efeitos × com 3 efeitos num aliado e num inimigo → caixas de habilidade/retrato/CENA idênticas (±1px), 3 efeitos sem
+  "+N" e tocáveis ≥40; auditoria da batalha segue a=b=c=d=0. Capturas `docs/telas/362c-*`. Suíte + build verdes.
+
+## §362b · BATALHA: retratos e habilidades MAIORES com o painel embaixo (opção A do dono)
 - Depois do §362 os retratos/habilidades tinham ~44px; o dono manteve o painel embaixo (**opção A**) e os aumentou:
   em repouso o painel fica baixo e **retrato ≥56 / habilidade ≥52**; com a descrição MAIS LONGA armada o painel cresce
   p/ cima e eles encolhem até **≥46 / ≥44** — tudo sem rolar. `view.js btGeoBatalha()` é a GEOMETRIA VIVA (o painel usa
