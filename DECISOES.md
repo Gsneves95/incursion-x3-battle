@@ -6,6 +6,49 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §364 · CAMPANHA acessível no canvas 780×360 (a pior nota que restava: 2,5)
+
+**Problema.** A tela da Campanha ainda era fluida (pré-§358): texto da história rolava, o painel da direita
+rolava, o rótulo "ATO VI" cortava ("TO"), nomes de ato na trilha vinham com "…", e cabia mal em 780×360. Era a
+última tela fora do padrão §357 (a pior nota da auditoria).
+
+**Decisão.** Migrada ao canvas fixo 780×360 (mesma receita de §358–§363b: `#campfix` 780×360 escalado por `fit()`,
+grupo `fixaPeq` em `base.js`, classe `campfix2`, `body.emcampanha`). Layout por tipo de ato:
+- **Cabeçalho** (faixa de 46px, separada): "‹ Início" + "Campanha" à esquerda; capítulo + "‹ ›" + contador "05/06" à direita.
+- **ESQUERDA** = arte + rótulo do ato ("ATO VI", sem corte — era `camp__num` a 8,7px com tracking grande; agora 12px/nowrap) +
+  título + **texto inteiro da história**. O texto NÃO rola: se não cabe na coluna, divide em **páginas** com "‹ i/n ›"
+  (`_paginarTexto`, quebra por palavra). O ato mais longo é "O Conselho Temporário" (**819 chars**).
+- **DIREITA por tipo:**
+  - **batalha** = citação da consequência + "Você jogará com" (3 retratos c/ selo TRAVADA/EMPRESTADA + troca §344c) +
+    "Enfrentará 3 VS 3" + "Kit revelado:" em **uma linha de nomes tocáveis** ("Hel · Fenrir", cada nome ≥40 de toque,
+    abre o overlay do kit) + Recompensas + CTA. Tudo cabe sem rolar (ver "o pior caso" abaixo).
+  - **escolha em 2 páginas** (o dono autorizou dividir p/ não rolar/cortar): a pista mais longa tem **86 chars** e,
+    a 12px, só cabe em 1 linha com o painel em **largura cheia**. Logo: vista **'texto'** (história paginada à
+    esquerda + teaser "A escolha" com a pergunta e a CTA "Ver as opções") → vista **'opções'** (painel full-width com
+    a pergunta, as 4 opções inteiras de 1 linha e "‹ Reler o texto" + "Confirmar escolha"). Nada rola, nada corta.
+  - **história** = ✦ + "Continuar".
+- **CTA** sempre visível acima da trilha (§356): `#campcta` (batalha/história/escolha-opções) ou `#campvopc` (escolha-texto).
+- **TRILHA** (56px): nós ≥40 de toque; nomes **em 2 linhas sem corte nem "…"**. O nome mais longo
+  ("Alianças, conflitos e oportunidades", 35c) só cabe em 2 linhas com `letter-spacing:-.3px` (3 linhas pediriam
+  trilha de 66px, que não deixava o pior caso de batalha caber — ver abaixo). Minúsculas (não caixa-alta) são mais estreitas.
+
+**O pior caso (batalha com consequência + kit revelado) não cabia sem rolar** — o miolo pedia ~243px num painel de
+~187px (o §269 rolava; §364 proíbe rolar). Compactado até caber: retratos a 40px (piso de toque), citação em 2 linhas,
+gaps apertados, divisor só quando há "nova mecânica", coluna da arte 320px (deixa o painel e as caixas de inimigo
+maiores — "Ceifador"/"Elemental" cabem). A dica da **nova mecânica** volta a aparecer inteira (sem `line-clamp`), porque
+o ato-aula (sem consequência) tem folga.
+
+**Rejeitado:** (a) manter a escolha numa página só — 819 de história + 4 opções de 86c não cabem juntas sem rolar;
+(b) trilha de 3 linhas (66px) — rouba a altura que a batalha-pior-caso precisa; (c) cortar nome/texto com "…" — o dono
+proíbe. **Arredondamento:** textos de 12px cuja largura própria é o ancestral medido pela auditoria batiam 11,99px
+(sub-pixel); a pista subiu p/ 13px. O carimbo `#build`/botão de conta saíam por cima do 1º nó da trilha → ocultos em
+`body.emcampanha` (como nas outras telas cheias).
+
+**Provas.** `acessibilidade_telas` mede a=b=c=d=0 em 780×360 para: batalha c/ kit revelado, texto mais longo (Conselho),
+escolha em opções (pista 86c), história sintética, ato travado e troca aberta. `campanha_cta` (§356) acha a CTA por
+classe (cobre as duas páginas da escolha). `campanha`/`montar_modos`/`moldura` atualizados aos novos seletores/medidas.
+Capturas `364-campanha-{batalha,texto-longo,escolha,travado}-{780x360,1846x852}.png`.
+
 ## §363b · BATALHA: painel de ALTURA FIXA, retratos e habilidades de tamanho CONSTANTE
 
 QUEIXA DO DONO (jogando): "dependendo do que eu toco para ver os detalhes, o box do resumo fica maior ou menor, e isso

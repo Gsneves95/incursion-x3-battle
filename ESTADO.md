@@ -2,7 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §363b · BATALHA: painel de ALTURA FIXA, retratos e habilidades de tamanho CONSTANTE
+## ★ §364 · CAMPANHA acessível no canvas 780×360 (era a pior nota: 2,5)
+- A Campanha foi migrada ao canvas fixo **780×360** (receita §358–§363b). Era a última tela fluida: texto e painel rolavam,
+  "ATO VI" cortava, nomes de ato na trilha vinham com "…".
+- **Layout:** cabeçalho 46px (‹ Início / Campanha · capítulo + ‹ › + 05/06); ESQUERDA = arte + rótulo do ato + título +
+  **história inteira** (sem rolar; se não cabe, **pagina** com "‹ i/n ›" — o maior é "O Conselho Temporário", 819 chars);
+  DIREITA por tipo (batalha: consequência + "Você jogará com" + "Enfrentará 3v3" + **"Kit revelado:" em 1 linha de nomes
+  tocáveis** + Recompensas + CTA; **escolha em 2 páginas** — 'texto' (história + teaser "Ver as opções") e 'opções'
+  (painel full-width com a pergunta + 4 opções inteiras de 1 linha + "‹ Reler o texto" / "Confirmar"); história: ✦ + Continuar);
+  CTA sempre acima da trilha (§356); TRILHA 56px com nomes **em 2 linhas sem corte** (`letter-spacing:-.3px`; o maior tem 35c).
+- **Por que 2 páginas na escolha:** a pista mais longa (86c) a 12px só cabe em 1 linha com o painel em largura cheia, e isso
+  não coexiste com a coluna da história → o dono autorizou dividir. **Pior caso (batalha c/ consequência+kit)** não cabia sem
+  rolar (~243px em ~187px): compactado (retratos a 40px, citação 2 linhas, arte 320px p/ caixas de inimigo maiores — "Ceifador"
+  cabe). `#build`/conta ocultos na campanha (cobriam o 1º nó).
+- **PROVAS:** `acessibilidade_telas` a=b=c=d=0 em 780×360 (batalha c/ kit, texto mais longo, escolha em opções, história,
+  travado, troca aberta); `campanha`/`campanha_cta`/`montar_modos`/`moldura` verdes; capturas `364-campanha-*-{780x360,1846x852}.png`.
+  Suíte + build verdes.
+
+## §363b · BATALHA: painel de ALTURA FIXA, retratos e habilidades de tamanho CONSTANTE
 - Queixa do dono: o painel mudava de tamanho conforme o que se tocava e o campo "pulava". Agora o painel aberto tem **altura
   FIXA (68px)** e o recolhido a barra fina (44px); o `btGeoBatalha` **não depende mais do conteúdo** → as caixas de retrato,
   habilidade, coluna de efeitos e cena são **IDÊNTICAS** em toda situação dentro de cada modo. O `hpOverlay` do §363 foi

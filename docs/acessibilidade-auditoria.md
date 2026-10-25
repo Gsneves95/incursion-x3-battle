@@ -16,81 +16,42 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 
 | # | Tela | a) texto<12 (<11) | b) toque<40 | c) rolagem | d) corte | nota | print |
 |--:|------|--:|--:|--:|--:|:--:|------|
-| 1 | Campanha — ato de batalha | 42 (40) | 5 | 1 | 8 | **2.5** | `357-campanha-batalha-780x360.png` |
-| 2 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
-| 3 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
-| 4 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
-| 5 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
-| 6 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
-| 7 | Campanha — ato de escolha | 38 (38) | 6 | 0 | 0 | **4.6** | `357-campanha-escolha-780x360.png` |
-| 8 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
-| 9 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
-| 10 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
-| 11 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
-| 12 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
-| 13 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
-| 14 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
-| 15 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
-| 16 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
-| 17 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
-| 18 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
-| 19 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
-| 20 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
-| 21 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
-| 22 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
-| 23 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
-| 24 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
-| 25 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
-| 26 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
-| 27 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
-| 28 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
-| 29 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
-| 30 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
-| 31 | Batalha — menu | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-menu-780x360.png` |
-| 32 | Batalha — confirmação de sair | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-sair-780x360.png` |
-| 33 | Batalha — confirmação de desistir | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-desistir-780x360.png` |
+| 1 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
+| 2 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
+| 3 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
+| 4 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
+| 5 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
+| 6 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
+| 7 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
+| 8 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
+| 9 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
+| 10 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
+| 11 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
+| 12 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
+| 13 | Campanha — ato de batalha (consequências + kit) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-batalha-780x360.png` |
+| 14 | Campanha — texto mais longo (Conselho, 819c, paginado) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-texto-longo-780x360.png` |
+| 15 | Campanha — ato de escolha (opções inteiras, pista 86c) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-escolha-780x360.png` |
+| 16 | Campanha — ato de história (sintético) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-historia-780x360.png` |
+| 17 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
+| 18 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
+| 19 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
+| 20 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
+| 21 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
+| 22 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
+| 23 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
+| 24 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
+| 25 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
+| 26 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
+| 27 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
+| 28 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 29 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
+| 30 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
+| 31 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
+| 32 | Batalha — menu | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-menu-780x360.png` |
+| 33 | Batalha — confirmação de sair | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-sair-780x360.png` |
+| 34 | Batalha — confirmação de desistir | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-desistir-780x360.png` |
 
 ## Detalhe por tela
-
-### Campanha — ato de batalha — nota 2.5
-
-Print: `docs/telas/357-campanha-batalha-780x360.png`. Contagens: a=42, b=5, c=1, d=8. (textos visíveis: 47; tocáveis: 13.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.crec__u` — **5.3px** ⚠<11 — "GEMAS"
-- `span.cslot__nome` — **5.89px** ⚠<11 — "Zeus"
-- `span.cslot__nome` — **5.89px** ⚠<11 — "Nezha"
-- `span.cslot__nome` — **5.89px** ⚠<11 — "Hades"
-- `span.camp__form` — **5.89px** ⚠<11 — "3 VS 3"
-- `span.camp__capeye` — **6.72px** ⚠<11 — "CAPÍTULO I"
-- `span.camp__lbl.camp__lbl--voce` — **6.73px** ⚠<11 — "Você jogará com"
-- `span.cslot__badge.cslot__lock` — **6.73px** ⚠<11 — "⚿"
-- `span.cslot__badge.cslot__swap` — **6.73px** ⚠<11 — "⇄"
-- `span.cslot__badge.cslot__swap` — **6.73px** ⚠<11 — "⇄"
-
-**b) 10 piores toques** (menor lado):
-
-- `#capprev` — **7.8×15.1** — "‹"
-- `#bvoltar` — **65.4×20.2** — "Início"
-- `#campcta` — **351.5×27.8** — "Jogar"
-- `button.camp__kitchip` — **351.5×28.6** — "Kit reveladoHel — ver as 4 hab"
-- `button.camp__kitchip` — **351.5×28.6** — "Kit reveladoFenrir — ver as 4 "
-
-**c) rolagens proibidas:**
-
-- `div.camp__briefrol` — eixo Y, +80px — "“Você desconfiou do silêncio, "
-
-**d) cortes:**
-
-- [corte] **importante** `span.cnode__nome` — "Alianças, conflitos e oportunidades"
-- [corte-ancestral] **importante** `b.crec__v` — "120"
-- [corte-ancestral] **importante** `span.crec__u` — "GEMAS"
-- [sobreposto] **importante** `span × #campcta` — "Fenrir — ver as 4  / Jogar"
-- [sobreposto] **importante** `span.camp__lbl.camp__lbl--rec × #campcta` — "Recompensas / Jogar"
-- [encoberto] **importante** `b.crec__v` — "120"
-- [encoberto] **importante** `span.crec__u` — "GEMAS"
-- [ellipsis] `span.camp__capep` — "“A dispersão não foi aleatória. Foi o in"
 
 ### Invocação — revelação — nota 2.6
 
@@ -248,32 +209,6 @@ Print: `docs/telas/357-invocacao-780x360.png`. Contagens: a=17, b=5, c=0, d=4. (
 - [encoberto] **importante** `button.iv-hero__det` — "Ver detalhes"
 - [encoberto] **importante** `span.iv-hero__lupa` — "⌕"
 
-### Campanha — ato de escolha — nota 4.6
-
-Print: `docs/telas/357-campanha-escolha-780x360.png`. Contagens: a=38, b=6, c=0, d=0. (textos visíveis: 42; tocáveis: 13.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.camp__capeye` — **6.72px** ⚠<11 — "PRÓLOGO"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Era dos Planos"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Incursão"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Criação do Eixo"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Profecia do Uno"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "O Início do Conflito"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Ruptura entre Céu e Terra"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "O Ciclo dos Expulsos"
-- `span.camp__num` — **7.31px** ⚠<11 — "TRECHO I"
-- `span.camp__capep` — **7.31px** ⚠<11 — "“Antes da unidade, havia o multiverso da"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **65.4×20.2** — "Início"
-- `#campcta` — **351.5×27.8** — "Confirmar escolha"
-- `button.copc` — **351.5×35.3** — "OL OlimpoOs que governam do al"
-- `button.copc` — **351.5×35.3** — "AS AsgardOs salões de guerra o"
-- `button.copc` — **351.5×35.3** — "DU DuatO rio, a balança e a lo"
-- `button.copc` — **351.5×35.3** — "XI XibalbaAs cavernas sagradas"
-
 ### Home — nota 4.8
 
 Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=0. (textos visíveis: 21; tocáveis: 9.)
@@ -294,34 +229,6 @@ Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=0. (texto
 **b) 10 piores toques** (menor lado):
 
 - `button.mperfil` — **98.7×33.6** — "Jogador"
-
-### Campanha — ato de história (sintético) — nota 5.4
-
-Print: `docs/telas/357-campanha-historia-780x360.png`. Contagens: a=22, b=2, c=0, d=1. (textos visíveis: 27; tocáveis: 9.)
-
-> Nota: A campanha atual só tem atos de batalha e escolha; este caso força `tipo='historia'` num ato real para auditar o caminho de render da história.
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.camp__capeye` — **6.72px** ⚠<11 — "PRÓLOGO"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Era dos Planos"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Incursão"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Criação do Eixo"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Profecia do Uno"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "O Início do Conflito"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "A Ruptura entre Céu e Terra"
-- `span.cnode__nome` — **6.73px** ⚠<11 — "O Ciclo dos Expulsos"
-- `span.camp__num` — **7.31px** ⚠<11 — "TRECHO I"
-- `span.camp__capep` — **7.31px** ⚠<11 — "“Antes da unidade, havia o multiverso da"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **65.4×20.2** — "Início"
-- `#campcta` — **246×27.8** — "Continuar"
-
-**d) cortes:**
-
-- [encoberto] **importante** `span.cnode__nome` — "A Era dos Planos"
 
 ### Em breve (marcador) — nota 6.8
 
@@ -367,6 +274,32 @@ _Sem achados._
 ### Batalha — inspeção da habilidade — nota 10
 
 Print: `docs/telas/357-batalha-inspecao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 35; tocáveis: 28.)
+
+_Sem achados._
+
+### Campanha — ato de batalha (consequências + kit) — nota 10
+
+Print: `docs/telas/357-campanha-batalha-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 43; tocáveis: 13.)
+
+_Sem achados._
+
+### Campanha — texto mais longo (Conselho, 819c, paginado) — nota 10
+
+Print: `docs/telas/357-campanha-texto-longo-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 29; tocáveis: 11.)
+
+_Sem achados._
+
+### Campanha — ato de escolha (opções inteiras, pista 86c) — nota 10
+
+Print: `docs/telas/357-campanha-escolha-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 34; tocáveis: 14.)
+
+_Sem achados._
+
+### Campanha — ato de história (sintético) — nota 10
+
+Print: `docs/telas/357-campanha-historia-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 26; tocáveis: 9.)
+
+> Nota: A campanha atual só tem atos de batalha e escolha; este caso força `tipo='historia'` num ato real para auditar o caminho de render da história.
 
 _Sem achados._
 
@@ -486,8 +419,9 @@ _Sem achados._
 - `docs/telas/357-batalha-oponente-780x360.png` — Batalha — turno do oponente
 - `docs/telas/357-batalha-armada-780x360.png` — Batalha — habilidade armada
 - `docs/telas/357-batalha-inspecao-780x360.png` — Batalha — inspeção da habilidade
-- `docs/telas/357-campanha-batalha-780x360.png` — Campanha — ato de batalha
-- `docs/telas/357-campanha-escolha-780x360.png` — Campanha — ato de escolha
+- `docs/telas/357-campanha-batalha-780x360.png` — Campanha — ato de batalha (consequências + kit)
+- `docs/telas/357-campanha-texto-longo-780x360.png` — Campanha — texto mais longo (Conselho, 819c, paginado)
+- `docs/telas/357-campanha-escolha-780x360.png` — Campanha — ato de escolha (opções inteiras, pista 86c)
 - `docs/telas/357-campanha-historia-780x360.png` — Campanha — ato de história (sintético)
 - `docs/telas/357-montar-campanha-780x360.png` — Montar time — encontro da campanha
 - `docs/telas/357-montar-dominio-780x360.png` — Montar time — Domínio (corrida)

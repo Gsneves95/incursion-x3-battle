@@ -38,7 +38,7 @@ const MEDIR=`(ci,ai,variante)=>{
     if(k>=0){ const cand=ROSTER.find(e=>!slots.some(s=>s&&s.key===e.key)); if(cand) campSwap[k]=cand.key; } }catch(e){} }
   campCapIdx=ci; campAtoIdx=ai; ir('campanha',{},{substituir:true}); render();
   const g=document.getElementById('gsplash'); if(g) g.remove();
-  const cta=document.getElementById('campcta'); const pe=document.querySelector('.camp__pe');
+  const cta=document.querySelector('.camp__cta'); const pe=document.querySelector('.camp__pe');  // §364: #campcta (batalha/história/escolha-opções) ou #campvopc (escolha-texto)
   if(!cta) return {semCta:true};
   const rc=cta.getBoundingClientRect(), rp=pe?pe.getBoundingClientRect():null, cs=getComputedStyle(cta);
   const cx=rc.left+rc.width/2, cy=rc.top+rc.height/2; const hit=document.elementFromPoint(cx,cy);
@@ -61,7 +61,7 @@ const ESTRESSAR=`(tipo)=>{
   if(!f) return {semAto:true};
   campCapIdx=f.ci; campAtoIdx=f.ai; ir('campanha',{},{substituir:true}); render();
   const g=document.getElementById('gsplash'); if(g) g.remove();
-  const brief=document.querySelector('.camp__brief'); const cta=document.getElementById('campcta');
+  const brief=document.querySelector('.camp__brief'); const cta=document.querySelector('.camp__cta');
   const rol=brief?brief.querySelector('.camp__briefrol'):null;
   if(!brief||!cta){ if(restore)restore(); return {semCta:true}; }
   const alto=document.createElement('div'); alto.innerHTML='<p>'+('conteúdo muito alto de consequência '.repeat(80))+'</p>';

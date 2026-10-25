@@ -2180,6 +2180,21 @@ let campSwap = {}, campVistaAto = null;       // trocas do slot emprestado (por 
 let campPicker = null;                        // slot idx cujo seletor de troca está aberto (null = fechado)
 let campEscolhaSel = null;                    // §268: opção selecionada num ato de escolha (antes de confirmar)
 let campKitRev = null;                        // §268: chave do inimigo cujo kit revelado está aberto (overlay)
+let campStoryPage = 0;                         // §364: página do texto da história (quando o texto é longo p/ a coluna, 780×360)
+let campEscolhaVista = null;                   // §364: 'texto' (história paginada + teaser) | 'opções' (painel full-width); null = resolve por ato
+// §364 — divide o texto da história em PÁGINAS que cabem na coluna sem rolar nem cortar (o dono pediu "2 páginas com
+// continuar" p/ os atos cujo texto não cabe). `budget` = nº aproximado de caracteres por página na largura da coluna;
+// quebra em limites de palavra. 1 página quando cabe inteiro.
+function _paginarTexto(txt, budget){
+  txt = String(txt || '').trim(); if (!txt || txt.length <= budget) return [txt];
+  const pags = []; const palavras = txt.split(/\s+/); let atual = '';
+  for (const p of palavras){
+    if (atual && (atual.length + 1 + p.length) > budget){ pags.push(atual); atual = p; }
+    else atual = atual ? (atual + ' ' + p) : p;
+  }
+  if (atual) pags.push(atual);
+  return pags.length ? pags : [txt];
+}
 
 function CAMPS(){ return (typeof CAMPANHAS !== 'undefined' && CAMPANHAS && CAMPANHAS.capitulos) ? CAMPANHAS.capitulos : []; }
 function atoFeito(id){ return !!(perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas) && perfil.campanha.concluidas.includes(id)); }
@@ -2257,9 +2272,9 @@ function copcaoHTML(o, sel, feito){
 // §268 — kit revelado de um inimigo (consequência `kitRevelado`): um CHIP no briefing que abre o kit
 // inteiro num overlay. O painel do ato tem altura fixa (290px, §262) — o kit não cabe inline sem
 // cortar; o overlay mostra as 4 skills sem limite e o chip deixa claro que a leitura foi recompensada.
-function kitRevChipHTML(k){ const m = metaComb(k);
-  return `<button class="camp__kitchip" data-kitrev="${H(k)}"><span class="camp__kitchipp">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span>
-    <span class="camp__kitchiptxt"><b>Kit revelado</b><span>${H(m.nome)} — ver as 4 habilidades</span></span><span class="camp__kitchipseta">›</span></button>`;
+// §364 — nome tocável do kit revelado (abre o kit inteiro no overlay); cada nome ≥40 de toque, numa linha compacta.
+function kitRevNomeHTML(k){ const m = metaComb(k);
+  return `<button class="camp__kitname" data-kitrev="${H(k)}" title="${H(m.nome)} — ver as 4 habilidades"><span class="camp__kitnamep">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span>${H(m.nome)}</button>`;
 }
 function campKitRevHTML(k){
   // §284-ajuste2: pela MESMA linha (kitLinhaHTML) e MESMA fonte (data/deuses via GODS) da sobreposição e da rota.
@@ -2282,11 +2297,16 @@ function renderCampanha(){
   const atos = cap.atos || [];
   if (campAtoIdx == null || campAtoIdx >= atos.length) campAtoIdx = atoAtualIdx(campCapIdx);
   const ato = atos[campAtoIdx];
-  if (campVistaAto !== ato.id) { campSwap = {}; campEscolhaSel = null; campVistaAto = ato.id; }   // troca de ato zera empréstimos e seleção
+  if (campVistaAto !== ato.id) { campSwap = {}; campEscolhaSel = null; campStoryPage = 0; campEscolhaVista = null; campVistaAto = ato.id; }   // troca de ato zera empréstimos, seleção, página do texto e vista da escolha
 
   const feitosCap = atos.filter(a => atoFeito(a.id)).length;
   const ehBatalha = ato.tipo === 'batalha';
   const ehEscolha = ato.tipo === 'escolha';
+  // §364: a escolha tem DUAS páginas (o dono autorizou dividir p/ não rolar/cortar): 'texto' (história paginada à
+  // esquerda + teaser) e 'opções' (painel full-width com a pergunta e as opções inteiras — pista de 86c cabe em 1 linha).
+  // Já jogado abre direto nas opções (mostra a travada); senão começa no texto.
+  if (ehEscolha && campEscolhaVista == null) campEscolhaVista = (escolhaFeita(ato.id) != null ? 'opções' : 'texto');
+  const escOp = ehEscolha && campEscolhaVista === 'opções';
   const eyebrow = cap.numero === 0 ? 'PRÓLOGO' : 'CAPÍTULO ' + numeroRomano(cap.numero);
   const capTit = (cap.nome.split('—')[1] || cap.nome).trim();
   const numAtoLabel = (cap.numero === 0 ? 'TRECHO ' : 'ATO ') + ato.numeral;
@@ -2300,13 +2320,26 @@ function renderCampanha(){
   const arteInner = ato._arteOk
     ? `<img class="camp__arteimg" src="${arteFile}" alt="" loading="lazy" onerror="this.remove()">`
     : `<div class="camp__artefallback"><span class="camp__phorn">◈</span></div>`;
-  const esquerda = `<div class="camp__arte">${arteInner}
+  // §364: o TEXTO da história cabe na coluna sem rolar; se for longo demais (ex.: o ato de escolha "O Conselho Temporário",
+  // 819 chars, na coluna estreita), divide em PÁGINAS com "‹ i/n ›" (desejo do dono) — nada rola, nada corta.
+  // batalha: coluna da arte 344; escolha-texto: 500 (larga); história: 540. Orçamento ≈ chars/página na largura da coluna.
+  const _budget = ehBatalha ? 620 : (ehEscolha ? 540 : 560);
+  const _pags = _paginarTexto(ato.texto || '', _budget);
+  if (campStoryPage >= _pags.length) campStoryPage = 0;
+  const _nav = _pags.length > 1 ? `<div class="camp__pag">
+      <button class="camp__pagb" id="camppagprev" ${campStoryPage === 0 ? 'disabled' : ''} aria-label="Página anterior">‹</button>
+      <span class="camp__pagn">${campStoryPage + 1} / ${_pags.length}</span>
+      <button class="camp__pagb" id="camppagnext" ${campStoryPage >= _pags.length - 1 ? 'disabled' : ''} aria-label="Próxima página">›</button>
+    </div>` : '';
+  // na vista 'opções' da escolha a coluna da arte some (o painel ocupa a largura toda); nos demais, arte + legenda + texto.
+  const esquerda = escOp ? '' : `<div class="camp__arte">${arteInner}
     <div class="camp__veu1"></div><div class="camp__veu2"></div>
     <div class="camp__legenda">
       <span class="camp__num">${H(numAtoLabel)}</span>
       <h2 class="camp__nome">${H(ato.nome)}</h2>
       <span class="camp__filete"></span>
-      <p class="camp__texto">${H(ato.texto || '')}</p>
+      <p class="camp__texto">${H(_pags[campStoryPage] || '')}</p>
+      ${_nav}
     </div>
   </div>`;
 
@@ -2334,7 +2367,8 @@ function renderCampanha(){
     // linha ao efeito sozinho) e o kit revelado do inimigo. O empréstimo já entrou no slot (slotsDoAto).
     const revs = revelacoesNoAto(ato.id);
     const revBloco = revs.length ? `<div class="camp__revel">${revs.map(t => `<p class="camp__revell">“${H(t)}”</p>`).join('')}</div>` : '';
-    const kitRevBloco = kitReveladoDaConsequencia(ato.id).map(kitRevChipHTML).join('');
+    const kitRevKeys = kitReveladoDaConsequencia(ato.id);
+    const kitRevBloco = kitRevKeys.length ? `<div class="camp__kitline"><span class="camp__kitlinelbl">Kit revelado:</span>${kitRevKeys.map(kitRevNomeHTML).join('')}</div>` : '';
     // §269: com DUAS leituras certas (2 revelações + 2 kits) o conteúdo passa dos 290px — o miolo ROLA
     // e a CTA fica ANCORADA embaixo (nunca sai de vista). Sem consequência, nada rola: idêntico ao de antes.
     brief = `<div class="camp__brief">
@@ -2351,27 +2385,38 @@ function renderCampanha(){
           </div>
         </div>
         ${kitRevBloco}
-        <div class="camp__divisor"></div>
-        ${mec}${rec}
+        ${mec ? '<div class="camp__divisor"></div>' + mec : ''}
+        ${rec}
       </div>
       <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}><span class="camp__ctaseta"></span>${pronto ? (jaFeito ? 'Rejogar' : 'Jogar') : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
     </div>`;
   } else if (ehEscolha) {
-    // §268 — TELA DA ESCOLHA: pergunta + opções (retrato quando é personagem + pista que não corta).
-    // Escolher seleciona; CONFIRMAR grava e avança — sem volta. O resultado NÃO se revela aqui (cai no alvo).
+    // §268/§364 — TELA DA ESCOLHA em 2 páginas. Escolher seleciona; CONFIRMAR grava e avança (sem volta).
+    // O resultado NÃO se revela aqui (cai no alvo). A pista nunca corta (full-width ⇒ 1 linha).
     const escolhido = escolhaFeita(ato.id);            // já jogado? mostra a opção travada
-    const feito = atoFeito(ato.id);
-    const podeConfirmar = escolhido != null || campEscolhaSel != null;
-    const ctaLabel = escolhido != null ? 'Continuar' : 'Confirmar escolha';
-    // §356: pergunta + opções no .camp__briefrol (rola se transbordar); a CTA fica FORA, ancorada embaixo.
-    brief = `<div class="camp__brief camp__brief--escolha">
-      <div class="camp__briefrol">
+    if (escOp) {
+      const podeConfirmar = escolhido != null || campEscolhaSel != null;
+      const ctaLabel = escolhido != null ? 'Continuar' : 'Confirmar escolha';
+      brief = `<div class="camp__escwrap">
         <div class="camp__perg">${H(ato.pergunta)}</div>
         <div class="camp__opcoes">${(ato.opcoes || []).map(o => copcaoHTML(o, campEscolhaSel, escolhido)).join('')}</div>
-      </div>
-      <button class="camp__cta" id="campcta" ${podeConfirmar ? '' : 'disabled'}><span class="camp__ctaseta"></span>${ctaLabel}</button>
-    </div>`;
-    void feito;
+        <div class="camp__escbar">
+          <button class="camp__reler" id="campreler"><span class="camp__chev"></span>Reler o texto</button>
+          <button class="camp__cta" id="campcta" ${podeConfirmar ? '' : 'disabled'}><span class="camp__ctaseta"></span>${ctaLabel}</button>
+        </div>
+      </div>`;
+    } else {
+      // vista 'texto': a história fica à esquerda (paginada); o teaser traz a pergunta e a CTA "Ver as opções" (§356).
+      const nop = (ato.opcoes || []).length;
+      brief = `<div class="camp__brief camp__brief--escteaser">
+        <div class="camp__briefrol">
+          <span class="camp__lbl camp__lbl--voce">A escolha</span>
+          <div class="camp__perg">${H(ato.pergunta)}</div>
+          <span class="camp__escnop">${nop} ${nop === 1 ? 'caminho' : 'caminhos'} à sua frente.</span>
+        </div>
+        <button class="camp__cta" id="campvopc"><span class="camp__ctaseta"></span>Ver as opções</button>
+      </div>`;
+    }
   } else {
     // §356: miolo no .camp__briefrol (rola se transbordar); a CTA "Continuar" fica FORA, ancorada embaixo.
     brief = `<div class="camp__brief camp__brief--hist">
@@ -2399,8 +2444,8 @@ function renderCampanha(){
       <span class="cnode__nome">${H(a.nome)}</span></button>`;
   }).join('');
 
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="camp ${ehBatalha ? '' : ehEscolha ? 'camp--escolha' : 'camp--historia'}">
+  stage.innerHTML = `<div id="baselayer" class="campfix2"><div id="campfix">
+  <div class="camp ${ehBatalha ? '' : escOp ? 'camp--escolhaop' : ehEscolha ? 'camp--escolha' : 'camp--historia'}">
     ${esquerda}
     <header class="camp__cab">
       <button class="camp__inicio" id="bvoltar"><span class="camp__chev"></span>Início</button>
@@ -2420,12 +2465,16 @@ function renderCampanha(){
     </div>
   </div>
   ${campKitRev != null ? campKitRevHTML(campKitRev) : ''}
-  </div>`;
+  </div></div>`;
 
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   const bp = stage.querySelector('#capprev'); if (bp) bp.onclick = () => { campCapIdx--; campAtoIdx = atoAtualIdx(campCapIdx); campSwap = {}; campVistaAto = null; render(); };
   const bn = stage.querySelector('#capnext'); if (bn) bn.onclick = () => { campCapIdx++; campAtoIdx = atoAtualIdx(campCapIdx); campSwap = {}; campVistaAto = null; render(); };
+  const pgp = stage.querySelector('#camppagprev'); if (pgp) pgp.onclick = () => { if (campStoryPage > 0) { campStoryPage--; render(); } };   // §364: paginação do texto
+  const pgn = stage.querySelector('#camppagnext'); if (pgn) pgn.onclick = () => { campStoryPage++; render(); };
+  const vop = stage.querySelector('#campvopc'); if (vop) vop.onclick = () => { campEscolhaVista = 'opções'; render(); };   // §364: texto → opções
+  const rel = stage.querySelector('#campreler'); if (rel) rel.onclick = () => { campEscolhaVista = 'texto'; render(); };   // §364: opções → reler o texto
   [...stage.querySelectorAll('.cnode[data-ato]')].forEach(b => { if (b.disabled) return; b.onclick = () => { campAtoIdx = +b.dataset.ato; render(); }; });
   [...stage.querySelectorAll('.cslot[data-empr]')].forEach(b => { b.onclick = () => { campPicker = +b.dataset.empr; render(); }; });
   [...stage.querySelectorAll('.copc[data-opc]')].forEach(b => { b.onclick = () => { campEscolhaSel = b.dataset.opc; render(); }; });   // §268: seleciona (não confirma)

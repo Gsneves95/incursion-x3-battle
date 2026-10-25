@@ -63,7 +63,7 @@ console.log('== GUARDA 2: ato de não-batalha (escolha) não tem recompensa e n�
   const h = naoBatalha[0];
   abrir(w, h.ci, h.ai, flat(w).slice(0, flat(w).findIndex(a => a.id === h.id)).map(a => a.id));
   const gemaAntes = w.eval('perfil.moedas.gema');
-  if (h.tipo === 'escolha') w.eval("document.querySelector('.copc[data-opc]').click();");   // seleciona 1ª opção
+  if (h.tipo === 'escolha') w.eval("campEscolhaVista='opções';render();document.querySelector('.copc[data-opc]').click();");   // §364: vai p/ a vista de opções e seleciona a 1ª
   w.eval("document.querySelector('#campcta').click();");
   ok(w.eval("rotaAtual()") === 'campanha', 'CONFIRMAR uma escolha NÃO vai para a batalha');   // BABÁ
   ok(w.eval('perfil.moedas.gema') === gemaAntes, 'CONFIRMAR uma escolha NÃO paga');   // BABÁ
@@ -321,13 +321,13 @@ console.log('== §268 C: a CONSEQUÊNCIA cai no ato-alvo conforme a escolha grav
   ok(!!$('.camp__revel') && /Poseidon/.test($('.camp__revel').textContent), 'a revelação do empréstimo aparece no ato-alvo');   // BABÁ
   // Conselho CERTA (ah puch) → kit de Hel revelado no Cap 1 VI + revelação certa
   abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'ahpuch' });
-  ok(!!$('.camp__kitchip'), 'Conselho certo (Ah Puch) ⇒ chip do kit revelado no Cap 1 VI');   // BABÁ
+  ok(!!$('.camp__kitname'), 'Conselho certo (Ah Puch) ⇒ chip do kit revelado no Cap 1 VI');   // BABÁ
   ok(/segredo ficou/.test($('.camp__revel').textContent), 'a revelação certa do Conselho aparece');
   w.eval("document.querySelector('[data-kitrev]').click();");
   ok(!!$('#campkitrevov') && $$('.camp__kitrevlist .col2k__row').length === 4, 'o overlay mostra o kit inteiro de Hel (4 skills)');   // BABÁ (§284-ajuste2: renderizador único)
   // Conselho ERRADA → SEM kit (consequência de erro é a PERDA do bônus, nunca desvantagem medida)
   abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'susanoo' });
-  ok(!$('.camp__kitchip'), 'Conselho errado ⇒ NENHUM kit revelado (erro custa o bônus, não bloqueia)');   // BABÁ
+  ok(!$('.camp__kitname'), 'Conselho errado ⇒ NENHUM kit revelado (erro custa o bônus, não bloqueia)');   // BABÁ
   ok(/sem uma palavra/.test($('.camp__revel').textContent), 'a revelação errada do Conselho aparece');
   // Nezha CERTA (rivais) → empréstimo Nezha no slot emprestado do Cap 1 VI
   abrir(w, 1, 5, cap1ate5, { 'cap1-v': 'rivais' });
@@ -335,7 +335,7 @@ console.log('== §268 C: a CONSEQUÊNCIA cai no ato-alvo conforme a escolha grav
   // NADA gravado ⇒ nenhuma consequência (o balanço medido do Cap 1 VI fica intacto)
   abrir(w, 1, 5, cap1ate5, {});
   ok(w.eval('timeDoAto(CAMPS()[1].atos[5]).join(",")') === 'zeus,ares,hades', 'sem escolha gravada, o time do Cap 1 VI é o default medido');   // BABÁ
-  ok(!$('.camp__kitchip') && !$('.camp__revel'), 'sem escolha, nem kit nem revelação (a consequência se revela quando acontece)');
+  ok(!$('.camp__kitname') && !$('.camp__revel'), 'sem escolha, nem kit nem revelação (a consequência se revela quando acontece)');
 }
 
 console.log('== §268 D: a trilha distingue os TRÊS tipos de nó (batalha|historia|escolha), sem rótulo escrito ==');
@@ -381,15 +381,15 @@ console.log('== §269 B: o prêmio do Nezha paga em INFORMAÇÃO (kit do Fenrir)
   abrir(w, 1, 5, cap1ate5, { 'cap1-v': 'rivais' });
   ok(w.eval(`JSON.stringify(kitReveladoDaConsequencia('cap1-vi'))`).includes('fenrir'), 'Nezha certo ⇒ kit do Fenrir revelado no ato VI');   // BABÁ
   ok(w.eval('timeDoAto(CAMPS()[1].atos[5]).join(",")') === 'zeus,nezha,hades', 'e o empréstimo do Nezha continua (a linha de revelação segue verdadeira)');
-  ok(!!$('.camp__kitchip'), 'o chip do kit aparece com o Nezha certo');
+  ok(!!$('.camp__kitname'), 'o chip do kit aparece com o Nezha certo');
   // as DUAS leituras certas ⇒ dois kits (Hel do Conselho + Fenrir do Nezha): entra no clímax conhecendo os dois
   abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'ahpuch', 'cap1-v': 'rivais' });
   const kits = JSON.parse(w.eval(`JSON.stringify(kitReveladoDaConsequencia('cap1-vi'))`));
   ok(kits.includes('hel') && kits.includes('fenrir'), `Conselho+Nezha certos ⇒ kits de Hel E Fenrir (veio ${kits.join(',')})`);   // BABÁ
-  ok($$('.camp__kitchip').length === 2, 'dois chips de kit no ato VI (Hel e Fenrir)');   // BABÁ
+  ok($$('.camp__kitname').length === 2, 'dois chips de kit no ato VI (Hel e Fenrir)');   // BABÁ
   // nenhuma leitura ⇒ nenhum kit (entra às cegas — o que Zeus faz na história)
   abrir(w, 1, 5, cap1ate5, {});
-  ok($$('.camp__kitchip').length === 0, 'sem leitura certa, nenhum kit revelado (entra no pacto às cegas)');   // BABÁ
+  ok($$('.camp__kitname').length === 0, 'sem leitura certa, nenhum kit revelado (entra no pacto às cegas)');   // BABÁ
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

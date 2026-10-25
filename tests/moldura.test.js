@@ -269,13 +269,14 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
         campCapIdx = ci; campAtoIdx = ai; render();
         const esc = ultimaEscala || 1, R = el => el.getBoundingClientRect();
         const nome = document.querySelector('.camp__nome'), leg = document.querySelector('.camp__legenda'),
-          arte = document.querySelector('.camp__arte'), txt = document.querySelector('.camp__texto');
-        const nr = R(nome), lr = R(leg), ar = R(arte), tr = R(txt);
+          arte = document.querySelector('.camp__arte'), txt = document.querySelector('.camp__texto'),
+          cab = document.querySelector('.camp__cab');   // §364: o cabeçalho é uma faixa separada ACIMA da arte (a legenda vive dentro da arte)
+        const nr = R(nome), lr = R(leg), ar = R(arte), tr = R(txt), cr = R(cab);
         return { id: nome.textContent, corta: nome.scrollWidth > nome.clientWidth + 1,
-          legTop: Math.round((lr.top - ar.top) / esc), txtCabe: tr.bottom <= ar.bottom + 1 };
+          legAbaixoCab: lr.top >= cr.bottom - 1, txtCabe: tr.bottom <= ar.bottom + 1 };
       }, { ci, ai });
       if (r.corta) problemas.push(`${r.id} (corta na horizontal)`);
-      if (r.legTop < 51) problemas.push(`${r.id} (legenda cruza o cabeçalho: ${r.legTop}<51)`);
+      if (!r.legAbaixoCab) problemas.push(`${r.id} (legenda cruza o cabeçalho)`);
       if (!r.txtCabe) problemas.push(`${r.id} (texto da história estoura)`);
     }
     ok(problemas.length === 0, `os 13 nomes: nenhum corta, legenda abaixo de 51px, texto cabe (problemas: ${problemas.join('; ')})`);
@@ -334,7 +335,7 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       const curtos = BESTIARIO_DADOS.map(b => ({ key: b.key, curto: b.curto || b.nome, temCurto: !!b.curto }));
       const cv = document.createElement('canvas'), cx = cv.getContext('2d');
       const larg = (t, f, ls) => { cx.font = f; try { cx.letterSpacing = ls || 'normal'; } catch (e) {} return cx.measureText(t).width; };
-      const cortaCin = curtos.filter(c => larg(c.curto, fontCin, 'normal') > boxCin).map(c => c.key);
+      const cortaCin = curtos.filter(c => larg(c.curto, fontCin, '-0.3px') > boxCin).map(c => c.key);   // §364: a caixa do inimigo usa tracking -0.3px (cabe "Ceifador" etc.)
       const semCurto = curtos.filter(c => !c.temCurto).map(c => c.key);
       return { total: curtos.length, boxCin, cortaCin, semCurto };
     });
