@@ -975,7 +975,7 @@ function renderProvacoes(){
       <span class="df-sem__rec">
         <span class="df-sem__reclab">RECOMPENSA</span>
         <span class="df-sem__recval">${feito ? '✓ Gema recebida' : (gema ? `<span class="df-gem">◈</span> ${gema} de Gema` : 'grátis')}</span>
-        <span class="df-sem__prazo">⌛ Termina em <b>${fmtPrazoSemana(_msAteViradaSemana())}</b></span>
+        <span class="df-sem__prazo">⌛ Resta <b>${fmtPrazoSemana(_msAteViradaSemana())}</b></span>
       </span>
       <button class="dfb dfb--jogar" data-semanal-jogar="1">JOGAR</button>
     </section>`;

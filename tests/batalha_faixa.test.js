@@ -50,7 +50,11 @@ const CAIXAS=[
       const campo=bat.querySelector('.b5-campo');
       out.campoCols=campo?[...campo.children].filter(c=>!c.classList.contains('b5-cena')).map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
       const cenaL=bat.querySelector('.b5-cena'); out.cenaLarga=cenaL?Math.round(cenaL.getBoundingClientRect().width/esc):0;
-      const painel=bat.querySelector('.b5-painel'); out.painelCols=painel?[...painel.children].map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
+      // §363b: o painel é em 2 FAIXAS (flex-column): [cab | linha2]. Medimos a largura do painel (deve ser 764) e as caixas da
+      // linha2 (descrição | meio | col3) p/ confirmar que a descrição leva a maior fatia.
+      const painel=bat.querySelector('.b5-painel'); out.painelW=painel?Math.round(painel.getBoundingClientRect().width/esc):0;
+      const row2=painel?[...painel.children].find(c=>c.querySelector&&c.querySelector('.bt-panel__meio')):null;
+      out.painelCols=row2?[...row2.children].map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
       const retr=bat.querySelector('.bt-portrait--ally'); out.retrato=retr?rel(retr):null;
       const skill=bat.querySelector('.bt-skill[data-sk]'); out.skill=skill?rel(skill):null;
       return out;
@@ -64,10 +68,12 @@ const CAIXAS=[
     // §362b: retrato e habilidade MAIORES e DINÂMICOS (btGeo) — o painel usa a altura do conteúdo e o campo recebe o
     // resto. Verificamos os INVARIANTES (quadrados, ≥ piso em repouso, colunas somam a largura, cena presente), não
     // números fixos (que variam com o conteúdo do painel).
-    const somaCampo=m.campoCols.reduce((a,b)=>a+b,0), somaPainel=m.painelCols.reduce((a,b)=>a+b,0);
+    const somaCampo=m.campoCols.reduce((a,b)=>a+b,0);
     ok(Math.abs(somaCampo-764)<=3, `@1846 as 3 colunas do GRID do campo somam ~764 (veio ${JSON.stringify(m.campoCols)} = ${somaCampo})`);
     ok(m.cenaLarga>=300, `§362d @1846 a CENA larga (camada sob as colunas de efeitos) cobre o centro (${m.cenaLarga}≥300)`);
-    ok(Math.abs(somaPainel-764)<=3, `@1846 as 3 colunas do painel somam ~764 (veio ${JSON.stringify(m.painelCols)} = ${somaPainel})`);
+    // §363b: o painel ocupa a largura toda (764) e, na linha 2, a DESCRIÇÃO é a coluna mais larga.
+    ok(Math.abs(m.painelW-764)<=3, `§363b @1846 o painel tem a largura toda (~764, veio ${m.painelW})`);
+    ok(m.painelCols.length>=2 && m.painelCols[0]===Math.max(...m.painelCols), `§363b @1846 a descrição é a coluna mais larga da linha 2 (veio ${JSON.stringify(m.painelCols)})`);
     // (este roster tem foco com passiva longa → painel cresce; o piso universal é ≥46/≥44. O ≥56 em repouso curto é
     //  provado por acessibilidade_telas/min-size com roster de passiva curta.)
     ok(m.retrato&&perto(m.retrato.w,m.retrato.h,2)&&m.retrato.h>=46, `@1846 retrato quadrado e ≥46 (veio ${m.retrato&&Math.round(m.retrato.w)}×${m.retrato&&Math.round(m.retrato.h)})`);
@@ -140,22 +146,17 @@ const CAIXAS=[
       const art=bat.querySelector('.b5-art img');
       const op=art?getComputedStyle(art).objectPosition:''; const opY=parseFloat((op.split(' ')[1]||'50%'));
       const artSrc=art?art.getAttribute('src'):'';
-      // (b) 1ª pílula (tipo): fundo colorido (alpha > 0)
-      const tit=bat.querySelector('.bt-panel__titulo'); const pilRow=tit&&tit.nextElementSibling;
-      const pil1=pilRow&&pilRow.firstElementChild; const bg=pil1?getComputedStyle(pil1).backgroundColor:'';
+      // (b) §363b: 1ª pílula (tipo) — fundo colorido (alpha > 0). As pílulas são irmãs do título na FAIXA 1 (sem wrapper).
+      const pil1=bat.querySelector('.bt-panel__pil'); const bg=pil1?getComputedStyle(pil1).backgroundColor:'';
       const alpha=(()=>{ const cm=/\/\s*([0-9.]+)\s*\)/.exec(bg); if(cm)return parseFloat(cm[1]); // color(srgb r g b / a)
         const m=/rgba?\(([^)]+)\)/.exec(bg); if(m){const p=m[1].split(',').map(s=>parseFloat(s)); return p.length>3?p[3]:1;}
         return (bg&&bg!=='transparent'&&bg!=='rgba(0, 0, 0, 0)')?1:0; })();
-      // (c) moldura da imagem: a imagem tem um filho com box-shadow inset (moldura do acento)
-      const img=bat.querySelector('.bt-panel__img'); const overlay=img&&img.lastElementChild;
-      const bs=overlay?getComputedStyle(overlay).boxShadow:''; const temMoldura=/inset/.test(bs);
       // (d) avatares: retratos reais (img) no topo
       const avMe=bat.querySelector('[data-prof="me"] img'); const avFoe=bat.querySelector('[data-prof="foe"] img');
-      return { opY, artSrc, alpha, temMoldura, avMe:avMe?avMe.getAttribute('src'):'', avFoe:avFoe?avFoe.getAttribute('src'):'' };
+      return { opY, artSrc, alpha, avMe:avMe?avMe.getAttribute('src'):'', avFoe:avFoe?avFoe.getAttribute('src'):'' };
     });
     ok(/^cena\/turno_meu\.webp/.test(m.artSrc), `§347: com a arte larga presente, a cena usa cena/turno_meu.webp (o fallback de retrato não entra; object-position Y=${m.opY}%)`);
     ok(m.alpha>0, `§335b pílula de tipo: fundo colorido (alpha ${m.alpha})`);
-    ok(m.temMoldura, '§335b imagem do painel: moldura inset na cor do acento');
     ok(/hades/i.test(m.avMe), `§335b avatar do jogador: retrato do 1º deus (src ${m.avMe})`);
     ok(/poseidon/i.test(m.avFoe), `§335b avatar da CPU: retrato do 1º inimigo (src ${m.avFoe})`);
     await ctx.close();

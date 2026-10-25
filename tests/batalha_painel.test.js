@@ -59,10 +59,11 @@ const SIT={
         cancel:!!pan.querySelector('.bt-cancel'), mira:!!pan.querySelector('.bt-panel__mira'), meio:(pan.querySelector('.bt-panel__meio')||{}).textContent||'',
         minis:pan.querySelectorAll('.bt-panel__minis .bt-mini').length, txt:(pan.textContent||'').replace(/\s+/g,' ') }; }); };
   let s;
-  s=await sit(SIT['deus']); ok(/VIDA/.test(s.meio)&&/ELEMENTO/.test(s.meio), 'deus: o meio mostra VIDA | ELEMENTO'); ok(/HABILIDADES/.test(s.minilab)&&s.minis>0&&!s.sel, 'deus: coluna direita = HABILIDADES (nenhuma destacada)');
-  s=await sit(SIT['habilidade lida']); ok(/OUTRAS HABILIDADES/.test(s.minilab), 'lida: coluna direita = OUTRAS HABILIDADES'); ok(s.sel, 'lida: a miniatura mostrada vem destacada'); ok(!s.cancel, 'lida: sem CANCELAR');
+  // §363b: as miniaturas não têm mais rótulo (a faixa é de altura fixa); valem a presença e o destaque da mini atual.
+  s=await sit(SIT['deus']); ok(/VIDA/.test(s.meio)&&/ELEMENTO/.test(s.meio), 'deus: o meio mostra VIDA | ELEMENTO'); ok(s.minis>0&&!s.sel, 'deus: miniaturas das habilidades (nenhuma destacada)');
+  s=await sit(SIT['habilidade lida']); ok(s.minis>0, 'lida: miniaturas das outras habilidades'); ok(s.sel, 'lida: a miniatura mostrada vem destacada'); ok(!s.cancel, 'lida: sem CANCELAR');
   s=await sit(SIT['armada']); ok(s.cancel, 'armada: coluna direita = CANCELAR'); ok(s.mira, 'armada: instrução com a mira'); ok(s.minis===0, 'armada: sem miniaturas');
-  s=await sit(SIT['efeito']); ok(/TURNOS/.test(s.meio)&&/APLICADO POR/.test(s.meio), 'efeito: o meio mostra TURNOS | APLICADO POR'); ok(s.minis>0, 'efeito: minis do portador');
+  s=await sit(SIT['efeito']); ok(/TURNOS/.test(s.meio)&&/POR/.test(s.meio), 'efeito: o meio mostra TURNOS | POR'); ok(s.minis>0, 'efeito: minis do portador');
   s=await sit(SIT['resumo']); ok(/RESUMO/.test(s.txt), 'resumo: título RESUMO'); ok(s.minis>0, 'resumo: minis do último a agir');
 
   // §353b: a forma DISCO foi APOSENTADA — toda arte de habilidade é CHEIA. Nenhum botão de habilidade recorta a arte

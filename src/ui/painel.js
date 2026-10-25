@@ -29,20 +29,23 @@ function _focoGod(){
   return lado.units.find(x=>x.vivo)||st.lados[eu].units.find(x=>x.vivo)||st.lados[eu].units[0];
 }
 // pílulas de uma HABILIDADE: TIPO (cor da energia) · classe · alvo · NV N (sempre por último).
+// §363b: pílula de ALVO curta (o painel de altura fixa tem a coluna do título estreita; o título + pílulas cabem em 1 linha).
+const ALVO_CURTO={ 'Todos os inimigos':'Inimigos', 'Todos os aliados':'Aliados', 'Alvo único':'Único', 'Um inimigo':'Inimigo', 'Um aliado':'Aliado', 'Sem alvo':'Sem alvo', 'A si mesmo':'Si', 'Área':'Área' };
 function _etqSkill(slotName, tf, nv, cor){
   const parts=(tf||'').split(' · ');
   const etq=[{txt:(TIPO_SLOT[slotName]||slotName.toUpperCase()), cor}];
   if(parts[0]) etq.push({txt:parts[0]});
-  if(parts[1]) etq.push({txt:parts[1]});
+  if(parts[1]) etq.push({txt:(ALVO_CURTO[parts[1]]||parts[1])});
   etq.push({txt:'NV '+(nv||1)});
   return etq;
 }
 // INSTRUÇÃO de alvo (adapta como no HTML). o={alvo,passos,cdNow,disponivel,motivo,alvoNome}.
 // §362b: SUBS curtas (≤~1 linha no painel 780) — o painel fica baixo em repouso p/ os retratos crescerem (sem rolar).
 function _instSkill(o){
-  if(o.cdNow>0) return {title:'Em recarga', sub:'Pronta em '+o.cdNow+' turno(s).', color:'#9AA4B8'};
-  if(!o.disponivel && o.motivo==='sem_energia') return {title:'Energia insuficiente', sub:'Troque ou acumule.', color:'#E8343C'};
-  if(o.alvoNome) return {title:'Alvo: '+o.alvoNome, sub:'Marcada neste turno.', color:'#4BE38A'};
+  // §363b: instruções CURTAS (1 linha) — o painel é de altura fixa; a coluna do meio é estreita, sem lugar p/ subs longas.
+  if(o.cdNow>0) return {title:'Em recarga · '+o.cdNow+'t', sub:'', color:'#9AA4B8'};
+  if(!o.disponivel && o.motivo==='sem_energia') return {title:'Sem energia', sub:'', color:'#E8343C'};
+  if(o.alvoNome) return {title:'Alvo: '+o.alvoNome, sub:'', color:'#4BE38A'};
   // §363: instruções genéricas de alvo ficam em 1 linha (sem sub redundante) — a faixa de meio encolheu com a seta/habilidades maiores.
   if(o.alvo==='todosInimigos') return {title:'Todos os inimigos', sub:'', color:'#F0B43C'};
   const p=(o.passos&&o.passos[0])||'';
@@ -76,12 +79,13 @@ function _modeloPainel(){
       // §336: a instrução vira CONFIRMAR clicável quando a ação está pronta p/ disparar (área, sem-alvo, si-mesmo, auto,
       // ou distribui com ≥1 escolhido). Restaura o caminho do #bconf de antes do §335 (o toque no alvo também confirma).
       const pronto=(typeof faltamAlvos==='function')?(faltamAlvos()<=0):false;
+      // §363b: subs curtas (1 linha) — coluna do meio estreita no painel de altura fixa.
       if(pronto){ m.prontoConfirmar=true;
-        if(armado.distribui){ const n=(typeof escolhidos!=='undefined'?escolhidos.length:0); m.inst={title:`Confirmar · ${n} alvo${n>1?'s':''}`, sub:'Toque aqui para repartir o dano entre os escolhidos.', color:'#4BE38A'}; }
-        else if(armado.aoe==='aliados'){ m.inst={title:'Todos os aliados', sub:'Toque qualquer aliado (ou aqui) para confirmar.', color:'#F0B43C'}; }
-        else if(armado.aoe==='inimigos'){ m.inst={title:'Todos os inimigos', sub:'Toque qualquer inimigo (ou aqui) para confirmar.', color:'#F0B43C'}; }
-        else { m.inst={title:'Confirmar', sub:'Toque aqui para usar esta habilidade.', color:'#4BE38A'}; }
-      } else if(armado.distribui){ m.inst={title:'Repartir o dano', sub:'Toque os inimigos para escolher quem recebe.', color:'#F0B43C'}; }
+        if(armado.distribui){ const n=(typeof escolhidos!=='undefined'?escolhidos.length:0); m.inst={title:`Confirmar · ${n} alvo${n>1?'s':''}`, sub:'', color:'#4BE38A'}; }
+        else if(armado.aoe==='aliados'){ m.inst={title:'Todos os aliados', sub:'Toque p/ confirmar', color:'#F0B43C'}; }
+        else if(armado.aoe==='inimigos'){ m.inst={title:'Todos os inimigos', sub:'Toque p/ confirmar', color:'#F0B43C'}; }
+        else { m.inst={title:'Confirmar', sub:'', color:'#4BE38A'}; }
+      } else if(armado.distribui){ m.inst={title:'Repartir o dano', sub:'Toque os inimigos', color:'#F0B43C'}; }
       return m;
     }
   }
@@ -95,7 +99,7 @@ function _modeloPainel(){
     const un=key&&typeof todas==='function'?todas().find(x=>x.key===key):null;
     return { tipo:'resumo', chave:key?('god-'+key):'detail', cor:'#C9A44C', tituloCor:'#9AA4B8',
       titulo:'RESUMO · '+rotuloLado(1-ladoExibido()).toUpperCase(), desc:linhas.join('  ·  ')||'sem ações',
-      donoUid:un?un.uid:null, inst:{title:'Resumo do turno', sub:'Toque para continuar.', color:'#F0B43C'},
+      donoUid:un?un.uid:null, inst:{title:'Resumo do turno', sub:'', color:'#F0B43C'},
       dir: un?{modo:'minis', selSlot:null}:null };
   }
   return _unidadeModeloFoco();
@@ -124,7 +128,7 @@ function _modeloDetalhe(d){
       titulo:(d.nome||''), donoUid:d.uid,
       desc:(d.passivaNome?((d.passivaAgora?d.passivaAgora+'\n':'')+`${d.passivaNome}: ${d.passivaDesc}`):'Sem passiva.'), etiquetas:etq,
       meio:[{rotulo:'VIDA', valor:`${d.hp}/${d.maxHp}${d.shield?' ◧'+d.shield:''}`}, {rotulo:'ELEMENTO', valor:(sub[1]||'')}],
-      inst:{title:aliado?'Toque uma habilidade':'Veja as habilidades ao lado', sub:'', color:'#F0B43C'},
+      inst:{title:aliado?'Toque uma habilidade':'Habilidades ao lado', sub:'', color:'#F0B43C'},
       dir:{modo:'minis', selSlot:null} };
   }
   if(d.kind==='efeito'){
@@ -132,12 +136,12 @@ function _modeloDetalhe(d){
     const durTxt=(d.dur!=null)?`${d.dur} turno${d.dur>1?'s':''}`:'permanente';
     return { tipo:'efeito', emoji:d.icone, cor:d.cor, tituloCor:'#F0B43C', titulo:(d.nome+(d.num?' '+d.num:'')), donoUid:d.uid,
       desc:d.desc, etiquetas:[{txt:cp.txt, cor:cp.cor}, {txt:(d.dur!=null)?`${d.dur} TURNO${d.dur>1?'S':''}`:'PERMANENTE'}],
-      meio:[{rotulo:'TURNOS', valor:durTxt}, {rotulo:'APLICADO POR', valor:(d.aplicadoPor||'—')}],
-      inst:{title:'Efeito ativo', sub:'Toque uma habilidade.', color:'#F0B43C'}, dir:{modo:'minis', selSlot:null} };
+      meio:[{rotulo:'TURNOS', valor:durTxt}, {rotulo:'POR', valor:(d.aplicadoPor||'—')}],
+      inst:{title:'Efeito ativo', sub:'', color:'#F0B43C'}, dir:{modo:'minis', selSlot:null} };
   }
   if(d.kind==='passiva'){
     return { tipo:'passiva', chave:d.chave, cor:d.cor, tituloCor:'#F0B43C', titulo:(d.nome||''), donoUid:d.uid,
-      desc:d.desc, etiquetas:[{txt:'PASSIVA', cor:d.cor}], inst:{title:'Passiva', sub:'Não gasta a ação.', color:'#F0B43C'}, dir:{modo:'minis', selSlot:null} };
+      desc:d.desc, etiquetas:[{txt:'PASSIVA', cor:d.cor}], inst:{title:'Passiva', sub:'não gasta ação', color:'#F0B43C'}, dir:{modo:'minis', selSlot:null} };
   }
   return _unidadeModeloFoco();
 }
@@ -154,80 +158,82 @@ function _unidadeModeloFoco(){
     titulo:(u.nome||''), donoUid:u.uid,
     desc:(g.passiva?`${g.passiva.nome}: ${g.passiva.desc}`:'Sem passiva.'), etiquetas:etq,
     meio:[{rotulo:'VIDA', valor:`${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}`}, {rotulo:'ELEMENTO', valor:elem}],
-    inst:{title:aliado?'Toque uma habilidade':'Veja as habilidades ao lado', sub:'', color:'#F0B43C'},
+    inst:{title:aliado?'Toque uma habilidade':'Habilidades ao lado', sub:'', color:'#F0B43C'},
     dir:{modo:'minis', selSlot:null} };
 }
 
-/* ---------- RENDER (§335: px de design) ---------- */
-function _pilulasHTML(m, P){
+/* ---------- RENDER (§363b: painel de ALTURA FIXA — colunas largas, descrição em até 3 linhas, tudo cabe sem rolar) ---------- */
+// pílulas como ITENS inline (vão na MESMA linha do título; quebram só se não couberem).
+function _pilItens(m, P){
   if(!m.etiquetas||!m.etiquetas.length) return '';
-  const h=P.pilulaH||18, fs=P.pilula||12;
-  // §362b: pílulas compactas (padding/gap menores) p/ as 4 da habilidade caberem em 1 linha (painel baixo em repouso).
+  const h=P.pilulaH||17, fs=P.pilula||12;
   const pil=e=>{ const st=e.cor?`background:color-mix(in srgb, ${e.cor} 20%, transparent);box-shadow:inset 0 0 0 1px ${e.cor};color:#F2ECFF`
     :`background:transparent;box-shadow:inset 0 0 0 1px rgba(201,164,76,.6);color:#E4E8F0`;
-    return `<div style="height:${h}px;padding:0 4px;display:flex;align-items:center;border-radius:3px;${st};font-size:${fs}px;font-weight:600;letter-spacing:.01em;white-space:nowrap">${H(e.txt)}</div>`; };
-  return `<div style="display:flex;gap:3px;flex-wrap:wrap">${m.etiquetas.map(pil).join('')}</div>`;
+    return `<span class="bt-panel__pil" style="height:${h}px;padding:0 4px;display:inline-flex;align-items:center;border-radius:3px;${st};font-size:${fs}px;font-weight:600;letter-spacing:.01em;white-space:nowrap">${H(e.txt)}</span>`; };
+  return m.etiquetas.map(pil).join('');
 }
-// COLUNA 1 — imagem + título + pílulas + descrição (§362: 780 — descrição COMPLETA, o painel cresce p/ cima)
-function _col1HTML(m, P){
-  const img=P.img||56, acc=m.cor||'#C9A44C';
-  let imgInner;
-  if(m.emoji) imgInner=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:${Math.round(img*0.5)}px">${m.emoji}</div>`;
-  else imgInner=slot(m.chave||'detail','',acc,0,m.redondo);
-  return `<div style="display:flex;align-items:flex-start;gap:8px;padding:${P.padV||4}px 8px;min-width:0">
-    <div class="bt-panel__img" style="position:relative;width:${img}px;height:${img}px;flex:none;border-radius:4px;overflow:hidden;background:#0A0E1C;box-shadow:0 0 0 1px rgba(0,0,0,.6)">${imgInner}<div style="position:absolute;inset:0;border-radius:4px;box-shadow:inset 0 0 0 2px ${acc};pointer-events:none"></div></div>
-    <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
-      <div class="cin bt-panel__titulo" style="font-weight:700;font-size:${P.titulo||16}px;line-height:1.1;letter-spacing:.02em;color:${m.tituloCor||'#F0B43C'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'')}</div>
-      ${_pilulasHTML(m,P)}
-      <div class="bt-panel__desc" style="font-size:${P.desc||12}px;font-weight:500;line-height:1.3;color:#E4E8F0">${realce(m.desc||'')}${m.motivo?`<span class="bt-panel__motivo" style="color:#ff9db4"> ⊘ ${H(m.motivo)}</span>`:''}</div>
-    </div></div>`;
-}
-// COLUNA 2 — células (CUSTO/RECARGA ou VIDA/ELEMENTO ...) + linha dourada + instrução com a mira (§362: flex, 780)
-function _col2HTML(m, P){
-  const cells=m.meio||[];
-  const cel=(c)=>{ let val;
-    if(c.pips) val=_custoPips(c.pips, P.pip||13);
-    else if(c.num!=null) val=`<div style="font-size:${P.recargaNum||16}px;font-weight:600;line-height:1.1;color:#C9CED8">${H(c.num)} <span style="color:${c.stateCor||'#C9CED8'}">${H(c.state||'')}</span></div>`;
-    else val=`<div style="font-size:${P.recargaNum||16}px;font-weight:600;color:#F2F4F8;line-height:1">${H(c.valor||'')}</div>`;
-    return `<div style="display:flex;flex-direction:column;gap:3px;min-width:0"><div style="font-size:${P.rotulo||12}px;font-weight:600;letter-spacing:.04em;color:#C9CED8">${H(c.rotulo||'')}</div>${val}</div>`; };
-  const topo = cells.length ? `<div style="display:flex;gap:14px">
-      <div style="min-width:0">${cel(cells[0])}</div>
-      ${cells[1]?`<div style="padding-left:14px;border-left:1px solid rgba(201,164,76,.5);min-width:0">${cel(cells[1])}</div>`:''}
-    </div>` : '';
-  const hr = cells.length ? `<div style="height:1px;margin:2px 0;background:linear-gradient(90deg,rgba(201,164,76,.85),rgba(201,164,76,.2))"></div>` : '';
-  const inst=m.inst||{title:'',sub:'',color:'#F0B43C'}; const ic=inst.color||'#F0B43C'; const sz=P.instIcone||28;
+// a MIRA + INSTRUÇÃO curta (§336: vira #bconf clicável quando pronta p/ confirmar). §363b: mora na FAIXA 1 (largura sobrando).
+function _instHTML(m, P){
+  const inst=m.inst||{title:'',sub:'',color:'#F0B43C'}; const ic=inst.color||'#F0B43C'; const sz=P.instIcone||18;
   const mira=`<div style="position:relative;width:${sz}px;height:${sz}px;flex:none">
     <div style="position:absolute;inset:3px;border-radius:50%;box-shadow:inset 0 0 0 2px ${ic}"></div>
-    <span style="position:absolute;left:50%;top:0;width:2px;height:8px;margin-left:-1px;background:${ic}"></span>
-    <span style="position:absolute;left:50%;bottom:0;width:2px;height:8px;margin-left:-1px;background:${ic}"></span>
-    <span style="position:absolute;top:50%;left:0;height:2px;width:8px;margin-top:-1px;background:${ic}"></span>
-    <span style="position:absolute;top:50%;right:0;height:2px;width:8px;margin-top:-1px;background:${ic}"></span></div>`;
+    <span style="position:absolute;left:50%;top:0;width:2px;height:5px;margin-left:-1px;background:${ic}"></span>
+    <span style="position:absolute;left:50%;bottom:0;width:2px;height:5px;margin-left:-1px;background:${ic}"></span>
+    <span style="position:absolute;top:50%;left:0;height:2px;width:5px;margin-top:-1px;background:${ic}"></span>
+    <span style="position:absolute;top:50%;right:0;height:2px;width:5px;margin-top:-1px;background:${ic}"></span></div>`;
   const conf=m.prontoConfirmar?' id="bconf" role="button" tabindex="0"':'';
-  // §362b: título + sub NA MESMA LINHA (quebra só quando longo/armado) — o painel fica baixo em repouso p/ os retratos crescerem.
-  const instr=`<div class="bt-panel__mira"${conf} style="display:flex;align-items:center;gap:8px;${m.prontoConfirmar?'cursor:pointer':''}">
-    ${mira}<div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:1px 6px;min-width:0">
-      <span class="bt-panel__miratit" style="font-size:${P.instTit||12}px;font-weight:600;color:${ic}">${H(inst.title||'')}</span>
-      ${inst.sub?`<span style="font-size:${P.instSub||12}px;font-weight:500;color:#D5DAE4">${H(inst.sub||'')}</span>`:''}</div></div>`;
-  return `<div class="bt-panel__meio" style="display:flex;flex-direction:column;justify-content:center;gap:3px;border-left:1px solid rgba(201,164,76,.5);padding:${P.padV||4}px 10px;min-width:0">${topo}${hr}${instr}</div>`;
+  return `<div class="bt-panel__mira"${conf} style="display:flex;align-items:center;gap:5px;min-width:0;flex:none;${m.prontoConfirmar?'cursor:pointer':''}">
+    ${mira}<div style="white-space:nowrap;line-height:1.1">
+      <span class="bt-panel__miratit" style="font-size:${P.instTit||12}px;font-weight:600;color:${ic}">${H(inst.title||'')}</span>${inst.sub?`<span style="font-size:${P.instSub||12}px;font-weight:500;color:#D5DAE4"> ${H(inst.sub||'')}</span>`:''}</div></div>`;
 }
-// COLUNA 3 — CANCELAR (armada) ou OUTRAS HABILIDADES / HABILIDADES (miniaturas do dono)
+// FAIXA 1 — TÍTULO + PÍLULAS (esquerda) + MIRA/INSTRUÇÃO (direita), na largura TODA do painel, 1 linha. §363b.
+function _cabHTML(m, P){
+  return `<div class="bt-panel__cab" style="display:flex;align-items:center;gap:6px;min-width:0;flex:none;overflow:hidden">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;min-width:0;flex:1;overflow:hidden">
+      <span class="cin bt-panel__titulo" style="font-weight:700;font-size:${P.titulo||14}px;line-height:1.2;letter-spacing:.02em;color:${m.tituloCor||'#F0B43C'};white-space:nowrap">${H(m.titulo||'')}</span>
+      ${_pilItens(m,P)}
+    </div>
+    ${_instHTML(m,P)}
+  </div>`;
+}
+// FAIXA 2 (esquerda) — a DESCRIÇÃO (coluna mais LARGA, até 3 linhas). §363b: sem a miniatura da arte no painel (ela era
+// redundante — o campo já mostra o retrato/habilidade grandes); a largura vai toda p/ o texto caber o pior caso sem cortar.
+function _descHTML(m, P){
+  const desc=`${realce(m.desc||'')}${m.motivo?`<span class="bt-panel__motivo" style="color:#ff9db4"> ⊘ ${H(m.motivo)}</span>`:''}`;
+  return `<div class="bt-panel__desc" style="font-size:${P.desc||12}px;font-weight:500;line-height:1.16;color:#E4E8F0;min-width:0;flex:1;height:100%;overflow:hidden">${desc}</div>`;
+}
+// COLUNA do meio — só CUSTO/RECARGA (ou VIDA/ELEMENTO, TURNOS/APLICADO-POR). §363b: a instrução foi p/ a FAIXA 1, então aqui
+// só ficam as 2 células, cada uma em 1 linha (rótulo em cima, valor embaixo), lado a lado.
+function _col2HTML(m, P, w){
+  const cells=m.meio||[];
+  if(!cells.length) return `<div class="bt-panel__meio" style="width:${w||120}px;flex:none;border-left:1px solid rgba(201,164,76,.5)"></div>`;
+  const cel=(c)=>{ let val;
+    if(c.pips) val=_custoPips(c.pips, P.pip||10);
+    else if(c.num!=null) val=`<span style="font-size:${P.recargaNum||12}px;font-weight:600;color:#C9CED8">${H(c.num)} <span style="color:${c.stateCor||'#C9CED8'}">${H(c.state||'')}</span></span>`;
+    else val=`<span style="font-size:${P.recargaNum||12}px;font-weight:600;color:#F2F4F8">${H(c.valor||'')}</span>`;
+    return `<div style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:${P.rotulo||12}px;font-weight:600;letter-spacing:.02em;color:#9AA4B8;white-space:nowrap">${H(c.rotulo||'')}</span>${val}</div>`; };
+  return `<div class="bt-panel__meio" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:3px 10px;border-left:1px solid rgba(201,164,76,.5);padding:0 8px;width:${w||120}px;flex:none;box-sizing:border-box;overflow:hidden">${cells.map(cel).join('')}</div>`;
+}
+// COLUNA 3 — [ MINIATURAS (ou CANCELAR) + SETA ▼ de recolher ]. §363b: a seta mora AQUI (não numa coluna à parte) p/ a
+// descrição ganhar largura; a fileira de miniaturas e a seta são ambas de toque ≥40.
 function _col3HTML(m, P){
-  if(!m.dir) return `<div style="border-left:1px solid rgba(201,164,76,.5);margin:${P.padV||4}px 0"></div>`;
-  if(m.dir.modo==='cancelar'){
-    const w=P.cancelW||120, h=P.cancelH||40;
-    return `<div style="display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(201,164,76,.5);margin:${P.padV||4}px 0;padding:0 8px">
-      <button class="b5-cancel bt-cancel" id="bcanc" style="width:${w}px;height:${h}px;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;cursor:pointer;background:linear-gradient(180deg,#0C1020,#05070E);box-shadow:inset 0 0 0 2px #C9A44C,inset 0 0 0 3px rgba(0,0,0,.5)">
-        <span class="cin" style="font-weight:700;font-size:${P.cancelFonte||14}px;letter-spacing:.04em;color:#F4F1EA">CANCELAR</span></button></div>`;
+  const seta=`<button id="bfold" class="b5-hover" title="Recolher painel" aria-label="Recolher painel" style="width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center;border:0;border-radius:6px;background:rgba(201,164,76,.1);cursor:pointer;color:#F0B43C;font-size:16px">▼</button>`;
+  let conteudo='';
+  if(m.dir && m.dir.modo==='cancelar'){
+    const w=P.cancelW||100, h=P.cancelH||40;
+    conteudo=`<button class="b5-cancel bt-cancel" id="bcanc" style="width:${w}px;height:${h}px;flex:none;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;cursor:pointer;background:linear-gradient(180deg,#0C1020,#05070E);box-shadow:inset 0 0 0 2px #C9A44C,inset 0 0 0 3px rgba(0,0,0,.5)">
+      <span class="cin" style="font-weight:700;font-size:${P.cancelFonte||13}px;letter-spacing:.04em;color:#F4F1EA">CANCELAR</span></button>`;
+  } else if(m.dir){
+    conteudo=_painelMinis(m,P);
   }
-  return `<div style="display:flex;align-items:center;border-left:1px solid rgba(201,164,76,.5);margin:${P.padV||4}px 0">${_painelMinis(m,P)}</div>`;
+  return `<div style="display:flex;align-items:center;justify-content:${conteudo?'space-between':'flex-end'};gap:6px;border-left:1px solid rgba(201,164,76,.5);padding:${P.padV||2}px 6px;height:100%;box-sizing:border-box;overflow:hidden">${conteudo}${seta}</div>`;
 }
-// miniaturas do DONO do conteúdo (donoUid, §333). A mostrada vem destacada (moldura dourada). ~70px p/ caber.
+// miniaturas do DONO do conteúdo (donoUid, §333) numa FILEIRA de 40 (toque ≥40). A mostrada vem destacada (moldura dourada).
 function _painelMinis(m, P){
   const uid=m.donoUid;
   const u=uid&&typeof todas==='function'?todas().find(x=>x.uid===uid):null;
   if(!u || !u.vivo) return '';
-  const selSlot=m.dir&&m.dir.selSlot, sz=P.mini||70;
-  const lab=(m.tipo==='skill')?'OUTRAS HABILIDADES':'HABILIDADES';
+  const selSlot=m.dir&&m.dir.selSlot, sz=P.mini||40;
   const minis=acoesDe(st,u).map(a=>{
     const anel=a.slot==='defesa'?'#D6DAE2':COR(u.elem);
     const sel=selSlot&&a.slot===selSlot;
@@ -236,9 +242,7 @@ function _painelMinis(m, P){
       ${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}
       <span class="b5-mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:${anel};pointer-events:none">${H(mono(a))}</span></div>`;
   }).join('');
-  return `<div class="bt-panel__minis" style="display:flex;flex-direction:column;gap:4px;padding:0 8px;min-width:0">
-    <div class="cin bt-panel__minilab" style="font-size:${P.rotulo||12}px;font-weight:700;letter-spacing:.03em;color:#F0B43C">${H(lab)}</div>
-    <div style="display:flex;gap:2px">${minis}</div></div>`;
+  return `<div class="bt-panel__minis" style="display:flex;align-items:center;gap:2px;min-width:0">${minis}</div>`;
 }
 // §363: BARRA FINA (painel recolhido) — a seta ▲ reabre; armado mostra nome+instrução+CANCELAR (e USAR p/ confirmar sem
 // alvo, §336); o resumo da CPU mostra "RESUMO · …"; senão, uma dica discreta do turno.
@@ -265,9 +269,12 @@ function _barraFinaHTML(g){
 function painelBaixoHTML(g){
   g=g||btGeoBatalha(); const m=g.m, P=_P(), pc=g.painel;
   if(g.recolhido) return _barraFinaHTML(g);
-  const seta=`<button id="bfold" class="b5-hover" title="Recolher painel" aria-label="Recolher painel" style="width:40px;height:100%;display:flex;align-items:center;justify-content:center;border:0;border-left:1px solid rgba(201,164,76,.28);background:none;cursor:pointer;color:#F0B43C;font-size:16px">▼</button>`;
-  return `<section class="b5-painel bt-panel" style="flex:none;height:${g.panelH}px;box-sizing:border-box;display:grid;grid-template-columns:${pc.info}px ${pc.meio}px minmax(0,1fr) 40px;align-items:stretch;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
-    ${_col1HTML(m,P)}${_col2HTML(m,P)}${_col3HTML(m,P)}${seta}
+  // §363b: painel de ALTURA FIXA em 2 FAIXAS. Faixa 1: TÍTULO + PÍLULAS na largura toda. Faixa 2: [img+DESCRIÇÃO (flex, larga)
+  // | CUSTO/RECARGA+instrução (meio fixo) | miniaturas/CANCELAR + SETA ▼]. Assim o pior caso (título longo + descrição de 168
+  // chars) cabe sem cortar e as caixas do campo nunca mudam de tamanho.
+  return `<section class="b5-painel bt-panel" style="flex:none;height:${g.panelH}px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;padding:3px 8px;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
+    ${_cabHTML(m,P)}
+    <div style="display:flex;align-items:stretch;gap:8px;flex:1;min-height:0">${_descHTML(m,P)}${_col2HTML(m,P,pc.meio)}${_col3HTML(m,P)}</div>
   </section>`;
 }
 

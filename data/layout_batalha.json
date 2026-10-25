@@ -29,10 +29,10 @@
   },
   "painel": {
     "left": 8, "top": 250, "w": 764,
-    "img": 44, "titulo": 15, "pilulaH": 18, "pilula": 12, "desc": 12, "padV": 3,
-    "infoDeus": 322, "infoSkill": 296, "meioArm": 180, "minisCol": 182, "cancelCol": 100,
-    "rotulo": 12, "pip": 10, "recargaNum": 12, "instIcone": 20, "instTit": 12, "instSub": 12,
-    "cancelW": 116, "cancelH": 40, "cancelFonte": 14, "mini": 40, "barra": 44
+    "img": 36, "titulo": 14, "pilulaH": 17, "pilula": 13, "desc": 12, "padV": 2,
+    "alturaAberto": 68, "meioRep": 158, "meioArm": 170,
+    "rotulo": 12, "pip": 10, "recargaNum": 12, "instIcone": 18, "instTit": 12, "instSub": 12,
+    "cancelW": 100, "cancelH": 40, "cancelFonte": 13, "mini": 40, "barra": 44
   },
   "menu": { "w": 320, "itemH": 40, "titulo": 16, "item": 13 }
 }

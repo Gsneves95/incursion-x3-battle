@@ -2,7 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §363 · BATALHA: cena discreta, habilidades maiores e o painel de baixo recolhível
+## ★ §363b · BATALHA: painel de ALTURA FIXA, retratos e habilidades de tamanho CONSTANTE
+- Queixa do dono: o painel mudava de tamanho conforme o que se tocava e o campo "pulava". Agora o painel aberto tem **altura
+  FIXA (68px)** e o recolhido a barra fina (44px); o `btGeoBatalha` **não depende mais do conteúdo** → as caixas de retrato,
+  habilidade, coluna de efeitos e cena são **IDÊNTICAS** em toda situação dentro de cada modo. O `hpOverlay` do §363 foi
+  removido (vida sempre abaixo do retrato).
+- O painel foi **reorganizado em 2 faixas** p/ caber o pior caso nessa altura: faixa 1 = TÍTULO+PÍLULAS + instrução; faixa 2 =
+  DESCRIÇÃO (larga, ≤3 linhas) + CUSTO/RECARGA + miniaturas + seta ▼. A miniatura da arte do painel saiu (redundante). A
+  descrição mais longa (babi 168 / nuwa 157) + "AGINDO AGORA" + motivo cabem sem cortar (só o resumo da CPU rola).
+- **Tamanhos (780×360):** aberto **retrato 56 / habilidade 71**; recolhido **retrato 64 / habilidade 79** (constantes). A meta
+  ~58/~70 fica em 56/71 porque manter as miniaturas + o texto inteiro no painel fixo pede 68px — ver DECISOES (§363b).
+- PROVAS: **varredura de estabilidade** (`batalha_estabilidade`, 100 deuses × situações × 2 modos: caixas idênticas + d=0 no
+  painel); auditoria a=b=c=d=0 nos dois modos (`acessibilidade_telas`). Capturas `docs/telas/363b-*` + `363b-estabilidade.png`.
+  Suíte + build verdes.
+
+## §363 · BATALHA: cena discreta, habilidades maiores e o painel de baixo recolhível
 - A **arte de turno** virou **fundo discreto**: escurecida/dessaturada (`brightness(.45) saturate(.6)`) + vinheta; o anúncio
   (SEU TURNO / TURNO DO OPONENTE) segue legível por cima. PROVA (`cena_discreta`, Chromium+sharp): luminância da cena **<**
   a dos 12 botões de habilidade, nos dois turnos (24<82 meu; 24<57 oponente).

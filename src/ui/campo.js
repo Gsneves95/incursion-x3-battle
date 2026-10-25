@@ -62,16 +62,14 @@ const FX_COR={ bom:{bg:'linear-gradient(180deg,#3CD873,#169447)',ring:'rgba(160,
   defesa:{bg:'linear-gradient(180deg,#3E8BFF,#1C56C8)',ring:'rgba(150,200,255,.8)'} };
 const HP_GRAD='linear-gradient(180deg,#5BEA8C,#22A855 60%,#1C8A47)';
 
-/* ---------- §362b/§363: barra de vida — ABAIXO do retrato (FORA da arte) em repouso; quando a fileira fica curta demais
-   (g.hpOverlay: ler habilidade de descrição longa), vira uma FAIXA SOBRE a base do retrato (toque ≥40, texto ≥12). ---------- */
-function btHp(u, g, overlay){
+/* ---------- §362b/§363b: barra de vida SEMPRE ABAIXO do retrato (FORA da arte) — largura do retrato, texto ≥12. O painel de
+   altura fixa (§363b) garante que a fileira sempre comporta retrato + barra (sem o hpOverlay do §363). ---------- */
+function btHp(u, g){
   const h=g.vida;
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
   const fill = u.vivo?`<div style="position:absolute;left:0;top:0;bottom:0;width:${pct}%;background:${HP_GRAD}"></div>`:'';
   const sh = u.shield?`<div style="position:absolute;top:0;right:0;height:100%;width:${Math.min(100,u.shield/u.maxHp*100)}%;background:#9fd8ff;opacity:.55"></div>`:'';
   const lab = `<div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#F4FFF6;text-shadow:0 1px 2px rgba(0,0,0,.85)">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>`;
-  // SOBRE a base do retrato: largura total, fundo mais escuro (a arte aparece atrás), ancorada embaixo.
-  if(overlay) return `<div class="bt-hp bt-hp--ov" style="position:absolute;left:0;right:0;bottom:0;height:${h}px;overflow:hidden;background:rgba(6,16,10,.72);box-shadow:inset 0 0 0 1px rgba(0,0,0,.55);pointer-events:none">${fill}${sh}${lab}</div>`;
   return `<div class="bt-hp" style="position:relative;width:${g.S}px;height:${h}px;flex:none;border-radius:3px;overflow:hidden;background:#0B1A10;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none">${fill}${sh}${lab}</div>`;
 }
 /* ---------- indicador de níveis (reusa o motor; §320) — discreto, no canto do retrato ---------- */
@@ -120,10 +118,8 @@ function btUnidadeAliada(u, meu, g){
   const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
     ${u.vivo?btNiv(u):''}
-    ${g.hpOverlay?btHp(u,g,true):''}
   </div>`;
-  const bloco = g.hpOverlay ? `<div style="flex:none">${portrait}</div>`
-    : `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
+  const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
   const skills=`<div style="display:flex;gap:4px;flex:none">${acoesDe(st,u).map(a=>btSkill(u,a,meu,g)).join('')}</div>`;
   // §362c: ordem do aliado — retrato · 4 habilidades · COLUNA DE EFEITOS (entre as habilidades e a cena), sempre reservada.
   return `<div style="display:flex;align-items:center;gap:${g.gap}px">${bloco}${skills}${btEfeitosCol(u,g,'me')}</div>`;
@@ -191,10 +187,8 @@ function btUnidadeInimiga(u, g){
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
     ${u.vivo?btNiv(u):''}
     ${mira}
-    ${g.hpOverlay?btHp(u,g,true):''}
   </div>`;
-  const bloco = g.hpOverlay ? `<div style="flex:none">${portrait}</div>`
-    : `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
+  const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
   // §362c: ordem do inimigo — COLUNA DE EFEITOS (à esquerda do retrato, sempre reservada) · retrato.
   return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:${g.gap}px">${btEfeitosCol(u,g,'foe')}${bloco}</div>`;
 }
@@ -270,7 +264,7 @@ function btCenaHTML(g){
   const anuncio = mostra ? `<div style="position:absolute;left:${ins}px;right:${ins}px;bottom:6px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
     ${ornato}
     ${linha(1)}
-    <div class="cin" style="margin-top:4px;font-weight:700;font-size:${tf}px;line-height:1.05;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 2px 0 rgba(40,24,4,.85),0 4px 16px rgba(0,0,0,.95)">${titulo}</div>
+    <div class="cin" style="margin-top:4px;max-width:100%;text-align:center;overflow-wrap:anywhere;font-weight:700;font-size:${tf}px;line-height:1.05;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 2px 0 rgba(40,24,4,.85),0 4px 16px rgba(0,0,0,.95)">${titulo}</div>
     ${linha(5)}
     <div style="width:8px;height:8px;margin-top:-4px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px ${acento};background:#070A14"></div>
   </div>` : '';

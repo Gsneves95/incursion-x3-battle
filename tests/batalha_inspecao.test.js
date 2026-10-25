@@ -147,7 +147,7 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
     prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1; st.ativo=0; armado=null;detalhe=null; foco=null;
     resumoTurno=[{turno:st.turno,tipo:'acao',origem:'${enemy[0]}',slot:'basico'}]; render();`);
   ok(/RESUMO/.test(($('.bt-panel__titulo')||{}).textContent||''), 'o painel está no RESUMO');
-  ok(!!$('.bt-panel__img img'), 'o painel do RESUMO mostra uma imagem (retrato de quem agiu), não um quadrado vazio');
+  ok(!!(($('.bt-panel__desc')||{}).textContent||'').trim(), '§363b: o painel do RESUMO mostra o texto do resumo do turno');
   ok(!/Turno\s*\d/i.test(($('.bt-panel__cd')||{}).textContent||''), 'o "Turno N" não aparece mais no canto do painel');
 
   // ---- 9) §333 (a) + §333b: as miniaturas são do DONO do conteúdo (situação PERSONAGEM); na ARMADA não há minis, há
@@ -164,13 +164,13 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ok(todasDoUid(poseUid), '(a) tocar o retrato abre a situação 1 — minis do Poseidon (dono)');
   ok($$('.bt-panel__minis .bt-mini.is-sel').length===0, '(a) na situação 1 nenhuma miniatura fica destacada');
   ok(!$('.bt-cancel'), '(a) na situação 1 NÃO há botão CANCELAR');
-  // (b) tocar uma MINIATURA (leitura) → situação 2: a mini daquele slot destacada, rótulo "OUTRAS HABILIDADES"
+  // (b) tocar uma MINIATURA (leitura) → situação 2: a mini daquele slot destacada (§363b: as minis não têm mais rótulo).
   const miniP=$(`.bt-panel__minis .bt-mini[data-look="${poseUid}|milagre"]`);
   ok(!!miniP, '(b) a miniatura do Milagre existe na coluna da direita');
   if(miniP) miniP.onclick({stopPropagation(){}});
   ok(w.eval("detalhe&&detalhe.kind")==='skill', '(b) tocar a miniatura abre a situação 2 (leitura de habilidade)');
   ok(!!$('.bt-panel__minis .bt-mini.is-sel'), '(b) a miniatura mostrada fica destacada (is-sel)');
-  ok(/OUTRAS HABILIDADES/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(b) rótulo "OUTRAS HABILIDADES"');
+  ok(todasDoUid(poseUid), '(b) as miniaturas seguem sendo do dono (Poseidon)');
   // (c) tocar num EFEITO do aliado Zeus (situação 4) → minis do ZEUS (portador)
   w.eval(`armado=null;detalhe=null; st.lados[0].units[1].efeitos=[{type:'vulneravel',v:6,dur:2}]; infoEfeito('${zeusUid}',0); render();`);
   ok(todasDoUid(zeusUid), '(c) tocar o efeito mostra as minis do portador (Zeus)');

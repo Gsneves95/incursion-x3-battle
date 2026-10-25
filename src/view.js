@@ -86,74 +86,26 @@ function _modoSub(){
     return 'DOMÍNIO'+(c?' · '+c:'')+prog; }
   return '';
 }
-// §362b — GEOMETRIA VIVA da batalha (opção A do dono: painel embaixo, retratos e habilidades MAIORES). Vive aqui (view
-// orquestra o ui): o painel usa SÓ a altura que o conteúdo pede (repouso curto → painel baixo); o campo recebe o resto e
-// dimensiona retrato = habilidade p/ caber 3 fileiras SEM rolar. Repouso → retrato grande (≥56, skill ≥52); descrição
-// longa armada → o painel cresce p/ cima e o retrato encolhe (≥46, skill ≥44). Colunas do painel adaptam: ao armar, a
-// descrição ganha largura (p/ caber em poucas linhas) + CANCELAR; em repouso/leitura, as miniaturas.
-function _estLinhasBat(txt, wPx, fPx){
-  if(!txt) return 1;
-  const cpl=Math.max(6, Math.floor(wPx/(fPx*0.5)));   // ~0.5em largura média (Rajdhani) — calibrado no harness
-  return String(txt).split('\n').reduce((n,seg)=>n+Math.max(1,Math.ceil((seg.length||1)/cpl)),0);
-}
+// §362b/§363b — GEOMETRIA da batalha (opção A do dono: painel embaixo, retratos e habilidades MAIORES). Vive aqui (view
+// orquestra o ui). §363b: o painel tem ALTURA FIXA por modo (aberto/recolhido), NÃO depende do conteúdo — o campo recebe o
+// resto e dimensiona retrato + habilidade iguais em toda situação (sem "pular"). Repouso aberto: retrato ≥56 (~57), skill
+// ≥68 (~72); recolhido: retrato ≥64, skill ≥76. O painel foi reorganizado (painel.js) p/ caber o pior caso nessa altura.
 function btGeoBatalha(){
   const P=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.painel)||{};
   const m=_modeloPainel();
   const W=(P.w||764), armado=!!m.armado;
-  // §362b: larguras das colunas por MODELO — ao armar a descrição é longa (info larga) + CANCELAR; em repouso/leitura a
-  // 3ª coluna são as miniaturas. O modelo de HABILIDADE tem pílulas + CUSTO (precisa de info); o de DEUS tem a passiva
-  // (precisa de mais info). Equilibramos p/ cada um caber em 1–poucas linhas (painel baixo → retratos grandes).
-  const temPips = (m.meio||[]).some(c=>c.pips);
-  // §363: o painel aberto reserva uma coluna de 40 à direita p/ a SETA de recolher (toque ≥40); as colunas de conteúdo
-  // (info|meio|col3) se distribuem no resto (W−40).
-  const SETA=40, Wc=W-SETA;
-  let col3, meio, info;
-  if(armado){ col3=P.cancelCol||100; meio=P.meioArm||180; info=Wc-meio-col3; }
-  else { col3=P.minisCol||166; info = temPips ? (P.infoSkill||296) : (P.infoDeus||322); meio=Wc-col3-info; }
-  const img = P.img||44;
-  const descW = info - img - 8 - 16;                  // largura de texto da descrição (px)
-  // a descrição renderiza com o MOTIVO inline (⊘ …) quando a habilidade está indisponível — conta no nº de linhas.
-  const descFull = (m.desc||'') + (m.motivo ? (' ⊘ ' + m.motivo) : '');
-  const lines = _estLinhasBat(descFull, descW, P.desc||12);
-  const lh = (P.desc||12)+3;
-  const pad = (P.padV!=null?P.padV:4)*2;
-  // COL1 (imagem | título + pílulas + descrição) — as pílulas podem quebrar em >1 linha quando a info é estreita.
-  let pillRows = 0;
-  if(m.etiquetas&&m.etiquetas.length){
-    const pilArea = Math.max(40, info - img - 16);
-    let w=0; for(const e of m.etiquetas){ w += String(e.txt).length*(P.pilula||12)*0.6 + 8 + 3; }
-    pillRows = Math.max(1, Math.ceil(w/pilArea));
-  }
-  const pilBlock = pillRows ? (pillRows*(P.pilulaH||18) + (pillRows-1)*3 + 4) : 0;
-  const col1H = (P.titulo||15) + 4 + pilBlock + lines*lh;
-  // COL2 (células CUSTO/RECARGA ou VIDA/ELEMENTO + linha + instrução com a mira)
-  const cells = m.meio||[];
-  const cellsH = cells.length ? ((P.rotulo||12)+2+(P.recargaNum||13)) : 0;
-  const hrH = cells.length ? 5 : 0;
-  const miw = meio - (P.instIcone||24) - 8 - 16;
-  const inst = m.inst||{};
-  // §362b: título + sub fluem na MESMA linha (quebram juntas quando longo); 1 linha em repouso.
-  const instTxt = (inst.title||'') + (inst.sub?(' '+inst.sub):'');
-  const instTxtH = _estLinhasBat(instTxt, miw, Math.max(P.instTit||12,P.instSub||12)) * (Math.max(P.instTit||12,P.instSub||12)+3);
-  const col2H = cellsH + hrH + Math.max(P.instIcone||24, instTxtH) + 6;   // +6: 2 gaps de 3 do flex
-  // COL3 (miniaturas do dono OU botão CANCELAR)
-  const col3H = armado ? (P.cancelH||40) : (m.donoUid ? ((P.rotulo||12)+4+(P.mini||40)) : 0);
-  const contentPanelH = Math.max(img, col1H, col2H, col3H) + pad + 4;   // +4: folga p/ o estimado ≥ o real (nunca estourar)
-  // §363: PAINEL RECOLHÍVEL — recolhido, o painel vira uma BARRA FINA e o campo ganha a altura (retratos/habilidades crescem).
+  // §363b: o painel de baixo tem ALTURA FIXA — não depende mais do conteúdo (queixa do dono: o campo "pulava" conforme o que
+  // se tocava). Aberto usa `alturaAberto`; recolhido a BARRA. Assim as caixas de retrato/habilidade/efeito/cena são
+  // IDÊNTICAS em TODA situação dentro de cada modo. O painel foi reorganizado (colunas largas, descrição em até 3 linhas)
+  // p/ caber o pior caso real (desc da nuwa, 157 chars) nessa altura fixa — ver painel.js.
   const recolhido = (typeof painelRecolhido!=='undefined' && painelRecolhido);
   const BARRA = (P.barra||44);
-  const panelH = recolhido ? BARRA : contentPanelH;
+  const panelH = recolhido ? BARRA : (P.alturaAberto||66);
   const BODY_H=292, BODY_GAP=2;                        // b5-body = 360−62−6 = 292; gap de 2 entre campo e painel
   const fieldH = BODY_H - BODY_GAP - panelH;
-  const rowGap=4, vida=14, hpGap=1;                    // barra de vida ABAIXO do retrato (texto ≥12 p/ a auditoria)
+  const rowGap=4, vida=14, hpGap=1;                    // §363b: a vida é SEMPRE a barra ABAIXO do retrato (sem hpOverlay).
   const rowH = Math.floor((fieldH - 2*rowGap)/3);     // altura de cada fileira (retrato + vida + folga)
-  // §363: em repouso a vida fica ABAIXO do retrato (desejo do dono). Mas quando o painel está MUITO alto (ler uma
-  // habilidade de descrição longa → fileira < retrato(40)+vida+gap), não cabe o retrato de toque (≥40) MAIS a barra
-  // abaixo na fileira — a fileira transbordaria sobre o painel. Nesse caso a barra de vida vira uma FAIXA SOBRE a base do
-  // retrato (`hpOverlay`): o toque continua ≥40, o texto ≥12, e a fileira = o retrato (nada transborda). Sem corte de
-  // texto do painel e sem a tela pular.
-  const hpOverlay = (rowH - vida - hpGap) < 40;
-  let S = hpOverlay ? Math.max(40, Math.min(72, rowH)) : Math.max(40, Math.min(72, rowH - vida - hpGap));   // retrato
+  const S = Math.max(40, Math.min(72, rowH - vida - hpGap));   // retrato
   // §363: a HABILIDADE ocupa a ALTURA TODA da fileira (retrato + barra de vida + o espaço entre eles) — quadrada.
   const skill = rowH, eff=40, gap=6;
   // §362c: a COLUNA DE EFEITOS é SEMPRE reservada (mesma largura com ou sem efeitos) p/ a tela não "pular". §362d: a CENA é
@@ -162,8 +114,12 @@ function btGeoBatalha(){
   const aliados  = 10 + S + gap + skillsW + gap + effW;
   const inimigos = effW + gap + S + 10;
   const freeBand = Math.max(0, W - aliados - inimigos);   // faixa central livre (entre as colunas de efeitos) p/ o anúncio
-  return { m, panelH, contentPanelH, fieldH, S, skill, rowH, vida, hpGap, hpOverlay, rowGap, eff, gap, effW, recolhido, freeBand,
-           cols:{ aliados, inimigos }, painel:{ info, meio, col3, img, lines, armado } };
+  // §363b: o painel aberto é em 2 FAIXAS (ver painel.js): TÍTULO+PÍLULAS na largura toda em cima; embaixo [img | DESCRIÇÃO
+  // (flex, mais larga) | CUSTO/RECARGA+instrução | miniaturas+SETA]. Largura da coluna do meio fixa por modo; a descrição
+  // pega o resto. Assim o pior caso (título mais longo + descrição mais longa, 168 chars) cabe nessa altura fixa sem cortar.
+  const meio=(armado?(P.meioArm||168):(P.meioRep||140));
+  return { m, panelH, fieldH, S, skill, rowH, vida, hpGap, rowGap, eff, gap, effW, recolhido, freeBand,
+           cols:{ aliados, inimigos }, painel:{ meio, img:(P.img||40), armado } };
 }
 function renderBatalha(){
   // §328: na batalha, o botão "conta" e o carimbo "build" do canto inferior esquerdo (fixos no body) são

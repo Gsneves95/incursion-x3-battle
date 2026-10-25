@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §363b · BATALHA: painel de ALTURA FIXA, retratos e habilidades de tamanho CONSTANTE
+
+QUEIXA DO DONO (jogando): "dependendo do que eu toco para ver os detalhes, o box do resumo fica maior ou menor, e isso
+altera o tamanho das imagens dos personagens e habilidades. Tudo deve ocupar sempre o mesmo espaço." No §363 a altura do
+painel vinha do conteúdo (btGeoBatalha media o modelo), então o campo encolhia/crescia a cada toque — e o `hpOverlay` era um
+sintoma disso.
+
+- **ALTURA FIXA.** O painel aberto tem **uma altura fixa (`alturaAberto`=68px)**, igual em toda situação (deus, habilidade
+  lida, armada, efeito, resumo, turno do oponente, repouso); o recolhido tem a barra fina fixa (44px). O `btGeoBatalha` **não
+  mede mais o conteúdo**: depende só do modo (aberto/recolhido) e do viewport. Consequência: as caixas de **retrato,
+  habilidade, coluna de efeitos e cena são IDÊNTICAS** em toda situação dentro de cada modo (o campo não "pula"). O
+  `hpOverlay` do §363 foi **removido** (a vida volta a ser sempre a barra abaixo do retrato).
+- **PAINEL REORGANIZADO em 2 FAIXAS** para caber o pior caso nessa altura usando a LARGURA: **faixa 1** = TÍTULO + PÍLULAS
+  (esquerda) + mira/INSTRUÇÃO curta (direita), na largura toda, 1 linha; **faixa 2** = DESCRIÇÃO (coluna mais larga, até 3
+  linhas) + CUSTO/RECARGA (ou VIDA/ELEMENTO, TURNOS/POR) numa coluna estreita + MINIATURAS do dono + a SETA ▼. A miniatura
+  da arte no painel foi **removida** (era redundante — o campo já mostra o retrato/habilidade grandes) p/ a descrição ganhar
+  a largura. Dimensionado pelo **pior caso real**: a descrição mais longa (babi, 168 chars; nuwa, 157) + a leitura viva
+  "AGINDO AGORA" + o motivo "⊘ …" cabem em ≤3 linhas, sem rolar nem cortar (só o texto do RESUMO da CPU rola).
+- **TAMANHOS MAIORES e constantes a 780×360:** aberto **retrato 56px, habilidade 71px**; recolhido **retrato 64px, habilidade
+  79px**. (A meta do dono era ~58/~70; chega-se a 56/71 porque manter as miniaturas + a descrição mais longa no painel fixo
+  exige 68px de painel — ver "Se não couber, reporte". Dropar as miniaturas daria ~58, mas o dono as pediu; a perda de 2px
+  no retrato preserva as miniaturas e o texto inteiro.)
+
+A geometria mora em `btGeoBatalha()` (view.js) e o painel em `painel.js` (`_cabHTML`+`_descHTML`+`_col2HTML`+`_col3HTML`).
+PROVAS (falham a suíte): **varredura de estabilidade** (`batalha_estabilidade`): p/ CADA um dos 100 deuses × cada habilidade
+lida/armada + deus + efeito + resumo + turno do oponente, nos dois modos, as caixas de painel/retrato/habilidade/efeito/cena
+são idênticas à referência (±1px) e o eixo **d** da auditoria = 0 no painel (nada cortado); auditoria a=b=c=d=0 nos estados
+de batalha nos dois modos (`acessibilidade_telas`); tamanhos dos itens 3. Capturas `docs/telas/363b-*` e `363b-estabilidade.png`.
+Suíte + build verdes.
+
 ## §363 · BATALHA: cena discreta, habilidades maiores e o painel de baixo recolhível
 
 Depois do §362d a cena larga voltou a competir com as habilidades pela atenção, e o dono quis **habilidades ainda maiores**
