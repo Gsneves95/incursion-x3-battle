@@ -159,11 +159,20 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "fora-tela",
+     "sel": "img.mapa__art",
+     "txt": "Mapa de INCURSION",
+     "importante": true,
+     "por": "viewport",
+     "foraPx": 42
+    }
+   ],
    "textTotal": 21,
    "tapTotal": 9
   },
-  "nota": 4.8,
+  "nota": 4.7,
   "setupErr": null,
   "medErr": null,
   "erros": []

@@ -19,7 +19,7 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 | 1 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
 | 2 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
 | 3 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
-| 4 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
+| 4 | Home | 21 (21) | 1 | 0 | 1 | **4.7** | `357-home-780x360.png` |
 | 5 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
 | 6 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
 | 7 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
@@ -158,9 +158,9 @@ Print: `docs/telas/357-invocacao-780x360.png`. Contagens: a=17, b=5, c=0, d=4. (
 - [encoberto] **importante** `button.iv-hero__det` — "Ver detalhes"
 - [encoberto] **importante** `span.iv-hero__lupa` — "⌕"
 
-### Home — nota 4.8
+### Home — nota 4.7
 
-Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=0. (textos visíveis: 21; tocáveis: 9.)
+Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=1. (textos visíveis: 21; tocáveis: 9.)
 
 **a) 10 piores textos pequenos** (px real):
 
@@ -178,6 +178,10 @@ Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=0. (texto
 **b) 10 piores toques** (menor lado):
 
 - `button.mperfil` — **98.7×33.6** — "Jogador"
+
+**d) cortes:**
+
+- [fora-tela] **importante** `img.mapa__art` — "Mapa de INCURSION"
 
 ### Em breve (marcador) — nota 6.8
 

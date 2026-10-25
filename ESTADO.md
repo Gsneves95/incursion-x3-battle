@@ -2,7 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §365 · DOMÍNIOS acessíveis (seleção + hub) no canvas 780×360 + paginação da campanha pelo espaço real
+## ★ §366 · AUDITORIA: fechada a cegueira do conteúdo fora da tela (d7) + reconferência de todas as telas
+- **Ponto cego (do §365) na FERRAMENTA:** o eixo (d) só olhava elementos VISÍVEIS, e `vis()` descarta o que está fora do
+  viewport — então conteúdo empurrado p/ fora do canvas (abaixo de 360) e recortado por `overflow:hidden` passava batido.
+  Novo **d7 `fora-tela`** em `auditoria_medida.js`: acusa qualquer elemento COM CONTEÚDO (texto, imagem com alt, tocável)
+  cuja caixa esteja total/parcial fora do viewport ou do ancestral que o recorta; exceção = listas roláveis da lista
+  branca; imagem decorativa (`alt=""`, ex. halo do orbe) não conta. Prova fixa no teste: reverter a correção do §365 faz
+  o d7 acusar (0→3).
+- **Reconferência:** auditoria inteira + `acessibilidade_telas` com d7 ligado — NENHUMA tela que estava em nota 10 passou
+  a acusar (§358–§365 já deixavam tudo dentro do canvas). home/invocacao/guia/embreve seguem <10 (fluidas, pré-§357,
+  trabalho futuro).
+- **Cultura sobre o título (seleção dos Domínios):** era encosto VISUAL (caixas com 1px de folga; o line-box da Cinzel
+  sangra ~2px), não sobreposição de caixa — por isso d4/d6 não pegaram. Corrigido com folga no layout (`.dcard__nome`
+  margin-top 6). Medir por INK (getClientRects) foi rejeitado: devolve line-box (leading), acusaria todo empilhamento
+  Cinzel do app (dezenas de falsos positivos). O ganho de cobertura do §366 é o d7.
+- **PROVAS:** `acessibilidade_telas` a=b=c=d=0 (com d7) em todas as telas §358–§365 + prova da guarda; suíte + build
+  verdes. Captura `366-dominios-selecao-{780x360,1846x852}.png`.
+
+## §365 · DOMÍNIOS acessíveis (seleção + hub) no canvas 780×360 + paginação da campanha pelo espaço real
 - **Campanha (ajuste do §364):** a paginação do texto agora **mede no DOM** e enche a página até o limite (quebra em
   palavra/frase). O `_paginarTexto` por estimativa parava no meio da frase com meia coluna vazia; o novo
   `_paginarCampTexto` resolve — todos os atos cabem hoje em UMA página cheia (o Conselho, 819c, a ~100%). Prova: nenhum

@@ -261,6 +261,24 @@ for (const [nome, setup] of Object.entries(ESTADOS)) {
     await ctx.close();
   }
 
+  // §366 — a GUARDA do ponto cego (conteúdo empurrado p/ fora da tela e escondido por overflow:hidden) pega de verdade:
+  // num hub já correto (d=0), reverter a correção (reinserir conteúdo alto na coluna da direita) faz o d7 'fora-tela' acusar.
+  console.log('\n== §366 — a guarda de conteúdo fora da tela acusa quando o conteúdo é empurrado p/ fora ==');
+  {
+    const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+    const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+    await page.evaluate(([b, s]) => { try { eval(b); eval(s); } catch (e) {} const g = document.getElementById('gsplash'); if (g) g.remove(); }, [BASE, DOMHUB('andamento')]);
+    const antes = await page.evaluate(medirNaPagina, CFG);
+    // reverte: empurra conteúdo p/ baixo da coluna da direita (como era antes do §365) — fica fora do canvas, recortado.
+    await page.evaluate(() => { const cfs = document.querySelector('.dh-cfs'); [...cfs.querySelectorAll('.dh-cf__p')].forEach(p => { p.style.height = '106px'; }); });
+    const depois = await page.evaluate(medirNaPagina, CFG);
+    const foraAntes = antes.d.filter(x => x.tipo === 'fora-tela').length;
+    const foraDepois = depois.d.filter(x => x.tipo === 'fora-tela').length;
+    ok(foraAntes === 0, `§366: hub corrigido não tem conteúdo fora da tela (fora-tela=${foraAntes})`);
+    ok(foraDepois > 0, `§366: ao reverter a correção, a guarda acusa conteúdo fora da tela (fora-tela=${foraDepois})`);
+    await ctx.close();
+  }
+
   await browser.close();
   if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) de acessibilidade §358`); process.exit(1); }
   console.log('\n>>> ACESSIBILIDADE §358 OK — Coleção/Ficha/Níveis cumprem o padrão §357 em todos os estados.');

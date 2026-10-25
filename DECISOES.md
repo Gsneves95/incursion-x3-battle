@@ -6,6 +6,40 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §366 · AUDITORIA: fechar o ponto cego do conteúdo fora da tela + reconferir TODAS as telas
+
+**1. Ponto cego (achado no §365) levado à FERRAMENTA.** Todos os checks do eixo (d) só olhavam elementos VISÍVEIS
+(`vis()`), e `vis()` descarta o que está inteiramente fora do viewport. Logo, conteúdo EMPURRADO para fora do canvas
+(abaixo dos 360, ou além da largura) e recortado pelo `overflow:hidden` de um ancestral ficava invisível à auditoria —
+no §365 isso escondeu a coluna da direita do hub (+61 px) e o 3º cartão de prêmio. Novo subtipo **d7 `fora-tela`** em
+`tools/auditoria_medida.js`: percorre TODO elemento com CONTEÚDO (texto direto, imagem COM alt, ou tocável) — sem passar
+por `vis()` — e acusa a caixa que esteja, total ou parcialmente, fora do viewport OU da área de um ancestral que o
+recorta. Exceção: conteúdo das listas roláveis da lista branca (passar da dobra ali é rolagem). Imagem decorativa
+(`alt=""`, ex.: o halo do orbe, que transborda o slot de propósito) não conta — é decoração, não conteúdo que se lê.
+**Prova de que pega:** num hub já correto d7=0; ao reverter a correção do §365 (reinserir conteúdo alto na coluna da
+direita), d7 passa a acusar (3 "fora-tela", 44–89 px fora). Guarda fixada no teste (`acessibilidade_telas`, bloco §366).
+
+**2. Reconferência.** Rodada a auditoria inteira (33+ telas) e o `acessibilidade_telas` (todos os estados) com o d7
+ligado. **Nenhuma tela que estava em nota 10 passou a acusar** — as correções de §358–§365 já deixavam o conteúdo
+dentro do canvas (o d7 confirma). As telas ainda fora do padrão (home, invocacao, invocacao-reveal, guia, embreve) são
+fluidas/pré-§357 (trabalho futuro, nota <10 por texto <12 px), fora do escopo desta reconferência.
+
+**3. Cultura sobre o título na seleção dos Domínios.** Na captura `365-dominios-selecao`, "CHINESA/EGÍPCIA…" (vermelho)
+encostava no título "Domínio dos Céus". **Causa real** (nenhuma das hipóteses — não era caixa transparente, `::before`
+nem opacidade): as CAIXAS da cultura e do título tinham só **1 px de folga** (sem sobreposição geométrica), mas o
+`line-box` da Cinzel (ascendentes altas, `line-height` curto) **sangra** ~2 px para a linha vizinha — um encosto VISUAL
+sem cruzamento de caixa. Por isso o d4 (compara `getBoundingClientRect`) e o d6 (elementFromPoint no centro dos glifos,
+que estavam livres) nada acharam. **Correção:** `.dcard__nome` ganhou `margin-top:6px` (folga de caixa 1→6, folga de
+glifo ~4 px) — a cultura fica claramente numa linha própria acima do título. **Na ferramenta:** tentei medir o
+texto-sobre-texto por INK (`Range.getClientRects`) em vez da caixa; foi **rejeitado** porque `getClientRects` devolve o
+*line-box* (inclui a metragem/leading da fonte, não o glifo), então acusava ~2 px de "sobreposição" em TODO
+empilhamento Cinzel do app (título+subtítulo, nome em 2 linhas, nome+função de cada cartão) — dezenas de falsos
+positivos. O d4 por caixa foi mantido; o ganho real de cobertura do §366 é o d7 (conteúdo medível fora da tela), e o
+caso-3 resolve-se pela folga do layout.
+
+**Provas.** `acessibilidade_telas` a=b=c=d=0 (com d7) em todas as telas de §358–§365 + a prova da guarda d7. Suíte +
+build verdes. Captura `366-dominios-selecao-780x360.png` (e `1846x852`).
+
 ## §365 · DOMÍNIOS acessíveis (seleção + hub) no canvas 780×360 + ajuste da paginação da campanha
 
 **0. Paginação da campanha (§364) pelo ESPAÇO REAL.** O `_paginarTexto` do §364 dividia por ESTIMATIVA de caracteres

@@ -199,6 +199,35 @@ function medirNaPagina(cfg){
     if (coberto) d.push({ tipo: 'encoberto', sel: sel(f.el), txt: f.t.slice(0, 40), importante: true, por: sel(coberto) });
   }
 
+  // d7) §366 — CONTEÚDO FORA DA TELA (o ponto cego do §365). Os checks acima só olham elementos VISÍVEIS (vis()); mas
+  // conteúdo empurrado para FORA do canvas (abaixo dos 360, ou além da largura) e escondido pelo overflow:hidden de um
+  // ancestral NÃO é "visível" — passava batido (no §365 escondia a coluna da direita do hub e os cartões de prêmio).
+  // Acusa QUALQUER elemento COM CONTEÚDO (texto direto, imagem, botão/tocável) cuja caixa esteja, total ou parcialmente,
+  // fora do viewport OU da área de um ancestral que o recorta. Exceção: conteúdo das listas roláveis (passar da dobra é
+  // rolagem). NÃO depende de vis() — é justamente o que vis() escondia.
+  // conteúdo = texto direto, elemento tocável, OU imagem COM alt (alt="" é imagem decorativa pelo padrão HTML — ex.: o
+  // halo do orbe, que transborda o slot de propósito (margem negativa); não é conteúdo que se lê e pode ser recortado).
+  const ehConteudo = el => {
+    if (/^(IMG|SVG|CANVAS|VIDEO|PICTURE)$/.test(el.tagName)) return (el.getAttribute('alt') || '').trim().length > 0;
+    return interativo(el) || getComputedStyle(el).cursor === 'pointer' || !!txtDe(el);
+  };
+  const renderavel = el => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return false; const r = el.getBoundingClientRect(); return r.width >= 0.5 && r.height >= 0.5; };
+  const clipAncestral = el => { let n = el.parentElement; for (let i = 0; i < 14 && n && n !== document.body; i++) { if (temClip(getComputedStyle(n))) return n; n = n.parentElement; } return null; };
+  const TOLF = 2;
+  for (const el of todos) {
+    if (!ehConteudo(el) || !renderavel(el) || dentroScrollOk(el)) continue;
+    const r = el.getBoundingClientRect();
+    let onde = '', por = '', base = null;
+    if (r.left < -TOLF || r.top < -TOLF || r.right > vw + TOLF || r.bottom > vh + TOLF) { onde = 'viewport'; base = { left: 0, top: 0, right: vw, bottom: vh }; }
+    else { const anc = clipAncestral(el); if (anc) { const ar = anc.getBoundingClientRect();
+      if (r.right > ar.right + TOLF || r.left < ar.left - TOLF || r.bottom > ar.bottom + TOLF || r.top < ar.top - TOLF) { onde = 'ancestral'; por = sel(anc); base = ar; } } }
+    if (onde) {
+      const foraPx = Math.round(Math.max(0, r.bottom - base.bottom, base.top - r.top, r.right - base.right, base.left - r.left));
+      const txt = (txtDe(el) || el.getAttribute('alt') || el.tagName.toLowerCase());
+      d.push({ tipo: 'fora-tela', sel: sel(el), txt: String(txt).slice(0, 30), importante: true, por: por || 'viewport', foraPx });
+    }
+  }
+
   // total de textos/tocáveis visíveis (para a nota)
   let textTotal = 0; for (const el of todos) { if (txtDe(el) && vis(el)) textTotal++; }
   let tapTotal = 0; for (const el of tapSet) { if (vis(el)) tapTotal++; }
