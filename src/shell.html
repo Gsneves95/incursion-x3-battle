@@ -1212,12 +1212,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .domficha--morto{opacity:.55}
 .domficha--morto .slot{filter:grayscale(1)}
 .domficha--morto .domficha__hp{color:var(--e-Chama)}
-.dompremios{display:flex;flex-direction:column;gap:10px;width:100%}
-.dompremio{display:flex!important;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;
-  height:auto;padding:12px 16px;border:1px solid var(--gold-soft);background:rgba(22,18,48,.85)}
-.dompremio:hover{border-color:var(--gold-text);background:rgba(36,29,82,.9)}
-.dompremio__t{font-family:'Cinzel',serif;font-weight:700;font-size:15px;color:var(--gold-text);letter-spacing:.02em}
-.dompremio__s{font-size:12px;color:var(--ink-dim);font-weight:600;white-space:normal;line-height:1.35}
+/* §365: cartões de prêmio do Domínio agora usam .dh-premio (flex-row no canvas 780×360) — o .dompremio antigo saiu */
 /* §277 — TELA DE ESCOLHA em cartões-PÔSTER (reskin do mockup do dono). Bandas do §276 sobre o palco de
    428: cab 48 + respiro 8 + cartões 308 + respiro 8 + rodapé 56 = 428 (respiro SÓ entre bandas). Largura
    FLUIDA (design 780..1200) → os cartões flexionam a 5 colunas (≤172, o valor a 951). NÃO se escala o
@@ -1225,130 +1220,95 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    e as proporções INTERNAS do cartão, e o tipo escala por LEGIBILIDADE (piso do §257/§261), não pelo
    fator geométrico. Fundo por arquivo OPCIONAL: sem ele, o gradiente radial do jogo. */
 :root{ --ouro-grad:linear-gradient(178deg,#FFFBEF 0%,#F6E4AE 26%,#E2C169 56%,#A97C22 84%,#F7E9B4 100%); }
-.dsel{position:absolute;inset:0;display:flex;flex-direction:column;padding:0;gap:8px}
+/* §365 — SELEÇÃO dos 5 Domínios no canvas 780×360 (px design = px real, §357). 5 pôsteres lado a lado (148px),
+   cabeçalho e rodapé "a marca a bater". Corpo ≥12, rótulos ≥11, toque ≥40, sem rolar. */
+.stage.domsel2{border:0;border-radius:0;box-shadow:none;background:#03050B}
+#baselayer.domsel2{position:absolute;inset:0;background:#03050B;overflow:hidden}
+#domselfix{position:absolute;left:50%;top:50%;width:780px;height:360px;transform-origin:center;overflow:hidden;color:var(--ink);font-family:'Rajdhani',sans-serif}
+.dsel{position:absolute;inset:0;display:flex;flex-direction:column;padding:0;gap:6px;
+  background:radial-gradient(120% 90% at 50% 0%,#0D1836 0%,#080E22 52%,#04070F 100%),#060B1A}
 .dsel__fundo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;z-index:0}
 .dsel__scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(120% 90% at 50% 0%,rgba(10,8,18,.35),rgba(10,8,18,.82) 78%)}
-/* CABEÇALHO */
-.dsel__cab{position:relative;z-index:2;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:12px;padding:0 20px}
-.dsel__voltar{flex:0 0 auto;width:34px;height:34px;display:flex;align-items:center;justify-content:center;
-  border-radius:9px;border:1px solid var(--gold-soft);background:rgba(14,11,30,.7);cursor:pointer}
+/* CABEÇALHO (44px) */
+.dsel__cab{position:relative;z-index:2;height:44px;flex:0 0 44px;display:flex;align-items:center;gap:10px;padding:0 10px}
+.dsel__voltar{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;border:1px solid var(--gold-soft);background:rgba(14,11,30,.7);cursor:pointer}
 .dsel__voltar:hover{border-color:var(--gold-text)}
-.dsel__seta{display:block;width:11px;height:11px;border-left:2px solid #F0DC9A;border-bottom:2px solid #F0DC9A;transform:rotate(45deg);margin-left:3px}
+.dsel__seta{display:block;width:10px;height:10px;border-left:2px solid #F0DC9A;border-bottom:2px solid #F0DC9A;transform:rotate(45deg);margin-left:3px}
 .dsel__tit{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:1px}
-.dsel__titlinha{display:flex;align-items:center;gap:9px}
-.dsel__titulo{font-family:'Cinzel',serif;font-weight:900;font-size:23px;letter-spacing:.04em;margin:0;line-height:1;
-  background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
-.dsel__ajuda{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:0;background:rgba(14,11,30,.5);
-  box-shadow:inset 0 0 0 1.5px rgba(212,175,55,.75);color:var(--gold-text);font-family:'Cinzel',serif;
-  font-weight:700;font-size:14px;line-height:1;cursor:pointer}
+.dsel__titlinha{display:flex;align-items:center;gap:8px}
+.dsel__titulo{font-family:'Cinzel',serif;font-weight:900;font-size:20px;letter-spacing:.03em;margin:0;line-height:1;
+  background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
+.dsel__ajuda{flex:0 0 auto;width:40px;height:40px;border-radius:50%;border:0;background:rgba(14,11,30,.5);
+  box-shadow:inset 0 0 0 1.5px rgba(212,175,55,.75);color:var(--gold-text);font-family:'Cinzel',serif;font-weight:700;font-size:16px;line-height:1;cursor:pointer}
 .dsel__ajuda:hover{box-shadow:inset 0 0 0 1.5px var(--gold-text)}
-.dsel__sub{font-family:'Cinzel',serif;font-weight:600;font-size:9px;letter-spacing:.24em;color:#A9B6C8;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dsel__hist{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px;cursor:pointer;
-  border:1px solid var(--gold-soft);border-radius:10px;padding:6px 14px;background:rgba(14,11,30,.7);font-family:inherit;text-align:right}
+.dsel__sub{font-family:'Cinzel',serif;font-weight:600;font-size:12px;letter-spacing:.07em;color:#A9B6C8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsel__hist{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:1px;cursor:pointer;min-height:40px;
+  border:1px solid var(--gold-soft);border-radius:8px;padding:4px 12px;background:rgba(14,11,30,.7);font-family:inherit;text-align:right}
 .dsel__hist:hover{border-color:var(--gold-text)}
-.dsel__hist-t{font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:var(--gold-text);letter-spacing:.04em}
-.dsel__hist-s{font-size:10px;color:var(--ink-mute)}
-/* OS CARTÕES */
-.dsel__cards{position:relative;z-index:2;flex:1 1 auto;display:flex;justify-content:center;align-items:stretch;
-  gap:12px;padding:22px 20px 0}   /* padding-top 22: espaço para o emblema meio-para-fora */
-/* §278 — PROPORÇÃO do pôster ancorada na referência do dono (0,435 = média das duas imagens): com a
-   altura travada em 308, a largura é 134 (era 172/0,558, largo demais). Largura FIXA em 134 dos 780 aos
-   1200 (max-width=largura-alvo, flex:1 alcança sempre o teto); a FOLGA vai para as LATERAIS (o justify-
-   center do .dsel__cards), deixando os cartões separados e com ar — como a referência. 5×134 + vãos 12 +
-   margens 20 = 758, cabe no piso 780; a 951/1200 sobra ar nas bordas. */
-.dcard{position:relative;flex:1 1 0;max-width:134px;min-width:0;cursor:pointer;background:none;border:0;padding:0;font-family:inherit}
-/* chanfro nos QUATRO cantos (13px, proporcionado ao cartão menor que o mockup); moldura+brilho por cultura */
+.dsel__hist-t{font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:var(--gold-text);letter-spacing:.03em}
+.dsel__hist-s{font-size:12px;color:var(--ink-mute)}
+/* OS CARTÕES — 5 pôsteres lado a lado (148px cada); 5×148 + vãos 8 + margens 16 = 788 ~ cabe centrado */
+.dsel__cards{position:relative;z-index:2;flex:1 1 auto;min-height:0;display:flex;justify-content:center;align-items:stretch;gap:8px;padding:14px 10px 0}
+.dcard{position:relative;flex:1 1 0;max-width:150px;min-width:0;cursor:pointer;background:none;border:0;padding:0;font-family:inherit}
 .dcard__poster{position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bodyA),var(--bodyB));
-  box-shadow:inset 0 0 0 2px var(--frame),inset 0 0 44px var(--glow);transition:transform .12s,filter .12s;
-  clip-path:polygon(13px 0,calc(100% - 13px) 0,100% 13px,100% calc(100% - 13px),calc(100% - 13px) 100%,13px 100%,0 calc(100% - 13px),0 13px)}
+  box-shadow:inset 0 0 0 2px var(--frame),inset 0 0 36px var(--glow);transition:transform .12s,filter .12s;
+  clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px)}
 .dcard:hover .dcard__poster{transform:translateY(-2px);filter:brightness(1.06)}
 .dcard__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .dcard__ph{position:absolute;inset:0;background:radial-gradient(90% 55% at 50% 20%,var(--glow),transparent 70%)}
-.dcard__artveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,18,.2) 0%,rgba(6,9,18,0) 34%,var(--artFade) 100%)}
-/* §278 — o VÉU é um ARCO (abóbada), não uma linha reta: sobe no centro e desce nas laterais, e o texto
-   assenta sobre ele (as duas imagens mostram a mesma curva). Um degradê escuro por-cultura RECORTADO por
-   uma máscara SVG em forma de abóbada (o topo é uma quadrática que pica ~44% no centro e desce a ~54% nas
-   bordas). A cor vem do degradê (var), a curva vem da máscara (alfa) — o arco é a forma, não um gradiente. */
-/* §281 — com o texto menor, o arco DESCE (devolve a arte): pico ~50% (era 44%), bordas ~58% (era 54%) →
-   a cena aparece em ~metade do cartão, não um terço. A frase e tudo abaixo seguem sobre a parte escura;
-   só a cultura e o nome (topo do bloco) ficam sobre a arte — o nome tem sombra dourada, a cultura contorno. */
-.dcard__scrim{position:absolute;inset:0;background:linear-gradient(180deg,var(--veilTop) 32%,var(--veilBottom) 54%);
-  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 55 Q50 39 100 55 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%;
-  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 55 Q50 39 100 55 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%}
-/* §281 — ESPAÇAMENTO POR PROXIMIDADE (4 grupos, não 7 linhas): cultura+nome COLADOS (um bloco); respiro
-   antes da frase; respiro antes do progresso; retratos+botão juntos na base. Gaps por margem, não uniforme. */
-.dcard__corpo{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;
-  gap:0;padding:8px 9px 10px;text-align:center}
-/* §281 — HIERARQUIA em 3 níveis. PRIMÁRIO: nome (13, único grande). SECUNDÁRIO: cultura + pílula (9).
-   TERCIÁRIO (sussurro): frase (8, itálico 300 cinza) + nomes de deus (8) — recuam por tamanho E peso/cor. */
-/* §281 — cultura e nome ficam no TOPO do bloco, acima do pico do arco, logo sobre a ARTE (clara em várias
-   cenas). O nome (dourado, primário) ganha uma AURA escura difusa — não um contorno duro — p/ ler sobre a
-   cena; a cultura mantém um contorno leve (é 9px e é o topo do bloco, estruturalmente sobre a arte — o §281
-   tentou tirar, mas sem escurecer a cena ela lava; ver DECISOES). Legibilidade pelo TEXTO, não subindo o véu. */
-/* §281-ajuste2: cultura 9→11px com letter-spacing .28em→.08em — MESMA largura ocupada (medido: a mais larga,
-   Japonesa, 69px em ambos; nenhuma cresce), mas letra grande o bastante para o CONTORNO trabalhar (contorno
-   em 9px empasta antes de virar letra). Continua SECUNDÁRIO — o nome tem 13 e manda. */
-.dcard__cult{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.08em;text-shadow:0 0 2px #04060e,0 1px 2px #04060e,0 0 6px rgba(4,6,14,.9)}
-.dcard__nome{display:flex;flex-direction:column;font-family:'Cinzel',serif;font-weight:700;font-size:13px;line-height:1.02;margin-top:1px;
+.dcard__artveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,18,.2) 0%,rgba(6,9,18,0) 30%,var(--artFade) 100%)}
+.dcard__scrim{position:absolute;inset:0;background:linear-gradient(180deg,var(--veilTop) 36%,var(--veilBottom) 58%)}
+.dcard__corpo{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 7px 8px;text-align:center}
+.dcard__cult{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--tag);font-weight:700;white-space:nowrap;text-shadow:0 0 2px #04060e,0 1px 2px #04060e,0 0 6px rgba(4,6,14,.9)}
+.dcard__nome{display:flex;flex-direction:column;font-family:'Cinzel',serif;font-weight:700;font-size:14px;line-height:1.04;margin-top:1px;
   background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 2px rgba(2,4,10,.95)) drop-shadow(0 0 6px rgba(2,4,10,.7))}
-.dcard__frase{font-style:italic;font-weight:300;font-size:8px;line-height:1.22;color:#AEB9CC;text-wrap:balance;min-height:19px;margin-top:7px;text-shadow:0 1px 2px rgba(4,6,14,.85)}
-.dcard__prog2{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:7px}
-.dcard__ant{font-size:8px;color:var(--ink-mute)}
-.dcard__deuses{display:flex;justify-content:center;gap:3px;margin-top:8px}
-.dcard__deus{display:flex;flex-direction:column;align-items:center;gap:1px;width:44px}
-/* §281 — moldura de retrato como a BATALHA/Coleção (.portrait: 1px, radius 6 em 94px): borda FINA e raio
-   PEQUENO, não ícone de app. No slot de 30px → 1px + radius 4 (proporcional ao raio da batalha). */
-.dcard__deus .slot{width:30px;height:30px;background:#0B1226;border-radius:4px;box-shadow:inset 0 0 0 1px var(--gold-soft)}
-.dcard__deus i{font-family:'Cinzel',serif;font-weight:600;font-style:normal;font-size:8px;letter-spacing:.04em;color:#C7D0DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44px}
-.dcard__entrar{margin-top:3px;width:100%;padding:5px 14px;font-family:'Cinzel',serif;font-weight:700;font-size:11px;
-  letter-spacing:.2em;color:#F5E9CA;background:linear-gradient(180deg,rgba(38,29,12,.9),rgba(18,14,6,.9));
+.dcard__frase{display:none}
+.dcard__prog2{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:6px}
+.dcard__ant{display:none}
+.dcard__deuses{display:flex;justify-content:center;gap:4px;margin-top:7px}
+.dcard__deus{display:flex;flex-direction:column;align-items:center;gap:1px;width:40px}
+.dcard__deus .slot{width:38px;height:38px;background:#0B1226;border-radius:5px;box-shadow:inset 0 0 0 1px var(--gold-soft)}
+.dcard__deus i{display:none}
+.dcard__entrar{margin-top:7px;width:100%;min-height:40px;padding:0 10px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;
+  letter-spacing:.12em;color:#F5E9CA;background:linear-gradient(180deg,rgba(38,29,12,.9),rgba(18,14,6,.9));
   box-shadow:inset 0 0 0 1.5px rgba(232,199,101,.85);display:flex;align-items:center;justify-content:center;gap:6px;
-  clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%)}
-.dcard__entrar b{font-weight:700;font-size:13px}
+  clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,11px 100%,0 50%)}
+.dcard__entrar b{font-weight:700;font-size:14px}
 .dcard:hover .dcard__entrar{filter:brightness(1.12)}
-/* EMBLEMA — anel dourado pousado no topo, metade para fora da moldura */
-.dcard__emblema{position:absolute;top:-20px;left:50%;transform:translateX(-50%);z-index:3;width:44px;height:44px;
-  border-radius:50%;padding:2.5px;background:linear-gradient(160deg,#F6E4AE,#8A6A22 52%,#5E4715 66%,#E8C765);box-shadow:0 2px 10px rgba(0,0,0,.55)}
-.dcard__emblema-in{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;
-  overflow:hidden;background:linear-gradient(160deg,var(--embA),var(--embB))}
+.dcard__emblema{position:absolute;top:-17px;left:50%;transform:translateX(-50%);z-index:3;width:38px;height:38px;
+  border-radius:50%;padding:2px;background:linear-gradient(160deg,#F6E4AE,#8A6A22 52%,#5E4715 66%,#E8C765);box-shadow:0 2px 8px rgba(0,0,0,.55)}
+.dcard__emblema-in{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;overflow:hidden;background:linear-gradient(160deg,var(--embA),var(--embB))}
 .dcard__emblema-in img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.dcard__embmono{font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.02em;line-height:1;
-  background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-/* PALETA POR CULTURA — é o que faz os cinco parecerem cinco lugares (nenhuma duas iguais) */
+.dcard__embmono{font-family:'Cinzel',serif;font-weight:900;font-size:13px;letter-spacing:.02em;line-height:1;background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .dcard--grega{--tag:#8FC4EE;--frame:rgba(120,180,240,.7);--glow:rgba(60,130,210,.2);--bodyA:rgba(8,18,38,.92);--bodyB:rgba(5,10,24,.96);--artFade:rgba(6,16,36,.9);--veilTop:rgba(6,16,36,0);--veilBottom:rgba(5,11,26,.94);--embA:#12325E;--embB:#061424}
 .dcard--egípcia{--tag:#E8C765;--frame:rgba(212,175,55,.75);--glow:rgba(190,150,50,.18);--bodyA:rgba(26,18,8,.92);--bodyB:rgba(12,9,5,.96);--artFade:rgba(26,16,6,.9);--veilTop:rgba(24,16,6,0);--veilBottom:rgba(18,12,5,.94);--embA:#3A2A08;--embB:#140E03}
 .dcard--chinesa{--tag:#E88A8A;--frame:rgba(212,90,70,.75);--glow:rgba(190,52,40,.2);--bodyA:rgba(28,10,12,.92);--bodyB:rgba(14,6,10,.96);--artFade:rgba(28,8,10,.9);--veilTop:rgba(24,8,10,0);--veilBottom:rgba(20,6,9,.94);--embA:#6E1418;--embB:#2A0709}
 .dcard--japonesa{--tag:#E89AB4;--frame:rgba(196,80,110,.55);--glow:rgba(150,40,70,.16);--bodyA:rgba(24,10,20,.92);--bodyB:rgba(11,6,14,.96);--artFade:rgba(22,8,18,.9);--veilTop:rgba(22,8,18,0);--veilBottom:rgba(16,6,14,.94);--embA:#4A1030;--embB:#160610}
-/* Nórdica: o mockup não trouxe — derivei em AZUL-GELO e o dono APROVOU (§277-ajustes): distinta da Grega
-   pelo caminho certo (claro contra profundo). Valores REGISTRADOS aqui, com os outros quatro — não re-derivar. */
 .dcard--nórdica{--tag:#BFE3F2;--frame:rgba(150,205,230,.7);--glow:rgba(90,165,205,.2);--bodyA:rgba(10,20,32,.92);--bodyB:rgba(6,12,20,.96);--artFade:rgba(8,18,30,.9);--veilTop:rgba(8,18,30,0);--veilBottom:rgba(6,13,22,.94);--embA:#1C3A4E;--embB:#08161E}
-/* progresso (§275) — mantém as classes que os guardas leem */
-.domcard__prog{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
-  border-radius:11px;padding:2px 9px;border:1px solid #2c2648;color:var(--ink-dim);background:rgba(6,8,16,.45)}
+/* progresso (§275) — classes que os guardas leem */
+.domcard__prog{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;border-radius:10px;padding:2px 9px;border:1px solid #2c2648;color:var(--ink-dim);background:rgba(6,8,16,.45);white-space:nowrap}
 .domcard__prog i{font-style:normal}
 .domcard__prog--ativo{color:var(--gold-text);border-color:rgba(216,178,90,.6);background:rgba(216,178,90,.14)}
 .domcard__prog--rec{color:var(--e-Verdejante);border-color:rgba(88,214,141,.4)}
 .domcard__prog--novo{color:var(--ink-mute)}
 .domcard__sup{font-style:normal;color:var(--gold-text);font-weight:800}
-/* §277 — RODAPÉ: dois painéis chanfrados. ESQ = seu melhor desempenho + VER HISTÓRICO. DIR = A MARCA A
-   BATER (recorde da semana passada + melhor de sempre). SEM recompensa/baú/top-10/placar comparativo. */
-.dsel__rodape{position:relative;z-index:2;flex:0 0 56px;height:56px;display:flex;gap:12px;margin:0 20px}
-.dsel__pain{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:14px;padding:0 18px;
+/* RODAPÉ: dois painéis "a marca a bater" (48px) */
+.dsel__rodape{position:relative;z-index:2;flex:0 0 48px;height:48px;display:flex;gap:8px;margin:0 10px 8px}
+.dsel__pain{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:10px;padding:0 14px;
   background:linear-gradient(180deg,rgba(12,18,38,.88),rgba(7,11,24,.88));box-shadow:inset 0 0 0 1px rgba(212,175,55,.42);
-  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
 .dsel__pain--dir{justify-content:flex-end;text-align:right}
-.dsel__pain-bloco{display:flex;flex-direction:column;gap:2px;min-width:0}
-.dsel__pain-rot{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.dsel__pain-bloco{display:flex;flex-direction:column;gap:1px;min-width:0}
+.dsel__pain-rot{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dsel__pain-val{font-size:12px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dsel__pain-val b{color:var(--gold-text);font-family:'Cinzel',serif;font-weight:700}
 .dsel__pain-val i{font-style:normal;color:var(--ink-mute)}
 .dsel__pain-num{font-size:13px}
-.dsel__pain--vazia .dsel__pain-val{color:var(--ink-mute);white-space:normal;line-height:1.25;font-size:11.5px}
-.dsel__pain-btn{flex:0 0 auto;margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.1em;
+.dsel__pain--vazia .dsel__pain-val{color:var(--ink-mute);white-space:normal;line-height:1.2;font-size:12px}
+.dsel__pain-btn{flex:0 0 auto;margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--gold-text);background:rgba(14,11,30,.6);border:1px solid var(--gold-soft);
-  border-radius:8px;padding:7px 11px;cursor:pointer}
+  border-radius:8px;padding:0 12px;min-height:40px;cursor:pointer}
 .dsel__pain-btn:hover{border-color:var(--gold-text)}
 /* §276 — overlay SEU HISTÓRICO */
 .dhist{max-width:560px;width:92%;max-height:88%;display:flex;flex-direction:column;text-align:left}
@@ -2230,6 +2190,7 @@ body.emdesafios #build, body.emdesafios #conta-botao{display:none!important}  /*
 body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §342: idem no MONTAR TIME do Domínio */
 body.emcolecao #build, body.emcolecao #conta-botao{display:none!important}  /* §346b: idem na Coleção (tela cheia; seguem na home/menu) */
 body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §348: idem no HUB do Domínio (tela cheia; seguem na home/menu) */
+body.emdominios #build, body.emdominios #conta-botao{display:none!important}  /* §365: idem na SELEÇÃO dos Domínios (canvas 780×360) */
 body.emprov #build, body.emprov #conta-botao{display:none!important}  /* §349: idem na tela PROVAÇÕES (tela cheia; seguem na home/menu) */
 body.emdeus #build, body.emdeus #conta-botao{display:none!important}  /* §350: idem na FICHA do deus */
 body.emniveis #build, body.emniveis #conta-botao{display:none!important}  /* §350: idem nos NÍVEIS */
@@ -2631,123 +2592,124 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 #provfix .mcat__f{font-size:12px;color:var(--ink-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #provfix .mcat__m{font-size:12px;font-style:italic;color:var(--ink-dim);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
 
-/* ======================= §348 — HUB DO DOMÍNIO (tela fixa 1846×852 escalada) ======================= */
+/* ======================= §365 — HUB DO DOMÍNIO no canvas 780×360 (px design = px real, §357) ======================= */
 .stage.dh2{border:0;border-radius:0;box-shadow:none;background:#03050B}
 #baselayer.dh2{position:absolute;inset:0;background:#03050B;overflow:hidden}
-#domhub{position:absolute;left:50%;top:50%;width:1846px;height:852px;transform-origin:center;overflow:hidden;
+#domhub{position:absolute;left:50%;top:50%;width:780px;height:360px;transform-origin:center;overflow:hidden;
   background:radial-gradient(130% 90% at 50% 0%,#0e1424 0%,#070a14 60%,#05070e 100%);color:#E8ECF4;
   font-family:'Rajdhani',system-ui,sans-serif;font-weight:600}
 #domhub .cin{font-family:'Cinzel',serif}
-/* arte do Domínio esmaecida no topo direito, atrás do cabeçalho */
-.dh-arte{position:absolute;top:0;right:0;width:1120px;height:300px;overflow:hidden;pointer-events:none;z-index:0}
+.dh-arte{position:absolute;top:0;right:0;width:470px;height:128px;overflow:hidden;pointer-events:none;z-index:0}
 .dh-arte__img{width:100%;height:100%;object-fit:cover;object-position:center 26%;opacity:.5}
-.dh-arte__veu{position:absolute;inset:0;background:linear-gradient(90deg,#0b0f1c 0%,rgba(11,15,28,.35) 42%,rgba(11,15,28,.08) 100%),linear-gradient(180deg,rgba(11,15,28,0) 40%,#0b0f1c 100%)}
-/* botões — alvo de toque mínimo 72px (§339b) */
-.dhb{border:0;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.03em;color:#E8ECF4;display:inline-flex;align-items:center;justify-content:center;line-height:1.1}
-.dhb--go{height:74px;min-width:360px;padding:0 48px;font-size:26px;letter-spacing:.06em;color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6),0 3px 12px rgba(0,0,0,.5)}
-/* cabeçalho */
-.dh-cab{position:absolute;left:32px;right:32px;top:18px;height:82px;z-index:2}
-.dhb--voltar{position:absolute;left:25px;top:4px;height:72px;padding:0 26px;font-size:22px;letter-spacing:.06em;background:rgba(10,13,22,.72);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);color:#C9CED8}
-.dh-tit{position:absolute;left:258px;top:0;display:flex;flex-direction:column;gap:5px}
-.dh-titulo{font-size:46px;font-weight:900;letter-spacing:.04em;color:#F0D79A;margin:0;line-height:1;text-shadow:0 2px 10px rgba(0,0,0,.6)}
-.dh-sub{font-size:21px;letter-spacing:.14em;color:#9AA4B8;text-transform:uppercase}
-.dh-ajuda{position:absolute;right:0;top:4px;width:72px;height:72px;border-radius:14px;font-size:30px;font-weight:700;color:#F0D79A;background:rgba(14,18,32,.9);box-shadow:inset 0 0 0 1px rgba(201,164,76,.6)}
-/* trilha de progresso */
-.dh-trilha{position:absolute;left:54px;right:54px;top:132px;height:118px;z-index:1}  /* §348b: trilha mais baixa p/ as colunas descerem */
-.dh-rail{position:relative;height:36px;margin:12px 16px 0}  /* §348c: dots/números mais acima → sobra uma linha p/ a legenda */
-.dh-rail__linha{position:absolute;left:0;right:0;top:18px;transform:translateY(-50%);height:4px;border-radius:2px;background:#2a3350}
-.dh-rail__on{position:absolute;left:0;top:18px;transform:translateY(-50%);height:4px;border-radius:2px;background:linear-gradient(90deg,#C9962F,#F0D79A);box-shadow:0 0 8px rgba(240,180,60,.5)}
-.dh-no{position:absolute;top:18px;width:0;height:0}
-.dh-no__p{position:absolute;top:0;left:0;transform:translate(-50%,-50%);width:17px;height:17px;border-radius:50%;background:#28324e;box-shadow:inset 0 0 0 2px #1a2238}
-.dh-no.is-done .dh-no__p{background:linear-gradient(180deg,#F4D98A,#C9962F);box-shadow:0 0 6px rgba(240,180,60,.45)}
-.dh-no.is-cur .dh-no__p{width:30px;height:30px;background:radial-gradient(circle,#fff7da,#F0D79A);box-shadow:0 0 18px rgba(255,220,120,.9),0 0 0 3px rgba(255,240,200,.45)}
-.dh-no--chefe .dh-no__p{width:22px;height:22px}
-.dh-no__coroa{position:absolute;top:0;left:0;transform:translate(-50%,-190%);font-size:23px;color:#E9C25A;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.6)}
-.dh-no__n{position:absolute;top:0;left:0;transform:translate(-50%,90%);font-size:20px;font-weight:700;color:#8893a8;white-space:nowrap}
+.dh-arte__veu{position:absolute;inset:0;background:linear-gradient(90deg,#0b0f1c 0%,rgba(11,15,28,.35) 42%,rgba(11,15,28,.08) 100%),linear-gradient(180deg,rgba(11,15,28,0) 46%,#0b0f1c 100%)}
+.dhb{border:0;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.03em;color:#E8ECF4;display:inline-flex;align-items:center;justify-content:center;line-height:1.1}
+.dhb--go{flex:none;height:40px;min-width:150px;padding:0 16px;font-size:14px;letter-spacing:.05em;color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6),0 2px 8px rgba(0,0,0,.5)}
+/* cabeçalho (40px) */
+.dh-cab{position:absolute;left:8px;right:8px;top:6px;height:40px;z-index:2}
+.dhb--voltar{position:absolute;left:0;top:0;height:40px;padding:0 12px;font-size:12px;letter-spacing:.05em;background:rgba(10,13,22,.72);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);color:#C9CED8}
+.dh-tit{position:absolute;left:112px;top:1px;right:52px;display:flex;flex-direction:column;gap:1px}
+.dh-titulo{font-size:18px;font-weight:900;letter-spacing:.03em;color:#F0D79A;margin:0;line-height:1.08;text-shadow:0 2px 10px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dh-sub{font-size:12px;letter-spacing:.1em;color:#9AA4B8;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dh-ajuda{position:absolute;right:0;top:0;width:40px;height:40px;border-radius:8px;font-size:18px;font-weight:700;color:#F0D79A;background:rgba(14,18,32,.9);box-shadow:inset 0 0 0 1px rgba(201,164,76,.6)}
+/* trilha de progresso (50px: trilho + números + legenda na própria linha) */
+.dh-trilha{position:absolute;left:24px;right:24px;top:52px;height:48px;z-index:1}
+.dh-rail{position:relative;height:16px;margin:4px 12px 0}
+.dh-rail__linha{position:absolute;left:0;right:0;top:8px;transform:translateY(-50%);height:3px;border-radius:2px;background:#2a3350}
+.dh-rail__on{position:absolute;left:0;top:8px;transform:translateY(-50%);height:3px;border-radius:2px;background:linear-gradient(90deg,#C9962F,#F0D79A);box-shadow:0 0 6px rgba(240,180,60,.5)}
+.dh-no{position:absolute;top:8px;width:0;height:0}
+.dh-no__p{position:absolute;top:0;left:0;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#28324e;box-shadow:inset 0 0 0 2px #1a2238}
+.dh-no.is-done .dh-no__p{background:linear-gradient(180deg,#F4D98A,#C9962F);box-shadow:0 0 5px rgba(240,180,60,.45)}
+.dh-no.is-cur .dh-no__p{width:14px;height:14px;background:radial-gradient(circle,#fff7da,#F0D79A);box-shadow:0 0 10px rgba(255,220,120,.9),0 0 0 2px rgba(255,240,200,.45)}
+.dh-no--chefe .dh-no__p{width:11px;height:11px}
+.dh-no__coroa{position:absolute;top:0;left:0;transform:translate(-50%,-110%);font-size:12px;color:#E9C25A;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.dh-no__n{position:absolute;top:0;left:0;transform:translate(-50%,60%);font-size:12px;font-weight:700;color:#9FA9BE;white-space:nowrap}
 .dh-no.is-done .dh-no__n{color:#C9A44C}
 .dh-no.is-cur .dh-no__n{color:#F0D79A}
-.dh-trilha__cap{position:absolute;left:0;right:0;top:88px;text-align:center;font-size:21px;color:#C9CED8}  /* §348c: legenda numa LINHA PRÓPRIA abaixo dos números, sem encostar */
-/* colunas */
-.dh-col{position:absolute;top:264px;bottom:22px}  /* §348b: termina em y≤830, com tudo dentro */
-.dh-col--time{left:54px;width:592px;display:flex;flex-direction:column;padding:22px 24px;border-radius:14px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
-.dh-col--meio{left:660px;width:580px;display:flex}
-.dh-col--dir{left:1254px;width:538px;display:flex;flex-direction:column;gap:18px}
+.dh-trilha__cap{position:absolute;left:0;right:0;top:40px;text-align:center;font-size:12px;color:#C9CED8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* colunas (3) */
+.dh-col{position:absolute;top:108px;bottom:8px}
+.dh-col--time{left:8px;width:250px;display:flex;flex-direction:column;padding:8px 9px;border-radius:9px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+.dh-col--meio{left:266px;width:248px;display:flex}
+.dh-col--dir{left:522px;width:250px;display:flex;flex-direction:column;gap:7px}
 /* esquerda — SEU TIME */
-.dh-col__cab{display:flex;align-items:center;margin-bottom:16px}
-.dh-col__t{font-size:26px;letter-spacing:.12em;color:#F0D79A;margin:0}
-.dh-lock{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:20px;color:#9AA4B8}
+.dh-col__cab{display:flex;align-items:center;margin-bottom:6px;gap:6px}
+.dh-col__t{font-size:15px;letter-spacing:.08em;color:#F0D79A;margin:0}
+.dh-lock{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:12px;color:#9AA4B8;white-space:nowrap}
 .dh-lock i{font-style:normal}
-.dh-uns{display:flex;flex-direction:column;gap:14px}
-.dh-un{display:flex;align-items:center;gap:16px;padding:12px 14px;border-radius:10px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
-.dh-un__p{width:78px;height:78px;flex:none;border-radius:8px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.dh-uns{display:flex;flex-direction:column;gap:5px}
+.dh-un{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:7px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+.dh-un__p{width:40px;height:40px;flex:none;border-radius:6px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
 .dh-un__p .slot{width:100%;height:100%}
-.dh-un__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
-.dh-un__n{font-family:'Cinzel',serif;font-size:24px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dh-un__meta{display:flex;align-items:center;gap:8px;font-size:20px;color:#C9CED8}
+.dh-un__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.dh-un__n{font-family:'Cinzel',serif;font-size:13px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dh-un__meta{display:flex;align-items:center;gap:5px;font-size:12px;color:#C9CED8}
 .dh-un__meta .orbe{flex:none}
-.dh-un__hp{margin-left:auto;font-size:23px;font-weight:700;color:#E8ECF4;white-space:nowrap}
-.dh-un__hp span{color:#8893a8;font-weight:600;font-size:18px}
-.dh-un__hp--caido{color:#E0545B;letter-spacing:.08em}
-.dh-un__bar{position:relative;height:14px;border-radius:7px;background:#1a1f30;overflow:hidden}
-.dh-un__bar i{display:block;height:100%;border-radius:7px}
+.dh-un__f{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dh-un__hp{margin-left:auto;font-size:12px;font-weight:700;color:#E8ECF4;white-space:nowrap;flex:none}
+.dh-un__hp span{color:#8893a8;font-weight:600;font-size:12px}
+.dh-un__hp--caido{color:#E0545B;letter-spacing:.06em}
+.dh-un__bar{position:relative;height:7px;border-radius:4px;background:#1a1f30;overflow:hidden}
+.dh-un__bar i{display:block;height:100%;border-radius:4px}
 .dh-un--caido{opacity:.72}
 .dh-un--caido .dh-un__p{filter:grayscale(1) brightness(.6)}
-.dh-un__p--vazia{display:grid;place-items:center;font-size:46px;color:#5a6278;background:rgba(16,20,34,.6);box-shadow:inset 0 0 0 2px rgba(120,130,160,.35)}
-.dh-un__hint{font-size:20px;color:#8893a8}
+.dh-un--vazia{align-items:center}
+.dh-un__p--vazia{display:grid;place-items:center;font-size:22px;color:#5a6278;background:rgba(16,20,34,.6);box-shadow:inset 0 0 0 2px rgba(120,130,160,.35)}
+.dh-un__hint{font-size:12px;color:#8893a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* esquerda — bônus de dano */
-.dh-bon{margin-top:auto;padding-top:14px}
-.dh-bon__top{display:flex;align-items:center;justify-content:space-between;font-size:21px;color:#C9CED8;margin-bottom:14px}
-.dh-bon__top b{font-size:25px;color:#F0D79A}
-.dh-bon__rail{position:relative;height:6px;border-radius:3px;background:#1a1f30;margin:0 12px 22px}
+.dh-bon{margin-top:auto;padding-top:4px}
+.dh-bon__top{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#C9CED8;margin-bottom:4px}
+.dh-bon__top b{font-size:13px;color:#F0D79A}
+.dh-bon__rail{position:relative;height:5px;border-radius:3px;background:#1a1f30;margin:0 8px 10px}
 .dh-bon__fill{position:absolute;left:0;top:0;height:100%;border-radius:3px;background:linear-gradient(90deg,#C9962F,#F0D79A)}
-.dh-bon__knob{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#F4D98A;box-shadow:0 0 8px rgba(240,180,60,.7);transform:translate(-50%,-50%)}
+.dh-bon__knob{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:#F4D98A;box-shadow:0 0 6px rgba(240,180,60,.7);transform:translate(-50%,-50%)}
 .dh-bon__mk{position:absolute;top:50%;transform:translateX(-50%)}
-.dh-bon__mk i{position:absolute;top:0;left:0;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#2a3350}
-.dh-bon__mk em{position:absolute;top:13px;left:0;transform:translateX(-50%);font-style:normal;font-size:18px;color:#8893a8;white-space:nowrap}
+.dh-bon__mk i{position:absolute;top:0;left:0;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:#2a3350}
+.dh-bon__mk em{position:absolute;top:7px;left:0;transform:translateX(-50%);font-style:normal;font-size:12px;color:#8893a8;white-space:nowrap}
 /* meio */
-.dh-meio{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:14px}
-.dh-meio--premio{border-radius:14px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);background:rgba(16,13,26,.5)}
-.dh-meio__t{font-size:34px;letter-spacing:.05em;color:#F0D79A;margin:0}
-.dh-foes{display:flex;gap:22px;justify-content:center}
-.dh-foe{width:132px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.dh-foe__p{position:relative;width:132px;height:132px;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px rgba(201,164,76,.5)}
+.dh-meio{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:4px}
+.dh-meio--premio{border-radius:10px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);background:rgba(16,13,26,.5);justify-content:flex-start;padding:6px;gap:5px}
+.dh-meio__t{font-size:16px;letter-spacing:.04em;color:#F0D79A;margin:0}
+.dh-foes{display:flex;gap:10px;justify-content:center}
+.dh-foe{width:66px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.dh-foe__p{position:relative;width:60px;height:60px;border-radius:8px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px rgba(201,164,76,.5)}
 .dh-foe__p .slot{width:100%;height:100%}
-.dh-foe--chefe .dh-foe__p{box-shadow:inset 0 0 0 3px #E0545B,0 0 16px rgba(224,84,91,.4)}
-.dh-foe__tag{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font-size:16px;font-weight:800;letter-spacing:.1em;color:#fff;background:rgba(179,22,30,.92);padding:3px 11px;border-radius:5px}
-.dh-foe__n{font-family:'Cinzel',serif;font-size:24px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:132px}
+.dh-foe--chefe .dh-foe__p{box-shadow:inset 0 0 0 2px #E0545B,0 0 10px rgba(224,84,91,.4)}
+.dh-foe__tag{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);font-size:11px;font-weight:800;letter-spacing:.06em;color:#fff;background:rgba(179,22,30,.92);padding:1px 6px;border-radius:4px}
+.dh-foe__n{font-family:'Cinzel',serif;font-size:12px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px}
 .dh-foe__meta{display:flex;align-items:center}
 .dh-meio__sep{width:72%;height:1px;background:rgba(201,164,76,.3)}
-.dh-meio__nota{font-size:21px;line-height:1.5;color:#9AA4B8;margin:0}
-.dh-meio__sub{font-size:22px;color:#C9CED8;margin:0}
-.dh-meio__msg{font-size:22px;line-height:1.55;color:#C9CED8;margin:0;max-width:470px}
+.dh-meio__nota{font-size:12px;line-height:1.35;color:#9AA4B8;margin:0}
+.dh-meio__sub{font-size:12px;color:#C9CED8;margin:0}
+.dh-meio__msg{font-size:12px;line-height:1.4;color:#C9CED8;margin:0;max-width:230px}
 .dh-meio__msg b{color:#F0D79A}
-.dh-crown{margin-bottom:-10px}
-.dh-crownsvg{width:160px;height:58px}
-.dh-selo{font-family:'Cinzel',serif;font-weight:700;font-size:30px;letter-spacing:.1em;padding:10px 26px;border-radius:10px}
+.dh-crown{margin-bottom:-6px}
+.dh-crownsvg{width:72px;height:24px}
+.dh-selo{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.08em;padding:5px 14px;border-radius:7px}
 .dh-selo--morto{color:#E0545B;box-shadow:inset 0 0 0 1px rgba(224,84,91,.5)}
 .dh-selo--venceu{color:#58D68D;box-shadow:inset 0 0 0 1px rgba(88,214,141,.5)}
-.dh-premios{display:flex;gap:18px;width:100%;justify-content:center}
-.dh-premio{flex:1;max-width:172px;min-height:214px;display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 14px;cursor:pointer;
-  border:0;border-radius:12px;background:rgba(16,20,34,.85);box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);color:#C9CED8;font-family:'Rajdhani',sans-serif;text-align:center}
-.dh-premio:hover{box-shadow:inset 0 0 0 2px #E9C25A,0 0 16px rgba(240,180,60,.2)}
-.dh-premio__ic{width:58px;height:58px}
-.dh-premio__ic svg{width:100%;height:100%}
-.dh-premio__t{font-family:'Cinzel',serif;font-weight:700;font-size:22px;color:#F0D79A;letter-spacing:.03em}
-.dh-premio__s{font-size:20px;line-height:1.4;color:#9AA4B8}
+.dh-premios{display:flex;flex-direction:column;gap:6px;width:100%;margin-top:0}
+.dh-premio{display:flex;align-items:center;gap:9px;width:100%;min-height:38px;padding:4px 9px;cursor:pointer;box-sizing:border-box;
+  border:0;border-radius:8px;background:rgba(16,20,34,.85);box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);color:#C9CED8;font-family:'Rajdhani',sans-serif;text-align:left}
+.dh-premio:hover{box-shadow:inset 0 0 0 2px #E9C25A,0 0 10px rgba(240,180,60,.2)}
+.dh-premio__ic{flex:none;width:34px;height:34px}
+.dh-premio__ic svg{width:100%;height:100%;display:block}
+.dh-premio__tx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.dh-premio__t{font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:#F0D79A;letter-spacing:.02em}
+.dh-premio__s{font-size:12px;line-height:1.2;color:#9AA4B8}
 /* direita — recordes + chefe final */
-.dh-box{padding:22px 24px;border-radius:14px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
-.dh-box__t{font-family:'Cinzel',serif;font-size:26px;letter-spacing:.12em;color:#F0D79A;margin:0 0 14px}
-.dh-rec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid rgba(201,164,76,.14)}
+.dh-box{padding:6px 9px;border-radius:9px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+.dh-box__t{font-family:'Cinzel',serif;font-size:15px;letter-spacing:.08em;color:#F0D79A;margin:0 0 4px}
+.dh-rec{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:3px 0;border-top:1px solid rgba(201,164,76,.14)}
 .dh-rec:first-of-type{border-top:0}
-.dh-rec__l{font-size:21px;color:#C9CED8}
-.dh-rec__v{font-family:'Cinzel',serif;font-size:30px;color:#F0D79A;white-space:nowrap}
-.dh-rec__v small{font-size:19px;color:#9AA4B8;font-family:'Rajdhani',sans-serif;font-weight:600}
+.dh-rec__l{font-size:12px;color:#C9CED8;min-width:0}
+.dh-rec__v{font-family:'Cinzel',serif;font-size:15px;color:#F0D79A;white-space:nowrap;flex:none}
+.dh-rec__v small{font-size:12px;color:#9AA4B8;font-family:'Rajdhani',sans-serif;font-weight:600}
 .dh-box--cf{flex:1;display:flex;flex-direction:column}
-.dh-cfs{display:flex;gap:14px;justify-content:space-between;margin-top:6px}
-.dh-cf{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px}
-.dh-cf__p{width:100%;height:106px;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px #E0545B}
+.dh-cfs{display:flex;gap:8px;justify-content:space-between;margin-top:3px}
+.dh-cf{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.dh-cf__p{width:100%;height:48px;border-radius:7px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px #E0545B}
 .dh-cf__p .slot{width:100%;height:100%}
-.dh-cf__n{font-family:'Cinzel',serif;font-size:20px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.dh-cf__n{font-family:'Cinzel',serif;font-size:12px;line-height:1.04;color:#F0D79A;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;text-align:center}
 .dh-cf__meta{display:flex}
 .stage.dm2{border:0;border-radius:0;box-shadow:none;background:#03050B}
 #baselayer.dm2{position:absolute;inset:0;background:#03050B;overflow:hidden}

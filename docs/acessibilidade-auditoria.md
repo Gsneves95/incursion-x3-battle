@@ -18,38 +18,41 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 |--:|------|--:|--:|--:|--:|:--:|------|
 | 1 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
 | 2 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
-| 3 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
-| 4 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
-| 5 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
-| 6 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
-| 7 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
-| 8 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
-| 9 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
-| 10 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
-| 11 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
-| 12 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
-| 13 | Campanha — ato de batalha (consequências + kit) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-batalha-780x360.png` |
-| 14 | Campanha — texto mais longo (Conselho, 819c, paginado) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-texto-longo-780x360.png` |
-| 15 | Campanha — ato de escolha (opções inteiras, pista 86c) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-escolha-780x360.png` |
-| 16 | Campanha — ato de história (sintético) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-historia-780x360.png` |
-| 17 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
-| 18 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
-| 19 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
-| 20 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
-| 21 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
-| 22 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
-| 23 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
-| 24 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
-| 25 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
-| 26 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
-| 27 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
-| 28 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
-| 29 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
-| 30 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
-| 31 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
-| 32 | Batalha — menu | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-menu-780x360.png` |
-| 33 | Batalha — confirmação de sair | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-sair-780x360.png` |
-| 34 | Batalha — confirmação de desistir | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-desistir-780x360.png` |
+| 3 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
+| 4 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
+| 5 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
+| 6 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
+| 7 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
+| 8 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
+| 9 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
+| 10 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
+| 11 | Campanha — ato de batalha (consequências + kit) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-batalha-780x360.png` |
+| 12 | Campanha — texto mais longo (Conselho, 819c, paginado) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-texto-longo-780x360.png` |
+| 13 | Campanha — ato de escolha (opções inteiras, pista 86c) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-escolha-780x360.png` |
+| 14 | Campanha — ato de história (sintético) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-historia-780x360.png` |
+| 15 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
+| 16 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
+| 17 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
+| 18 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
+| 19 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
+| 20 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
+| 21 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
+| 22 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
+| 23 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
+| 24 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
+| 25 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
+| 26 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 27 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
+| 28 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
+| 29 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
+| 30 | Domínios — seleção dos 5 | 0 (0) | 0 | 0 | 0 | **10** | `357-dominios-780x360.png` |
+| 31 | Domínios — ajuda "?" | 0 (0) | 0 | 0 | 0 | **10** | `357-dominios-ajuda-780x360.png` |
+| 32 | Domínio HUB — em andamento (1 caído) | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-andamento-780x360.png` |
+| 33 | Domínio HUB — chefe vencido (3 prêmios) | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-premio-780x360.png` |
+| 34 | Domínio HUB — nova corrida | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-nova-780x360.png` |
+| 35 | Batalha — menu | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-menu-780x360.png` |
+| 36 | Batalha — confirmação de sair | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-sair-780x360.png` |
+| 37 | Batalha — confirmação de desistir | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-desistir-780x360.png` |
 
 ## Detalhe por tela
 
@@ -122,60 +125,6 @@ Print: `docs/telas/357-guia-780x360.png`. Contagens: a=57, b=8, c=0, d=0. (texto
 - `#bvoltar` — **58.1×30.4** — "‹ VOLTAR"
 - `button.cmpb.cmpb--primary` — **51.6×30.4** — "JOGAR"
 - `button.cmpb.cmpb--quiet` — **86.3×30.4** — "JOGAR DE NOVO"
-
-### Domínios — seleção — nota 3.8
-
-Print: `docs/telas/357-dominios-780x360.png`. Contagens: a=64, b=4, c=0, d=4. (textos visíveis: 65; tocáveis: 9.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.dcard__frase` — **6.73px** ⚠<11 — "A revolta, a lança e a mão que remendou "
-- `i` — **6.73px** ⚠<11 — "Wukong"
-- `i` — **6.73px** ⚠<11 — "Nezha"
-- `i` — **6.73px** ⚠<11 — "Nüwa"
-- `span.dcard__frase` — **6.73px** ⚠<11 — "A barca, a magia e o rei que volta."
-- `i` — **6.73px** ⚠<11 — "Rá"
-- `i` — **6.73px** ⚠<11 — "Ísis"
-- `i` — **6.73px** ⚠<11 — "Osíris"
-- `span.dcard__frase` — **6.73px** ⚠<11 — "O raio, o tridente e a lança que pensa."
-- `i` — **6.73px** ⚠<11 — "Zeus"
-
-**b) 10 piores toques** (menor lado):
-
-- `#dajuda` — **21.9×21.9** — "?"
-- `#dhistver` — **102.3×25.2** — "Ver histórico"
-- `#binicio` — **28.6×28.6** — ""
-- `#dhist` — **115.4×37.9** — "Seu históricoseus recordes por"
-
-**d) cortes:**
-
-- [corte-ancestral] **importante** `i` — "Amaterasu"
-- [corte-ancestral] **importante** `i` — "Tsukuyomi"
-- [ellipsis] `i` — "Amaterasu"
-- [ellipsis] `i` — "Tsukuyomi"
-
-### Domínio — hub — nota 4.1
-
-Print: `docs/telas/357-dominio-hub-780x360.png`. Contagens: a=32, b=3, c=0, d=0. (textos visíveis: 41; tocáveis: 3.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `i.dh-no__n` — **8.45px** ⚠<11 — "1"
-- `i.dh-no__n` — **8.45px** ⚠<11 — "10"
-- `i.dh-no__n` — **8.45px** ⚠<11 — "20"
-- `i.dh-no__n` — **8.45px** ⚠<11 — "30"
-- `i.dh-no__n` — **8.45px** ⚠<11 — "40"
-- `span.dh-un__hint` — **8.45px** ⚠<11 — "Você monta o time ao começar"
-- `span.dh-un__hint` — **8.45px** ⚠<11 — "Você monta o time ao começar"
-- `span.dh-un__hint` — **8.45px** ⚠<11 — "Você monta o time ao começar"
-- `div.dh-cf__n` — **8.45px** ⚠<11 — "Zeus"
-- `div.dh-cf__n` — **8.45px** ⚠<11 — "Poseidon"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **59.6×30.4** — "‹ VOLTAR"
-- `#dajuda` — **30.4×30.4** — "?"
-- `#dentrar` — **175.5×31.3** — "MONTAR TIME E COMEÇAR ›"
 
 ### Invocação — tela — nota 4.3
 
@@ -285,7 +234,7 @@ _Sem achados._
 
 ### Campanha — texto mais longo (Conselho, 819c, paginado) — nota 10
 
-Print: `docs/telas/357-campanha-texto-longo-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 29; tocáveis: 11.)
+Print: `docs/telas/357-campanha-texto-longo-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 26; tocáveis: 9.)
 
 _Sem achados._
 
@@ -393,6 +342,36 @@ Print: `docs/telas/357-provacoes-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (t
 
 _Sem achados._
 
+### Domínios — seleção dos 5 — nota 10
+
+Print: `docs/telas/357-dominios-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 45; tocáveis: 9.)
+
+_Sem achados._
+
+### Domínios — ajuda "?" — nota 10
+
+Print: `docs/telas/357-dominios-ajuda-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 3; tocáveis: 1.)
+
+_Sem achados._
+
+### Domínio HUB — em andamento (1 caído) — nota 10
+
+Print: `docs/telas/357-dominio-hub-andamento-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 57; tocáveis: 3.)
+
+_Sem achados._
+
+### Domínio HUB — chefe vencido (3 prêmios) — nota 10
+
+Print: `docs/telas/357-dominio-hub-premio-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 55; tocáveis: 5.)
+
+_Sem achados._
+
+### Domínio HUB — nova corrida — nota 10
+
+Print: `docs/telas/357-dominio-hub-nova-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 41; tocáveis: 3.)
+
+_Sem achados._
+
 ### Batalha — menu — nota 10
 
 Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 11; tocáveis: 9.)
@@ -438,8 +417,11 @@ _Sem achados._
 - `docs/telas/357-desafios-780x360.png` — Desafios (hub)
 - `docs/telas/357-composicao-780x360.png` — Composição (desafios)
 - `docs/telas/357-provacoes-780x360.png` — Provações
-- `docs/telas/357-dominios-780x360.png` — Domínios — seleção
-- `docs/telas/357-dominio-hub-780x360.png` — Domínio — hub
+- `docs/telas/357-dominios-780x360.png` — Domínios — seleção dos 5
+- `docs/telas/357-dominios-ajuda-780x360.png` — Domínios — ajuda "?"
+- `docs/telas/357-dominio-hub-andamento-780x360.png` — Domínio HUB — em andamento (1 caído)
+- `docs/telas/357-dominio-hub-premio-780x360.png` — Domínio HUB — chefe vencido (3 prêmios)
+- `docs/telas/357-dominio-hub-nova-780x360.png` — Domínio HUB — nova corrida
 - `docs/telas/357-invocacao-780x360.png` — Invocação — tela
 - `docs/telas/357-invocacao-reveal-780x360.png` — Invocação — revelação
 - `docs/telas/357-guia-780x360.png` — Guia (folha de componentes, dev)

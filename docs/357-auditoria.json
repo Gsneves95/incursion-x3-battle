@@ -262,8 +262,8 @@
    "b": [],
    "c": [],
    "d": [],
-   "textTotal": 29,
-   "tapTotal": 11
+   "textTotal": 26,
+   "tapTotal": 9
   },
   "nota": 10,
   "setupErr": null,
@@ -561,690 +561,85 @@
  },
  {
   "slug": "dominios",
-  "nome": "Domínios — seleção",
+  "nome": "Domínios — seleção dos 5",
   "file": "357-dominios-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "#dajuda",
-     "txt": "?",
-     "px": 11.78,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.dsel__sub",
-     "txt": "ESCOLHA UM DOMÍNIO · ENFRENTE BATALHAS ·",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsel__hist-t",
-     "txt": "Seu histórico",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsel__hist-s",
-     "txt": "seus recordes por Domínio",
-     "px": 8.41,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__cult",
-     "txt": "Chinesa",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "Domínio",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "dos Céus",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__frase",
-     "txt": "A revolta, a lança e a mão que remendou ",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.domcard__prog.domcard__prog--novo",
-     "txt": "Não iniciado",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Wukong",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Nezha",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Nüwa",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__entrar",
-     "txt": "ENTRAR",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "›",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__embmono",
-     "txt": "CE",
-     "px": 11.78,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.dcard__cult",
-     "txt": "Egípcia",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "Domínio",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "de Duat",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__frase",
-     "txt": "A barca, a magia e o rei que volta.",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.domcard__prog.domcard__prog--novo",
-     "txt": "Não iniciado",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Rá",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Ísis",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Osíris",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__entrar",
-     "txt": "ENTRAR",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "›",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__embmono",
-     "txt": "DU",
-     "px": 11.78,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.dcard__cult",
-     "txt": "Grega",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "Domínio",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "do Olimpo",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__frase",
-     "txt": "O raio, o tridente e a lança que pensa.",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.domcard__prog.domcard__prog--novo",
-     "txt": "Não iniciado",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Zeus",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Poseidon",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Atena",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__entrar",
-     "txt": "ENTRAR",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "›",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__embmono",
-     "txt": "OL",
-     "px": 11.78,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.dcard__cult",
-     "txt": "Japonesa",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "Domínio",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "de Takamagahara",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__frase",
-     "txt": "O sol, a tempestade e a lua.",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.domcard__prog.domcard__prog--novo",
-     "txt": "Não iniciado",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Amaterasu",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Susanoo",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Tsukuyomi",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__entrar",
-     "txt": "ENTRAR",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "›",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__embmono",
-     "txt": "TK",
-     "px": 11.78,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.dcard__cult",
-     "txt": "Nórdica",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "Domínio",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "de Asgard",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__frase",
-     "txt": "O corvo, o martelo e a mentira.",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.domcard__prog.domcard__prog--novo",
-     "txt": "Não iniciado",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Odin",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Thor",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "Loki",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__entrar",
-     "txt": "ENTRAR",
-     "px": 9.26,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "›",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dcard__embmono",
-     "txt": "AS",
-     "px": 11.78,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.dsel__pain-rot",
-     "txt": "Seu melhor desempenho",
-     "px": 7.98,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsel__pain-val",
-     "txt": "Ainda sem marca — escolha um Domínio e c",
-     "px": 9.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#dhistver",
-     "txt": "Ver histórico",
-     "px": 8.4,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsel__pain-rot",
-     "txt": "A marca a bater esta semana",
-     "px": 7.98,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsel__pain-val",
-     "txt": "A cada semana, uma escada nova para bate",
-     "px": 9.67,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#binicio",
-     "txt": "",
-     "w": 28.6,
-     "h": 28.6,
-     "min": 28.6
-    },
-    {
-     "sel": "#dajuda",
-     "txt": "?",
-     "w": 21.9,
-     "h": 21.9,
-     "min": 21.9
-    },
-    {
-     "sel": "#dhist",
-     "txt": "Seu históricoseus recordes por",
-     "w": 115.4,
-     "h": 37.9,
-     "min": 37.9
-    },
-    {
-     "sel": "#dhistver",
-     "txt": "Ver histórico",
-     "w": 102.3,
-     "h": 25.2,
-     "min": 25.2
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
-   "d": [
-    {
-     "tipo": "ellipsis",
-     "sel": "i",
-     "txt": "Amaterasu",
-     "importante": false
-    },
-    {
-     "tipo": "ellipsis",
-     "sel": "i",
-     "txt": "Tsukuyomi",
-     "importante": false
-    },
-    {
-     "tipo": "corte-ancestral",
-     "sel": "i",
-     "txt": "Amaterasu",
-     "importante": true,
-     "por": "div.dcard__poster"
-    },
-    {
-     "tipo": "corte-ancestral",
-     "sel": "i",
-     "txt": "Tsukuyomi",
-     "importante": true,
-     "por": "div.dcard__poster"
-    }
-   ],
-   "textTotal": 65,
+   "d": [],
+   "textTotal": 45,
    "tapTotal": 9
   },
-  "nota": 3.8,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
  },
  {
-  "slug": "dominio-hub",
-  "nome": "Domínio — hub",
-  "file": "357-dominio-hub-780x360.png",
+  "slug": "dominios-ajuda",
+  "nome": "Domínios — ajuda \"?\"",
+  "file": "357-dominios-ajuda-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ VOLTAR",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-sub",
-     "txt": "NOVA CORRIDA · SEMANA 43",
-     "px": 8.88,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__n",
-     "txt": "1",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__coroa",
-     "txt": "♛",
-     "px": 9.72,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__n",
-     "txt": "10",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__coroa",
-     "txt": "♛",
-     "px": 9.72,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__n",
-     "txt": "20",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__coroa",
-     "txt": "♛",
-     "px": 9.72,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__n",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__coroa",
-     "txt": "♛",
-     "px": 9.72,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.dh-no__n",
-     "txt": "40",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-trilha__cap",
-     "txt": "Nível 1 de 40 · próximo chefe no nível 1",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "h2.dh-col__t.cin",
-     "txt": "SEU TIME",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.dh-un__n",
-     "txt": "Vaga 1",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-un__hint",
-     "txt": "Você monta o time ao começar",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.dh-un__n",
-     "txt": "Vaga 2",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-un__hint",
-     "txt": "Você monta o time ao começar",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.dh-un__n",
-     "txt": "Vaga 3",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-un__hint",
-     "txt": "Você monta o time ao começar",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-foe__n",
-     "txt": "Atena",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-foe__n",
-     "txt": "Erínias",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-foe__n",
-     "txt": "Zeus",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.dh-meio__nota",
-     "txt": "A vida carrega entre os níveis. A cada c",
-     "px": 8.88,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#dentrar",
-     "txt": "MONTAR TIME E COMEÇAR ›",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "h2.dh-box__t.cin",
-     "txt": "SEUS RECORDES",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-rec__l",
-     "txt": "Recorde desta semana",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-rec__l",
-     "txt": "Marca a bater (semana anterior)",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dh-rec__l",
-     "txt": "Melhor de sempre",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "h2.dh-box__t.cin",
-     "txt": "CHEFE FINAL",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-cf__n",
-     "txt": "Zeus",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-cf__n",
-     "txt": "Poseidon",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dh-cf__n",
-     "txt": "Atena",
-     "px": 8.45,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ VOLTAR",
-     "w": 59.6,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "#dajuda",
-     "txt": "?",
-     "w": 30.4,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "#dentrar",
-     "txt": "MONTAR TIME E COMEÇAR ›",
-     "w": 175.5,
-     "h": 31.3,
-     "min": 31.3
-    }
-   ],
+   "a": [],
+   "b": [],
+   "c": [],
+   "d": [],
+   "textTotal": 3,
+   "tapTotal": 1
+  },
+  "nota": 10,
+  "setupErr": null,
+  "medErr": null,
+  "erros": []
+ },
+ {
+  "slug": "dominio-hub-andamento",
+  "nome": "Domínio HUB — em andamento (1 caído)",
+  "file": "357-dominio-hub-andamento-780x360.png",
+  "r": {
+   "a": [],
+   "b": [],
+   "c": [],
+   "d": [],
+   "textTotal": 57,
+   "tapTotal": 3
+  },
+  "nota": 10,
+  "setupErr": null,
+  "medErr": null,
+  "erros": []
+ },
+ {
+  "slug": "dominio-hub-premio",
+  "nome": "Domínio HUB — chefe vencido (3 prêmios)",
+  "file": "357-dominio-hub-premio-780x360.png",
+  "r": {
+   "a": [],
+   "b": [],
+   "c": [],
+   "d": [],
+   "textTotal": 55,
+   "tapTotal": 5
+  },
+  "nota": 10,
+  "setupErr": null,
+  "medErr": null,
+  "erros": []
+ },
+ {
+  "slug": "dominio-hub-nova",
+  "nome": "Domínio HUB — nova corrida",
+  "file": "357-dominio-hub-nova-780x360.png",
+  "r": {
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
    "textTotal": 41,
    "tapTotal": 3
   },
-  "nota": 4.1,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []

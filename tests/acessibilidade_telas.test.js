@@ -25,6 +25,22 @@ const BASE = `try{
 // §362: BOOT da batalha (uma Provação sandbox: 3 aliados × 3 inimigos, meu turno, 6 tipos de energia).
 const BTBOOT = `st=montarProvacao({aliados:['hades','babi','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null;menuAberto=false;ov=null;ir('batalha',{},{substituir:true});render();`;
 
+// §365: HUB do Domínio — semeia a corrida no estado pedido (reusa o padrão do dominio_hub.test).
+const DOMHUB = estado => `(function(){
+  var lads=dominioLadders(),lad=lads[0],c=String(lad.cultura).toLowerCase(),tot=domTotalNiveis(lad),sem=semanaInfo(lad);
+  perfil.dominios=perfil.dominios||{porDominio:{}}; perfil.dominios.porDominio=perfil.dominios.porDominio||{};
+  var prog=perfil.dominios.porDominio[c]={run:null,melhorSempre:24,semanas:{}}; prog.semanas[sem.chaveAnt]=18; prog.semanas[sem.chave]=12;
+  var team=['zeus','ogum','tyr'],vida=[{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false}];
+  function mk(o){return Object.assign({cultura:lad.cultura,time:team.slice(),semanaIdx:sem.idx,semana:sem.chave,marcaAnterior:18,nivel:12,vida:vida.map(function(v){return Object.assign({},v)}),bonus:0.2,reviveGasto:[],profundidade:11,status:'ativo',aguardandoPremio:false,id:'t'},o);}
+  var E=${JSON.stringify(estado)};
+  if(E==='andamento') prog.run=mk({});
+  else if(E==='premio') prog.run=mk({nivel:20,profundidade:20,aguardandoPremio:true});
+  else if(E==='nova') prog.run=null;
+  else if(E==='morto') prog.run=mk({status:'morto',nivel:12,profundidade:11});
+  else if(E==='completo') prog.run=mk({status:'completo',nivel:tot,profundidade:tot,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:50,vivo:true}]});
+  ir('dominio',{cultura:c},{substituir:true}); render();
+})();`;
+
 const ESTADOS = {
   'Coleção — sem filtro': `colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();`,
   'Coleção — com filtro': `colF={busca:'',cultura:'',classe:'',funcao:'Controlador',elem:'Aurora',status:'tem',raridade:'',ordem:'nome'};ir('colecao',{},{substituir:true});render();`,
@@ -64,6 +80,15 @@ const ESTADOS = {
   'Campanha — história (sintético)': `var caps=CAMPANHAS.capitulos;var a=caps[0].atos[0];a.__tipo0=a.tipo;a.tipo='historia';perfil.campanha={capitulo:0,fase:0,concluidas:[],escolhas:{}};campCapIdx=0;campAtoIdx=0;campVistaAto=null;ir('campanha',{},{substituir:true});render();`,
   'Campanha — ato travado': `perfil.campanha={capitulo:1,fase:0,concluidas:[],escolhas:{}};var caps=CAMPANHAS.capitulos;var c1=caps.findIndex(c=>c.numero===1);campCapIdx=c1;campAtoIdx=caps[c1].atos.findIndex(a=>a.id==='cap1-vi');campVistaAto=null;ir('campanha',{},{substituir:true});render();`,
   'Campanha — troca do emprestado aberta': `perfil.campanha={capitulo:1,fase:0,concluidas:[],escolhas:{}};var caps=CAMPANHAS.capitulos;caps.forEach(c=>c.atos.forEach(a=>{if(a.id!=='cap1-vi')perfil.campanha.concluidas.push(a.id);}));var c1=caps.findIndex(c=>c.numero===1);campCapIdx=c1;campAtoIdx=caps[c1].atos.findIndex(a=>a.id==='cap1-vi');campVistaAto=null;ir('campanha',{},{substituir:true});render();campPicker=0;render();`,
+  // §365: DOMÍNIOS no canvas 780×360 — a seleção dos 5, o "?" aberto, e o hub nos 5 estados (andamento c/ 1 caído,
+  // chefe vencido, nova corrida, encerrada, conquistado). Tudo sem rolar, nada cortado.
+  'Domínios — seleção dos 5': `ir('dominios',{},{substituir:true});render();`,
+  'Domínios — ajuda "?" aberta': `ir('dominios',{},{substituir:true});render();abrirAjudaDominios();`,
+  'Domínio HUB — em andamento (1 caído)': DOMHUB('andamento'),
+  'Domínio HUB — chefe vencido (3 prêmios)': DOMHUB('premio'),
+  'Domínio HUB — nova corrida': DOMHUB('nova'),
+  'Domínio HUB — corrida encerrada': DOMHUB('morto'),
+  'Domínio HUB — conquistado': DOMHUB('completo'),
   // §361: PROVAÇÕES — 5 estados no canvas 780×360 (ativa c/ máx de objetivos; prévia; confirmação; faixa espiada; offline).
   'Provações — ativa (4 objetivos)': `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:5000,faixa:{chave:'semideus',nome:'Semideus'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:'hades',progresso:{hades:{ativadaEm:0,obj:[{seq:1},{vol:5},{vol:3,seqA:4,seqB:2},{vol:2}]}},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();`,
   'Provações — prévia de uma disponível': `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:5000,faixa:{chave:'semideus',nome:'Semideus'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:'hades',progresso:{hades:{ativadaEm:0,obj:[{seq:1},{vol:5},{vol:3,seqA:4,seqB:2},{vol:2}]}},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();(function(){var c=document.querySelector('.pvc--disponivel[data-carta]');if(c){provPrevia=c.dataset.carta;render();}})();`,
@@ -191,6 +216,49 @@ for (const [nome, setup] of Object.entries(ESTADOS)) {
     ok(re.barra && re.panel <= 48, `§363 item3a: RECOLHIDO o painel vira barra fina (~44, veio ${re.panel})`);
     ok(re.ret >= 64, `§363 item3b: RECOLHIDO retrato ≥64px (${re.ret})`);
     ok(re.sk >= 76, `§363 item3b: RECOLHIDO habilidade ≥76px (${re.sk})`);
+  }
+
+  // §365 — PAGINAÇÃO do texto da campanha pelo ESPAÇO REAL: nenhum ato que cabe numa página é paginado; e numa
+  // página que não é a última, o texto ocupa ≥85% da área. (A medição é no DOM, 780×360.)
+  console.log('\n== §365 — paginação do texto da campanha (preenche a página, sem cortar frase no vácuo) ==');
+  {
+    const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+    const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+    await page.evaluate(b => { try { eval(b); } catch (e) {} }, BASE);
+    // (a) nenhum ato real é paginado à toa (todos cabem numa página hoje) e nenhuma página transborda
+    const real = await page.evaluate(() => {
+      const out = []; const caps = CAMPANHAS.capitulos;
+      for (let ci = 0; ci < caps.length; ci++) for (let ai = 0; ai < caps[ci].atos.length; ai++) {
+        perfil.campanha = { capitulo: 1, fase: 0, concluidas: [], escolhas: {} };
+        campCapIdx = ci; campAtoIdx = ai; campVistaAto = null; campEscolhaVista = null; campStoryPage = 0;
+        ir('campanha', {}, { substituir: true }); render();
+        const nav = document.querySelector('.camp__pag'); const n = nav ? +(nav.querySelector('.camp__pagn').textContent.split('/')[1]) : 1;
+        let over = false, worst = 100;
+        for (let p = 0; p < n; p++) { campStoryPage = p; render(); const t = document.querySelector('.camp__texto'); if (!t) continue;
+          if (t.scrollHeight > t.clientHeight + 1) over = true; if (p < n - 1) worst = Math.min(worst, Math.round(100 * t.scrollHeight / t.clientHeight)); }
+        out.push({ nome: caps[ci].atos[ai].nome, pags: n, over, worst });
+      }
+      return out;
+    });
+    const over = real.filter(r => r.over), subfill = real.filter(r => r.pags > 1 && r.worst < 85);
+    ok(over.length === 0, `§365a: nenhuma página de ato transborda (${over.map(r => r.nome).join(', ') || 'ok'})`);
+    ok(subfill.length === 0, `§365a: páginas não-últimas ocupam ≥85% (${subfill.map(r => r.nome + ' ' + r.worst + '%').join(', ') || 'ok'})`);
+    // (b) um TEXTO sintético bem longo DEVE paginar, e cada página não-última ocupa ≥85% (prova de que preenche)
+    const syn = await page.evaluate(() => {
+      const caps = CAMPANHAS.capitulos; const a = caps[0].atos[0]; const velho = a.texto;
+      a.texto = ('Os deuses caminharam sobre as ruínas do mundo partido, medindo o que restava e o que ainda podia ruir. ').repeat(12);
+      perfil.campanha = { capitulo: 0, fase: 0, concluidas: [], escolhas: {} };
+      campCapIdx = 0; campAtoIdx = 0; campVistaAto = null; campEscolhaVista = null; campStoryPage = 0;
+      ir('campanha', {}, { substituir: true }); render();
+      const nav = document.querySelector('.camp__pag'); const n = nav ? +(nav.querySelector('.camp__pagn').textContent.split('/')[1]) : 1;
+      let worst = 100, over = false;
+      for (let p = 0; p < n; p++) { campStoryPage = p; render(); const t = document.querySelector('.camp__texto'); if (t.scrollHeight > t.clientHeight + 1) over = true; if (p < n - 1) worst = Math.min(worst, Math.round(100 * t.scrollHeight / t.clientHeight)); }
+      a.texto = velho; return { n, worst, over };
+    });
+    ok(syn.n >= 2, `§365b: um texto longo sintético é dividido em páginas (${syn.n})`);
+    ok(!syn.over, `§365b: nenhuma página do texto longo transborda`);
+    ok(syn.worst >= 85, `§365b: cada página não-última do texto longo ocupa ≥85% da área (pior ${syn.worst}%)`);
+    await ctx.close();
   }
 
   await browser.close();

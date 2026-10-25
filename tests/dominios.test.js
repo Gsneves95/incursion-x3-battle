@@ -183,7 +183,7 @@ console.log('== 7) §210/§240: fim de nível tem saída; o "voltar" fecha para 
   ok(w.eval('rotaAtual()') === 'dominio' && w.eval('(paramsAtuais()||{}).cultura') === c0, '§240: o voltar fecha a escolha para o HUB do Domínio certo');
   ok(w.eval('dominio===null && dominioFim===null'), 'o latch de batalha foi limpo ao ir ao hub');
   ok(w.eval(`perfil.dominios.porDominio["${c0}"].run.aguardandoPremio`) === true, 'a corrida PERSISTE (aguardandoPremio) — o hub retoma a escolha, sem beco sem saída');
-  ok(!!d.querySelector('.dompremio[data-premio=cura]'), 'o hub mostra a escolha de prêmio retomável');
+  ok(!!d.querySelector('.dh-premio[data-premio=cura]'), 'o hub mostra a escolha de prêmio retomável');
   ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
 }
@@ -341,9 +341,9 @@ console.log('== 11) §277 RESKIN pôster: paleta distinta por cultura · emblema
   // Amaterasu/Tsukuyomi FICAM inteiros no dado (sem forma curta graciosa — cortam com reticência, §277-ajustes)
   ok(w.eval('Object.keys(DOMINIOS.japonesa.curtos||{}).length===0'), 'a trinca japonesa fica inteira (curtos vazio) — reticência, não nome errado');
   // §278 — PROPORÇÃO do pôster: cartão 134 de largura (0,435 = referência do dono), não 172
-  ok(/\.dcard\{[^}]*max-width:134px/.test(html), 'o cartão tem 134px de largura (proporção 0,435 da referência §278)');
-  // §278 — o VÉU é um ARCO (máscara SVG em abóbada), não um degradê linear reto
-  ok(/\.dcard__scrim\{[^}]*mask:url\(['"]?data:image\/svg\+xml/.test(html.replace(/\s+/g, ' ')), 'o véu é um ARCO (máscara SVG), não linha reta (§278)');
+  ok(/\.dcard\{[^}]*max-width:150px/.test(html), 'o cartão tem 150px de largura (§365: 5 pôsteres no canvas 780×360)');
+  // §365 — o VÉU do cartão é um degradê escuro por-cultura (o arco SVG do §278 saiu no canvas 780×360)
+  ok(/\.dcard__scrim\{[^}]*linear-gradient/.test(html.replace(/\s+/g, ' ')), 'o cartão tem véu escuro por-cultura (§365)');
   // §278 — retrato de canto ARREDONDADO com moldura fina (sem o chanfro diagonal do §277)
   ok(/\.dcard__deus \.slot\{[^}]*border-radius:[45]px/.test(html) && !/\.dcard__deus \.slot\{[^}]*clip-path/.test(html),
     'o retrato é quadrado de canto arredondado + moldura fina (não chanfro diagonal) — §278/§281');

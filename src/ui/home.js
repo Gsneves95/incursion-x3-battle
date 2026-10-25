@@ -2195,6 +2195,55 @@ function _paginarTexto(txt, budget){
   if (atual) pags.push(atual);
   return pags.length ? pags : [txt];
 }
+// §365 — paginação pelo ESPAÇO REAL (mede no DOM, em px de design): enche cada página até o limite da área do texto,
+// quebrando em fim de PALAVRA (de preferência de FRASE, quando ainda ocupar ≥85% da área). Se cabe inteiro, 1 página.
+// Mede numa réplica off-screen da coluna da legenda (o título e a nav afetam a altura útil). `artw` = largura da coluna da arte.
+let _campPagCache = {};
+function _paginarCampTexto(numLabel, nome, texto, artw){
+  texto = String(texto || '').replace(/\s+/g, ' ').trim();
+  if (!texto) return [''];
+  if (typeof document === 'undefined' || !document.body) return [texto];
+  const ck = artw + '|' + numLabel + '|' + nome + '|' + texto;
+  if (_campPagCache[ck]) return _campPagCache[ck];
+  const host = document.createElement('div');
+  host.setAttribute('style', 'position:absolute;left:-10000px;top:0;width:' + artw + 'px;height:256px;visibility:hidden;pointer-events:none;z-index:-1');
+  host.innerHTML = '<div style="position:relative;width:100%;height:256px">'
+    + '<div class="camp__legenda">'
+    + '<span class="camp__num">' + H(numLabel) + '</span>'
+    + '<h2 class="camp__nome">' + H(nome) + '</h2>'
+    + '<span class="camp__filete"></span>'
+    + '<p class="camp__texto"></p>'
+    + '<div class="camp__pag" data-mn style="display:none"><button class="camp__pagb">‹</button><span class="camp__pagn">1 / 9</span><button class="camp__pagb">›</button></div>'
+    + '</div></div>';
+  document.body.appendChild(host);
+  try {
+    const pEl = host.querySelector('.camp__texto'), nav = host.querySelector('[data-mn]');
+    pEl.textContent = texto;
+    const h0 = pEl.clientHeight;
+    if (h0 <= 0) return (_campPagCache[ck] = [texto]);              // sem layout (jsdom) → 1 página
+    if (pEl.scrollHeight <= h0 + 1) return (_campPagCache[ck] = [texto]);   // cabe inteiro, sem nav
+    nav.style.display = 'flex';                                     // vai paginar → reserva a nav (reduz a área útil)
+    const area = pEl.clientHeight;
+    if (area <= 0) return (_campPagCache[ck] = [texto]);
+    const pal = texto.split(' '), N = pal.length;
+    const cabe = (ini, fim) => { pEl.textContent = pal.slice(ini, fim).join(' '); return pEl.scrollHeight <= pEl.clientHeight + 1; };
+    const alt = (ini, fim) => { pEl.textContent = pal.slice(ini, fim).join(' '); return pEl.scrollHeight; };
+    const pags = []; let i = 0, guarda = 0;
+    while (i < N && guarda++ < N + 5){
+      let lo = 1, hi = N - i, best = 1;                             // busca binária: maior k tal que [i, i+k) cabe
+      while (lo <= hi){ const mid = (lo + hi) >> 1; if (cabe(i, i + mid)){ best = mid; lo = mid + 1; } else hi = mid - 1; }
+      let fim = i + best;
+      if (fim < N){                                                 // não é a última → prefere fim de frase se mantém ≥85%
+        let corte = -1;
+        for (let j = i + best; j > i; j--){ if (/[.!?…]["'”’)]?$/.test(pal[j - 1])){ corte = j; break; } }
+        if (corte > i && alt(i, corte) >= 0.85 * area) fim = corte;
+      }
+      pags.push(pal.slice(i, fim).join(' '));
+      i = fim;
+    }
+    return (_campPagCache[ck] = (pags.length ? pags : [texto]));
+  } finally { host.remove(); }
+}
 
 function CAMPS(){ return (typeof CAMPANHAS !== 'undefined' && CAMPANHAS && CAMPANHAS.capitulos) ? CAMPANHAS.capitulos : []; }
 function atoFeito(id){ return !!(perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas) && perfil.campanha.concluidas.includes(id)); }
@@ -2320,11 +2369,11 @@ function renderCampanha(){
   const arteInner = ato._arteOk
     ? `<img class="camp__arteimg" src="${arteFile}" alt="" loading="lazy" onerror="this.remove()">`
     : `<div class="camp__artefallback"><span class="camp__phorn">◈</span></div>`;
-  // §364: o TEXTO da história cabe na coluna sem rolar; se for longo demais (ex.: o ato de escolha "O Conselho Temporário",
-  // 819 chars, na coluna estreita), divide em PÁGINAS com "‹ i/n ›" (desejo do dono) — nada rola, nada corta.
-  // batalha: coluna da arte 344; escolha-texto: 500 (larga); história: 540. Orçamento ≈ chars/página na largura da coluna.
-  const _budget = ehBatalha ? 620 : (ehEscolha ? 540 : 560);
-  const _pags = _paginarTexto(ato.texto || '', _budget);
+  // §364/§365: o TEXTO da história cabe na coluna sem rolar; se for longo demais (ex.: "O Conselho Temporário", 819 chars),
+  // divide em PÁGINAS com "‹ i/n ›" — paginado pelo ESPAÇO REAL (mede no DOM), enchendo cada página ao limite da área
+  // (quebra em fim de palavra/frase). batalha: coluna da arte 320; escolha-texto: 460; história: 540.
+  const _artw = ehBatalha ? 320 : (ehEscolha ? 460 : 540);
+  const _pags = escOp ? [''] : _paginarCampTexto(numAtoLabel, ato.nome, ato.texto || '', _artw);
   if (campStoryPage >= _pags.length) campStoryPage = 0;
   const _nav = _pags.length > 1 ? `<div class="camp__pag">
       <button class="camp__pagb" id="camppagprev" ${campStoryPage === 0 ? 'disabled' : ''} aria-label="Página anterior">‹</button>
@@ -3219,21 +3268,21 @@ function renderDominios(){
   const lads = dominioLadders();
   const cards = lads.map(dominioPosterHTML).join('');
   const temFundo = temArteDom('dominios-fundo');
-  stage.innerHTML = `<div id="baselayer" class="dsel">
-    <div class="stage__bg"></div>
+  stage.innerHTML = `<div id="baselayer" class="domsel2"><div id="domselfix"><div class="dsel">
     ${temFundo ? '<img class="dsel__fundo" src="banners/dominios/dominios-fundo.webp" alt="">' : ''}
     <div class="dsel__scrim"></div>
     <header class="dsel__cab">
       <button class="dsel__voltar" id="binicio" aria-label="Voltar"><i class="dsel__seta"></i></button>
       <div class="dsel__tit">
-        <div class="dsel__titlinha"><h1 class="dsel__titulo">Domínios</h1><button class="dsel__ajuda" id="dajuda" aria-label="Como funciona">?</button></div>
-        <span class="dsel__sub">ESCOLHA UM DOMÍNIO · ENFRENTE BATALHAS · ALCANCE O TOPO</span>
+        <h1 class="dsel__titulo">Domínios</h1>
+        <span class="dsel__sub">ESCOLHA · ENFRENTE · ALCANCE O TOPO</span>
       </div>
+      <button class="dsel__ajuda" id="dajuda" aria-label="Como funciona">?</button>
       <button class="dsel__hist" id="dhist"><span class="dsel__hist-t">Seu histórico</span><span class="dsel__hist-s">seus recordes por Domínio</span></button>
     </header>
     <div class="dsel__cards">${cards || '<p class="domsec__msg">Nenhum Domínio carregado.</p>'}</div>
     ${dominioMarcaBaterHTML()}
-  </div>`;
+  </div></div></div>`;
   const q = s => stage.querySelector(s);
   const b = q('#binicio'); if (b) b.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   const h = q('#dhist'); if (h) h.onclick = () => abrirHistoricoDominios();
@@ -3342,7 +3391,7 @@ function _domHubUnHTML(k, vida){
     <div class="dh-un__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 32, false)}</div>
     <div class="dh-un__id">
       <b class="dh-un__n">${H(g.nome)}</b>
-      <div class="dh-un__meta">${orbe(g.elem, 22)}<span class="dh-un__f">${H(g.funcao || '')}</span>
+      <div class="dh-un__meta">${orbe(g.elem, 14)}<span class="dh-un__f">${H(g.funcao || '')}</span>
         ${vivo ? `<span class="dh-un__hp">${hp}<span>/${max}</span></span>` : `<span class="dh-un__hp dh-un__hp--caido">CAÍDO</span>`}</div>
       <div class="dh-un__bar"><i style="width:${Math.round(frac * 100)}%;background:${cor}"></i></div>
     </div>
@@ -3357,7 +3406,7 @@ function _domHubTrilhaHTML(total, cleared, atual){
     const left = total > 1 ? ((n - 1) / (total - 1) * 100) : 50;
     const mostraNum = (n === 1 || chefe || cur);
     const cls = `dh-no${done ? ' is-done' : ''}${cur ? ' is-cur' : ''}${chefe ? ' dh-no--chefe' : ''}`;
-    nos.push(`<span class="${cls}" style="left:${left.toFixed(3)}%" data-no="${n}">${chefe ? '<i class="dh-no__coroa">♛</i>' : ''}<i class="dh-no__p"></i>${mostraNum ? `<i class="dh-no__n">${n}</i>` : ''}</span>`);
+    nos.push(`<span class="${cls}" style="left:${left.toFixed(3)}%" data-no="${n}"><i class="dh-no__p"></i>${mostraNum ? `<i class="dh-no__n">${n}</i>` : ''}${chefe ? '<i class="dh-no__coroa">♛</i>' : ''}</span>`);
   }
   const goldTo = atual > 0 ? atual : cleared;
   const goldFrac = total > 1 ? Math.max(0, (goldTo - 1) / (total - 1) * 100) : 0;
@@ -3391,7 +3440,7 @@ function _domPremioIcon(tipo){
   return `<svg viewBox="0 0 56 56" aria-hidden="true"><g fill="none" stroke="#E0545B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M28 10l6 9-6 4-6-4z" fill="#E0545B"/><path d="M28 23v21 M22 39h12"/></g><g fill="none" stroke="#E9C25A" stroke-width="3" stroke-linecap="round"><path d="M42 24v-8 M38 20l4-4 4 4"/></g></svg>`;
 }
 function _domHubPremioCard(tipo, titulo, sub){
-  return `<button class="dompremio dh-premio" data-premio="${tipo}"><span class="dh-premio__ic">${_domPremioIcon(tipo)}</span><span class="dh-premio__t">${H(titulo)}</span><span class="dh-premio__s">${H(sub)}</span></button>`;
+  return `<button class="dh-premio" data-premio="${tipo}"><span class="dh-premio__ic">${_domPremioIcon(tipo)}</span><span class="dh-premio__tx"><span class="dh-premio__t">${H(titulo)}</span><span class="dh-premio__s">${H(sub)}</span></span></button>`;
 }
 function _domCoroaSVG(){ return `<svg viewBox="0 0 170 60" class="dh-crownsvg" aria-hidden="true"><g fill="none" stroke="#C9A44C" stroke-width="2.5" stroke-linecap="round"><path d="M40 50c-16-3-27-13-31-27 M130 50c16-3 27-13 31-27"/></g><g fill="#E9C25A"><path d="M55 44l-9-24 18 13 21-21 21 21 18-13-9 24z"/><circle cx="46" cy="18" r="4"/><circle cx="85" cy="9" r="5"/><circle cx="124" cy="18" r="4"/></g></svg>`; }
 
@@ -3471,7 +3520,6 @@ function renderDominioHub(){
     if (opc.includes('bonus')) cards.push(_domHubPremioCard('bonus', 'BÔNUS DE DANO', `+${Math.round(DOM_PASSO_BONUS * 100)}% de dano (agora +${bonusPct}%, teto +${tetoPct}%).`));
     meio = `<div class="dh-crown">${_domCoroaSVG()}</div>
       <h2 class="dh-meio__t cin">CHEFE VENCIDO — NÍVEL ${prof}</h2>
-      <p class="dh-meio__sub">Escolha uma recompensa para a corrida.</p>
       <div class="dh-premios">${cards.join('')}</div>`;
   } else if (estado === 'nova'){
     const foes = domInimigosNivel(lad, sem.idx, 1).map(k => _domHubFoeHTML(k, domEhChefe(1))).join('');
@@ -3496,7 +3544,7 @@ function renderDominioHub(){
     <div class="dh-rec"><span class="dh-rec__l">Marca a bater (semana anterior)</span><b class="dh-rec__v">${recVal(recAnt, '— 1ª semana')}</b></div>
     <div class="dh-rec"><span class="dh-rec__l">Melhor de sempre</span><b class="dh-rec__v">${recVal(melhor)}</b></div>`;
   const chefeFinalHTML = lad.trio.map(k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
-    return `<div class="dh-cf" data-chefe="${H(k)}"><div class="dh-cf__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 26, false)}</div><div class="dh-cf__n">${H(g.nome)}</div><div class="dh-cf__meta">${orbe(g.elem, 22)}</div></div>`; }).join('');
+    return `<div class="dh-cf" data-chefe="${H(k)}"><div class="dh-cf__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 26, false)}</div><div class="dh-cf__n">${H(g.nome)}</div></div>`; }).join('');
 
   stage.innerHTML = `<div id="baselayer" class="dh2"><div id="domhub" data-estado="${estado}">
     <div class="dh-arte">${arteHTML}<div class="dh-arte__veu"></div></div>
@@ -3525,7 +3573,7 @@ function renderDominioHub(){
   const en = q('#dentrar'); if (en) en.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const nv = q('#dnova'); if (nv) nv.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const de = q('#ddescer'); if (de) de.onclick = () => descerDominio(c);
-  [...stage.querySelectorAll('.dompremio')].forEach(btn => { btn.onclick = () => escolherPremioDominio(c, btn.getAttribute('data-premio')); });
+  [...stage.querySelectorAll('.dh-premio')].forEach(btn => { btn.onclick = () => escolherPremioDominio(c, btn.getAttribute('data-premio')); });
   fit();
 }
 

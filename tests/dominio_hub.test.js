@@ -85,16 +85,16 @@ console.log('== §348 — HUB DO DOMÍNIO: estados, botões, handlers ==');
   semear(w, 'premio');
   ok(!!d.querySelector('#domhub[data-estado="premio"]'), 'premio: data-estado="premio"');
   ok(/CHEFE VENCIDO — NÍVEL 20/.test(d.querySelector('.dh-meio__t').textContent), 'premio: "CHEFE VENCIDO — NÍVEL 20"');
-  ok(!!d.querySelector('.dompremio[data-premio="cura"]') && !!d.querySelector('.dompremio[data-premio="reviver"]') && !!d.querySelector('.dompremio[data-premio="bonus"]'), 'premio: os 3 cartões (cura/reviver/bônus) disponíveis');
+  ok(!!d.querySelector('.dh-premio[data-premio="cura"]') && !!d.querySelector('.dh-premio[data-premio="reviver"]') && !!d.querySelector('.dh-premio[data-premio="bonus"]'), 'premio: os 3 cartões (cura/reviver/bônus) disponíveis');
   // (3) REVIVER usa o DEUS DO TIME (run.time[caído]=tyr), não o trio inimigo (lad.trio)
-  const revTxt = d.querySelector('.dompremio[data-premio="reviver"]').textContent;
+  const revTxt = d.querySelector('.dh-premio[data-premio="reviver"]').textContent;
   const nomeTime = w.eval(`domNomeDeus('tyr')`), nomeTrio = w.eval(`domNomeDeus(DOMINIOS[Object.keys(DOMINIOS)[0]].trio[2])`);
   ok(revTxt.indexOf(nomeTime) >= 0, `premio: REVIVER mostra o deus do TIME caído ("${nomeTime}")`);
   ok(nomeTime === nomeTrio || revTxt.indexOf(nomeTrio) < 0, 'premio: REVIVER NÃO usa o nome do trio inimigo (lad.trio)');
   // a sublinha da trilha é a de prêmio
   ok(/Chefe vencido no nível 20 · escolha uma recompensa/.test(d.querySelector('.dh-trilha__cap').textContent), 'premio: a legenda da trilha pede a recompensa');
   // clicar BÔNUS → escolherPremioDominio (bonus sobe, aguardandoPremio sai)
-  d.querySelector('.dompremio[data-premio="bonus"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  d.querySelector('.dh-premio[data-premio="bonus"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval(`(function(){ var r=perfil.dominios.porDominio[Object.keys(DOMINIOS)[0]].run; return !r.aguardandoPremio && Math.round(r.bonus*100)===30; })()`), 'premio: tocar BÔNUS chama escolherPremioDominio (bônus 20%→30%, sai do portão)');
 }
 {
@@ -102,7 +102,7 @@ console.log('== §348 — HUB DO DOMÍNIO: estados, botões, handlers ==');
   const { w, d } = mkDom();
   // caído no slot 1 (brigid-like): time ['zeus','ogum','tyr'], 2º caído
   semear(w, 'premio', { vida: [{ hp: 50, vivo: true }, { hp: 0, vivo: false }, { hp: 40, vivo: true }] });
-  const revTxt = d.querySelector('.dompremio[data-premio="reviver"]').textContent;
+  const revTxt = d.querySelector('.dh-premio[data-premio="reviver"]').textContent;
   ok(revTxt.indexOf(w.eval(`domNomeDeus('ogum')`)) >= 0, 'premio: com o 2º do time caído, o REVIVER nomeia ESSE deus (ogum)');
 }
 {
@@ -171,7 +171,7 @@ function acharChromium(){
       // §348b: o defeito que o §348 NÃO pegou — media #domhub (que tem overflow:hidden e RECORTA os filhos que
       // transbordam) e nunca os FILHOS. Agora medimos o fundo (y de DESIGN) de cada caixa de coluna E dos filhos que
       // transbordavam (nomes do chefe final, régua do bônus, retratos), convertendo a coord de tela em design pela escala.
-      const esc = hb.height / 852;   // escala da tela fixa (1 a 1846×852; ~0.42 a 780×360)
+      const esc = hb.height / 360;   // §365: a tela fixa agora é 780×360 (esc=1 a 780×360; ~2.37 a 1846×852)
       const designBot = el => Math.round((el.getBoundingClientRect().bottom - hb.top) / esc);
       let botMax = 0, piorBot = '';
       hub.querySelectorAll('.dh-col--time,.dh-col--meio,.dh-col--dir,.dh-cf__n,.dh-cf__p,.dh-bon__mk em,.dh-bon__rail,.dh-foe__n,.dh-premio__s,.dh-un__bar').forEach(el => { const b = designBot(el); if (b > botMax) { botMax = b; piorBot = el.className.split(' ')[0] + ':' + el.textContent.trim().slice(0, 12); } });
@@ -197,7 +197,7 @@ function acharChromium(){
       ok(!m.overlap, `§348 @${W}×${H} [${est}]: as 3 colunas não se sobrepõem`);
       ok(m.clips.length === 0, `§348 @${W}×${H} [${est}]: nenhum texto corta (${m.clips.join(' | ') || 'ok'})`);
       // §348b: NENHUM filho (caixa de coluna, nomes do chefe final, régua do bônus) passa de y=830 de design.
-      ok(m.botMax <= 830, `§348b @${W}×${H} [${est}]: o conteúdo (colunas, chefe final, bônus) termina em y≤830 (pior: ${m.botMax} em ${m.piorBot})`);
+      ok(m.botMax <= 358, `§348b @${W}×${H} [${est}]: o conteúdo (colunas, chefe final, bônus) termina em y≤358 (pior: ${m.botMax} em ${m.piorBot})`);
       // §348c: os números da trilha no MESMO topo (tol 2px) e a legenda não intersecta nenhum número.
       ok(m.spanTopos <= 2, `§348c @${W}×${H} [${est}]: todos os números da trilha no mesmo topo (span ${m.spanTopos}px ≤ 2)`);
       ok(!m.capBateNum, `§348c @${W}×${H} [${est}]: a legenda não intersecta nenhum número da trilha`);

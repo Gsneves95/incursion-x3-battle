@@ -76,8 +76,12 @@ const SCREENS = [
  { slug:'provacoes', nome:'Provações', setup:`ir('provacoes',{},{substituir:true});render();` },
 
  // DOMÍNIOS
- { slug:'dominios', nome:'Domínios — seleção', setup:`ir('dominios',{},{substituir:true});render();` },
- { slug:'dominio-hub', nome:'Domínio — hub', setup:`['nezha','brigid','ogum','zeus','poseidon','atena','ares','hera','apolo'].forEach(k=>perfil.deuses[k]={copias:1,obtidoEm:Date.now()});perfil.dominios={porDominio:{}};try{var cult=(DOMINIOS&&DOMINIOS[0]&&DOMINIOS[0].cultura)||'grega';ir('dominio',{cultura:cult});render();}catch(e){ir('dominio',{});render();}` },
+ // §365: DOMÍNIOS no canvas 780×360 — seleção dos 5, "?" e o hub nos estados (andamento c/ 1 caído, chefe vencido).
+ { slug:'dominios', nome:'Domínios — seleção dos 5', setup:`ir('dominios',{},{substituir:true});render();` },
+ { slug:'dominios-ajuda', nome:'Domínios — ajuda "?"', setup:`ir('dominios',{},{substituir:true});render();abrirAjudaDominios();` },
+ { slug:'dominio-hub-andamento', nome:'Domínio HUB — em andamento (1 caído)', setup:`(function(){var lad=dominioLadders()[0],c=String(lad.cultura).toLowerCase(),sem=semanaInfo(lad);perfil.dominios={porDominio:{}};var prog=perfil.dominios.porDominio[c]={run:null,melhorSempre:24,semanas:{}};prog.semanas[sem.chaveAnt]=18;prog.semanas[sem.chave]=12;prog.run={cultura:lad.cultura,time:['zeus','ogum','tyr'],semanaIdx:sem.idx,semana:sem.chave,nivel:12,profundidade:11,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false}],bonus:0.2,reviveGasto:[],status:'ativo',aguardandoPremio:false,id:'t'};ir('dominio',{cultura:c},{substituir:true});render();})();` },
+ { slug:'dominio-hub-premio', nome:'Domínio HUB — chefe vencido (3 prêmios)', setup:`(function(){var lad=dominioLadders()[0],c=String(lad.cultura).toLowerCase(),sem=semanaInfo(lad);perfil.dominios={porDominio:{}};var prog=perfil.dominios.porDominio[c]={run:null,melhorSempre:24,semanas:{}};prog.run={cultura:lad.cultura,time:['zeus','ogum','tyr'],semanaIdx:sem.idx,semana:sem.chave,nivel:20,profundidade:20,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false}],bonus:0.2,reviveGasto:[],status:'ativo',aguardandoPremio:true,id:'t'};ir('dominio',{cultura:c},{substituir:true});render();})();` },
+ { slug:'dominio-hub-nova', nome:'Domínio HUB — nova corrida', setup:`perfil.dominios={porDominio:{}};try{var cult=dominioLadders()[0].cultura;ir('dominio',{cultura:cult});render();}catch(e){ir('dominio',{});render();}` },
 
  // INVOCAÇÃO
  { slug:'invocacao', nome:'Invocação — tela', setup:`ir('invocacao',{},{substituir:true});render();` },

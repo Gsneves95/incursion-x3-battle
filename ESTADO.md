@@ -2,7 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §364 · CAMPANHA acessível no canvas 780×360 (era a pior nota: 2,5)
+## ★ §365 · DOMÍNIOS acessíveis (seleção + hub) no canvas 780×360 + paginação da campanha pelo espaço real
+- **Campanha (ajuste do §364):** a paginação do texto agora **mede no DOM** e enche a página até o limite (quebra em
+  palavra/frase). O `_paginarTexto` por estimativa parava no meio da frase com meia coluna vazia; o novo
+  `_paginarCampTexto` resolve — todos os atos cabem hoje em UMA página cheia (o Conselho, 819c, a ~100%). Prova: nenhum
+  ato que cabe é paginado; página não-última ≥85% (testado com um texto longo sintético que força 2 páginas).
+- **Domínios:** as DUAS telas passaram ao canvas fixo **780×360** (o hub saiu do 1846×852 do §348 — a 780 o texto de
+  20px virava ~8px e reprovava o §357; era a nota 3,8/4,1 da auditoria).
+  - **Seleção:** 5 pôsteres lado a lado (arte, cultura, nome, progresso da semana, 3 chefes), "‹ Domínios ? · Seu
+    histórico", rodapé "a marca a bater". (Caíram a frase de sabor e os nomes-de-deus de 8px; véu escuro no lugar do arco SVG.)
+  - **Hub:** mesmo layout do §348 (cabeçalho + trilha de 40 + SEU TIME / meio por estado / recordes+chefe final) em
+    780×360. Cartões de recompensa em flex-row com texto inteiro e ≥40 de toque (a classe antiga `.dompremio` saiu).
+    Nada rola; nada cortado (inclusive conteúdo empurrado p/ fora do canvas — medido por overflow guard, não só pelo eixo d).
+- **PROVAS:** `acessibilidade_telas` a=b=c=d=0 em 780×360 (seleção, "?", hub em andamento c/ 1 caído, chefe vencido, nova,
+  encerrada, conquistado) + a prova da paginação; `dominios`/`dominio_hub`/`dominio_montar`/`moldura` verdes; capturas
+  `365-dominios-selecao-*`, `365-dominio-hub-{andamento,chefe-vencido,nova}-*`, `365-campanha-texto-longo-*`. Suíte + build verdes.
+
+## §364 · CAMPANHA acessível no canvas 780×360 (era a pior nota: 2,5)
 - A Campanha foi migrada ao canvas fixo **780×360** (receita §358–§363b). Era a última tela fluida: texto e painel rolavam,
   "ATO VI" cortava, nomes de ato na trilha vinham com "…".
 - **Layout:** cabeçalho 46px (‹ Início / Campanha · capítulo + ‹ › + 05/06); ESQUERDA = arte + rótulo do ato + título +

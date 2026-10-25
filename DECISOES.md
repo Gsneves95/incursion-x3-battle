@@ -6,6 +6,44 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §365 · DOMÍNIOS acessíveis (seleção + hub) no canvas 780×360 + ajuste da paginação da campanha
+
+**0. Paginação da campanha (§364) pelo ESPAÇO REAL.** O `_paginarTexto` do §364 dividia por ESTIMATIVA de caracteres
+(orçamento fixo), o que parava a página 1 do "Conselho Temporário" no meio de uma frase com metade da coluna vazia.
+Novo `_paginarCampTexto(numLabel, nome, texto, artw)`: **mede no DOM** (réplica off-screen da coluna da legenda, em px
+de design) e **enche cada página até o limite da área do texto**, por busca binária de palavras, quebrando em fim de
+PALAVRA (de preferência de FRASE quando ainda ocupa ≥85%). Se o texto inteiro cabe, 1 página (sem nav). Resultado: todos
+os atos atuais cabem em **uma página cheia** (o §364 superdividia — o Conselho, 819c, agora é 1 página a ~100%). Prova
+(`acessibilidade_telas`): nenhum ato que cabe é paginado; nenhuma página transborda; e num texto longo sintético que
+força 2 páginas, a página não-última ocupa ≥85%.
+
+**1. As duas telas de Domínios ao canvas 780×360** (px de design = px real; `fit()` escala p/ cima), como §358–§364.
+Em `base.js`, `emDomHub` saiu do grupo `fixa` (1846×852, §348) e `emDominios` entrou — ambas no grupo `fixaPeq`
+(780×360). `#build`/conta ocultos (`body.emdominios`/`emdomhub`).
+- **Seleção (renderDominios):** 5 pôsteres lado a lado (148px), cada um com arte, cultura, nome (2 linhas), pílula de
+  progresso da semana e os 3 retratos do chefe; cabeçalho "‹ Domínios ? · Seu histórico" e o rodapé "a marca a bater"
+  (seu melhor / recorde anterior). Caíram a FRASE de sabor e os nomes-de-deus de 8px (eram <11, e o §365 pede ≥12); a
+  moldura-arco SVG do §278 virou um véu escuro por-cultura. O "?" saiu de dentro do título (empurrava a faixa p/ fora)
+  e virou um botão 40×40 do próprio cabeçalho.
+- **Hub (renderDominioHub):** o MESMO layout do §348 (cabeçalho + trilha de 40 degraus + 3 colunas: SEU TIME · meio por
+  estado · recordes/chefe final), redesenhado em 780×360. Trilha 48px com números (1, chefes, atual) a 12px e a legenda
+  numa linha própria; coroa dos chefes reordenada p/ cima do nó (não mais encoberta); nós ≥40 de toque. Cartões de
+  recompensa (CURA TOTAL/REVIVER/BÔNUS) em **flex-row** (ícone + título + texto inteiro), ≥40 de toque — a classe antiga
+  `.dompremio` (que tinha `display:flex!important` em coluna e inflava o cartão a 86px) foi **removida**; o nome do estado
+  usa só `.dh-premio`. O orbe de cada deus em SEU TIME caiu p/ 14px e o da coluna do chefe final saiu (a coluna da direita
+  estourava a altura por ~60px — o eixo d da auditoria NÃO pega conteúdo empurrado PARA FORA do canvas de 360 recortado
+  por `overflow:hidden`, então a prova do §365 mede isso diretamente via overflow guard).
+
+**Rejeitado:** (a) manter o hub no canvas 1846×852 escalado — a 780×360 o texto de 20px vira ~8,4px real e reprova o
+§357 (era a nota 3,8/4,1 da auditoria); (b) cortar nome/texto dos cartões de recompensa — o dono pede o texto inteiro;
+(c) rolar as colunas — o §357 proíbe. **NADA de função se perde:** montar e começar, descer, escolher prêmio, nova
+corrida, ajuda, histórico, troca, a arte por Domínio seguem.
+
+**Provas.** `acessibilidade_telas` mede a=b=c=d=0 em 780×360 para a seleção, o "?" aberto e o hub nos 5 estados; os
+guardas `dominios`/`dominio_hub`/`dominio_montar` seguem verdes (geometria atualizada a 780×360, selectors `.dh-premio`).
+Capturas `365-dominios-selecao-*`, `365-dominio-hub-{andamento,chefe-vencido,nova}-*`, `365-campanha-texto-longo-*`
+(780×360 e 1846×852).
+
 ## §364 · CAMPANHA acessível no canvas 780×360 (a pior nota que restava: 2,5)
 
 **Problema.** A tela da Campanha ainda era fluida (pré-§358): texto da história rolava, o painel da direita
