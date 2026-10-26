@@ -69,7 +69,7 @@ function btHp(u, g){
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
   const fill = u.vivo?`<div style="position:absolute;left:0;top:0;bottom:0;width:${pct}%;background:${HP_GRAD}"></div>`:'';
   const sh = u.shield?`<div style="position:absolute;top:0;right:0;height:100%;width:${Math.min(100,u.shield/u.maxHp*100)}%;background:#9fd8ff;opacity:.55"></div>`:'';
-  const lab = `<div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#F4FFF6;text-shadow:0 1px 2px rgba(0,0,0,.85)">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>`;
+  const lab = `<div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#F4FFF6;text-shadow:0 0 2px #000,0 0 3px #000,0 1px 2px #000">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>`;
   return `<div class="bt-hp" style="position:relative;width:${g.S}px;height:${h}px;flex:none;border-radius:3px;overflow:hidden;background:#0B1A10;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none">${fill}${sh}${lab}</div>`;
 }
 /* ---------- indicador de níveis (reusa o motor; §320) — discreto, no canto do retrato ---------- */

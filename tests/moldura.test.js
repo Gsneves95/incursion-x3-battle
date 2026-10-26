@@ -105,6 +105,9 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
   }
 
   console.log('== matriz: o jogo aplica o que a regra manda, dentro da viewport ==');
+  // §367: as telas do jogo migraram ao canvas FIXO 780×360; a REGRA fluida (calcularEnquadramento) rege agora a tela de
+  // RESERVA (o carrossel da home, quando falta a arte do mapa). Mede-se o fit fluido nela (o resize só chama fit, não re-renderiza).
+  await page.evaluate(() => { ir('home', {}, { substituir: true }); renderHomeCarrossel(); });
   for (const [w, h] of TAMANHOS) {
     for (const safe of [false, true]) {
       const r = await medir(w, h, safe);
@@ -197,6 +200,7 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     const ctx = await browser.newContext({ deviceScaleFactor: dpr });
     const pg = await ctx.newPage();
     await pg.goto('file://' + distAbs, { waitUntil: 'load' });
+    await pg.evaluate(() => { ir('home', {}, { substituir: true }); renderHomeCarrossel(); });   // §367: a regra fluida rege o carrossel de reserva
     console.log(`  -- DPR ${dpr} --`);
     for (const [w, h] of TAMANHOS) {
       await pg.setViewportSize({ width: w, height: h });

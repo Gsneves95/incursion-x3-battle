@@ -6,6 +6,53 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §367 · As últimas telas acessíveis (780×360) + eixo (e) CONTRASTE na auditoria
+
+**1. Novo eixo (e) — contraste WCAG contra o FUNDO REAL.** A auditoria media tamanho (a), toque (b), rolagem (c) e
+corte/sobreposição (d), mas não o **contraste**: o caso que originou isto é o nome da cultura "CHINESA" (vermelho) sobre a
+arte vermelha na seleção de Domínios — lia-se por sorte. `medirContraste(page,cfg)` em `tools/auditoria_medida.js`: tira um
+screenshot COM o texto, **esconde o preenchimento do glifo mantendo a sombra** (a sombra do texto é correção legítima,
+listada pelo dono), tira outro SEM o texto, e nos pixels onde o glifo pintava amostra a luminância do fundo real; razão WCAG
+com a cor do texto, **percentil 20% mais desfavorável**; exige ≥4,5:1 (corpo) e ≥3:1 (título grande). Decisões finas: cor
+de **texto-gradiente** = média das paradas (inclusive quando o texto vive em `<span>` filhos e o recorte `background-clip`
+está num ancestral — sobe a árvore); **controle inativo** (`[disabled]`) é isento (WCAG 1.4.3); **glifo decorativo puro**
+(ícone) não entra; **texto SVG** (`<text>` de um cartão vetorial, ex.: o nome na revelação) **não entra no (e)** (é arte
+autocontida com fundo próprio — a "lavagem" atrás do nome — e amostrar vetor escalado no raster é impreciso; o eixo (a) de
+tamanho continua valendo). **Dois bugs de medição corrigidos no caminho:** (i) ler a cor de cada folha ANTES de esconder
+qualquer texto — senão um `<b>`/`<span>` filho, iterado depois do pai já transparente, era lido como "preto" e a razão
+colava em ~1,1 (derrubava dezenas de `<b>` que tinham contraste ótimo); (ii) o d7 (§366) contava como "conteúdo" qualquer
+filho que só HERDOU `cursor:pointer` (glow/halo decorativo de um cartão clicável) — agora só o TOPO da região clicável
+conta, como no eixo (b).
+
+**2. Correções de contraste (sem mudar estilo além do necessário — sombra/plaquinha/ajuste de cor).** Rodado o eixo (e) em
+TODAS as telas §358–§366. Consertos: rótulo de HP na batalha (sombra tripla, 88 instâncias, um ajuste em `campo.js`);
+`#pvpultimo` (fundo sólido + texto claro); números de vaga da Seleção (plaquinha escura sólida atrás; vaga do oponente em
+vermelho mais escuro + sombra); rótulos de filtro `fgrp__l` (→ `--ink-dim`); `dfb--danger` "SIM" (vermelho mais escuro +
+sombra); `dhist__nota` (→ `--ink-dim`); `rq__max` das Provações (gold mais claro); `#bmenubuild` da batalha (cinza mais
+claro); **títulos dourados dos Domínios** (véu `dcard__scrim` muito mais escuro — gradiente não credita `drop-shadow`);
+rarezas da Coleção (eram falso-positivo do bug (i), sumiram). Alvo atingido: **e=0 em todas** as telas §358–§366.
+
+**3. As 5 últimas telas migradas ao canvas PEQUENO de 780×360** (px de design = px real, padrão §357 direto):
+**Invocação** (`#invfix`): o selo SS foi para a mesma LINHA do nome (economia de altura), a base virou um contêiner
+`pointer-events:none` com só os controles clicáveis (o "Ver detalhes" do hero fica à esquerda, atrás da base larga, e o
+clique atravessa os vãos vazios), o "+" das gemas e o "⚠ DEV" ficam legíveis (fora da pílula, 40×40), o reveal ×10 ganhou
+`background-color` sólido (a auditoria reconhece como camada que cobre a tela), o "10% OFF" entrou no fluxo acima do título,
+e o rótulo do topo das cartas tem piso de 12px. **Home** (`#homefix`): a caixa do mapa PREENCHE o canvas; a Loja desceu
+(x18/y80) e a Campanha afastou do chip JOGADOR (chip subiu 6px); contadores ≥12px. **Loja "em breve"** (`#embrevefix`):
+marcador legível com CTA aos Desafios. **Carregamento** (`web/carregamento/lancador.html` + splash `#gsplash`): já passavam
+(fontes em `clamp(vw)` ≥12px, botão TENTAR DE NOVO ≥40). **Guia** (`#guiafix`): saiu do canvas de 1846×852 e adotou 780×360,
+grade de tiles em 2 colunas que ROLA por dentro (lista); `docs/guia-visual.md` atualizado ao novo padrão (canvas 780×360,
+eixo (e)); o teste `guia_folha` segue garantindo doc ↔ folha.
+
+**⚠ O LANÇADOR precisa de APK NOVO no celular.** `lancador.html` é empacotado no APK (camada 2, antes da URL do Render); as
+mudanças da parte do lançador **só aparecem no aparelho com um APK regerado** (`cap-www.js`). No navegador/preview já valem.
+
+**4. `fit()` não usa mais o canvas de 1846×852.** Com a guia migrada, NADA usa a tela grande; o ramo `fixa` virou `false`.
+A REGRA fluida (`calcularEnquadramento`) rege agora só a tela de RESERVA (o carrossel da home, quando falta a arte do
+mapa). Os testes de enquadramento (`interface` t14, `moldura`) passaram a exercitar o fit fluido nesse carrossel.
+
+---
+
 ## §366 · AUDITORIA: fechar o ponto cego do conteúdo fora da tela + reconferir TODAS as telas
 
 **1. Ponto cego (achado no §365) levado à FERRAMENTA.** Todos os checks do eixo (d) só olhavam elementos VISÍVEIS

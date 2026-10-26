@@ -16,193 +16,55 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 
 | # | Tela | a) texto<12 (<11) | b) toque<40 | c) rolagem | d) corte | nota | print |
 |--:|------|--:|--:|--:|--:|:--:|------|
-| 1 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
-| 2 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
-| 3 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
-| 4 | Home | 21 (21) | 1 | 0 | 1 | **4.7** | `357-home-780x360.png` |
-| 5 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
-| 6 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
-| 7 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
-| 8 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
-| 9 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
-| 10 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
-| 11 | Campanha — ato de batalha (consequências + kit) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-batalha-780x360.png` |
-| 12 | Campanha — texto mais longo (Conselho, 819c, paginado) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-texto-longo-780x360.png` |
-| 13 | Campanha — ato de escolha (opções inteiras, pista 86c) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-escolha-780x360.png` |
-| 14 | Campanha — ato de história (sintético) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-historia-780x360.png` |
-| 15 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
-| 16 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
-| 17 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
-| 18 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
-| 19 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
-| 20 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
-| 21 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
-| 22 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
-| 23 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
-| 24 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
-| 25 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
-| 26 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
-| 27 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
-| 28 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
-| 29 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
-| 30 | Domínios — seleção dos 5 | 0 (0) | 0 | 0 | 0 | **10** | `357-dominios-780x360.png` |
-| 31 | Domínios — ajuda "?" | 0 (0) | 0 | 0 | 0 | **10** | `357-dominios-ajuda-780x360.png` |
-| 32 | Domínio HUB — em andamento (1 caído) | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-andamento-780x360.png` |
-| 33 | Domínio HUB — chefe vencido (3 prêmios) | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-premio-780x360.png` |
-| 34 | Domínio HUB — nova corrida | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-nova-780x360.png` |
+| 1 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
+| 2 | Home | 0 (0) | 0 | 0 | 0 | **10** | `357-home-780x360.png` |
+| 3 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
+| 4 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
+| 5 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
+| 6 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
+| 7 | Campanha — ato de batalha (consequências + kit) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-batalha-780x360.png` |
+| 8 | Campanha — texto mais longo (Conselho, 819c, paginado) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-texto-longo-780x360.png` |
+| 9 | Campanha — ato de escolha (opções inteiras, pista 86c) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-escolha-780x360.png` |
+| 10 | Campanha — ato de história (sintético) | 0 (0) | 0 | 0 | 0 | **10** | `357-campanha-historia-780x360.png` |
+| 11 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
+| 12 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
+| 13 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
+| 14 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
+| 15 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
+| 16 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
+| 17 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
+| 18 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
+| 19 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
+| 20 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
+| 21 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
+| 22 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 23 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
+| 24 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
+| 25 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
+| 26 | Domínios — seleção dos 5 | 0 (0) | 0 | 0 | 0 | **10** | `357-dominios-780x360.png` |
+| 27 | Domínios — ajuda "?" | 0 (0) | 0 | 0 | 0 | **10** | `357-dominios-ajuda-780x360.png` |
+| 28 | Domínio HUB — em andamento (1 caído) | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-andamento-780x360.png` |
+| 29 | Domínio HUB — chefe vencido (3 prêmios) | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-premio-780x360.png` |
+| 30 | Domínio HUB — nova corrida | 0 (0) | 0 | 0 | 0 | **10** | `357-dominio-hub-nova-780x360.png` |
+| 31 | Invocação — tela | 0 (0) | 0 | 0 | 0 | **10** | `357-invocacao-780x360.png` |
+| 32 | Invocação — revelação | 0 (0) | 0 | 0 | 0 | **10** | `357-invocacao-reveal-780x360.png` |
+| 33 | Guia (folha de componentes, dev) | 0 (0) | 0 | 0 | 0 | **10** | `357-guia-780x360.png` |
+| 34 | Em breve (marcador) | 0 (0) | 0 | 0 | 0 | **10** | `357-embreve-780x360.png` |
 | 35 | Batalha — menu | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-menu-780x360.png` |
 | 36 | Batalha — confirmação de sair | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-sair-780x360.png` |
 | 37 | Batalha — confirmação de desistir | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-desistir-780x360.png` |
 
 ## Detalhe por tela
 
-### Invocação — revelação — nota 2.6
-
-Print: `docs/telas/357-invocacao-reveal-780x360.png`. Contagens: a=19, b=7, c=0, d=24. (textos visíveis: 24; tocáveis: 10.)
-
-> Nota: A revelação é autoritativa do SERVIDOR; no modo arquivo (sem WS) as cartas não chegam. Aqui a sobreposição é aberta com o esqueleto REAL (`#iv-reveal`) para auditar a moldura (dica + "Invocar mais"); as cartas (`.iv-card`) precisam do servidor vivo.
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.iv-off` — **7.57px** ⚠<11 — "10% OFF"
-- `span.iv-hero__tag` — **8.4px** ⚠<11 — "RATE-UP"
-- `button.iv-oferta` — **8.42px** ⚠<11 — "— 10× grátis, SS garantido"
-- `b` — **8.42px** ⚠<11 — "Bênção do Iniciante"
-- `button.iv-hero__det` — **9.24px** ⚠<11 — "Ver detalhes"
-- `button.iv-plus` — **9.26px** ⚠<11 — "+"
-- `span.iv-pity__lbl` — **9.26px** ⚠<11 — "SS garantido"
-- `div.iv-tip` — **9.26px** ⚠<11 — "toque fora para voltar"
-- `p.iv-hero__cite` — **10.08px** ⚠<11 — "“Declarou primeiro. Perguntou depois.”"
-- `span.iv-c.iv-cess` — **10.1px** ⚠<11 — "✦"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.iv-plus` — **15.1×15.1** — "+"
-- `button.iv-pity__q` — **18.5×18.5** — "?"
-- `button.iv-oferta` — **245.2×23.6** — "Bênção do Iniciante — 10× grát"
-- `button.iv-hbtn` — **25.2×25.2** — "‹"
-- `button.iv-hero__det` — **108.5×26.9** — "⌕ Ver detalhes"
-- `div.iv-revfoot` — **121.1×28.6** — "Invocar mais ×1"
-- `#iv-revagain` — **121.1×28.6** — "Invocar mais ×1"
-
-**d) cortes:**
-
-- [sobreposto] **importante** `button.iv-oferta × div.iv-tip` — "— 10× grátis, SS g / toque fora para vo"
-- [sobreposto] **importante** `span.iv-off × span.iv-pb__t` — "10% OFF / Invocação ×10"
-- [encoberto] **importante** `button.iv-hbtn` — "‹"
-- [encoberto] **importante** `span.iv-title` — "Invocação"
-- [encoberto] **importante** `span.iv-c.iv-cess` — "✦"
-- [encoberto] **importante** `#iv-essencia` — "—"
-- [encoberto] **importante** `span.iv-c` — "💎"
-- [encoberto] **importante** `#iv-gemas` — "—"
-- [encoberto] **importante** `button.iv-plus` — "+"
-- [encoberto] **importante** `span.iv-hero__tag` — "RATE-UP"
-
-### Guia (folha de componentes, dev) — nota 3.1
-
-Print: `docs/telas/357-guia-780x360.png`. Contagens: a=57, b=8, c=0, d=0. (textos visíveis: 58; tocáveis: 8.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.df-toast__ic` — **5.06px** ⚠<11 — "!"
-- `span.df-toast__msg` — **5.06px** ⚠<11 — "Sem conexão com o servidor."
-- `p.df-vazio` — **5.06px** ⚠<11 — "Nenhum deus neste filtro."
-- `span.df-chip` — **5.49px** ⚠<11 — "Todas"
-- `b` — **5.49px** ⚠<11 — "6"
-- `span.df-chip.is-on` — **5.49px** ⚠<11 — "Conquistadas"
-- `b` — **5.49px** ⚠<11 — "2"
-- `span.dsk__nv` — **5.49px** ⚠<11 — "Nv 3"
-- `span.nltop__ptn` — **5.49px** ⚠<11 — "Pontos de Zeus:"
-- `b` — **5.49px** ⚠<11 — "0"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.df-toast__x` — **10×7.6** — "✕"
-- `button.nlb.nlb--go` — **63.3×16.9** — "CONFIRMAR"
-- `button.nlb.nlb--quiet` — **63.3×16.9** — "CANCELAR"
-- `span.df-chip` — **26.2×16.9** — "Todas 6"
-- `span.df-chip.is-on` — **43.5×16.9** — "Conquistadas 2"
-- `#bvoltar` — **58.1×30.4** — "‹ VOLTAR"
-- `button.cmpb.cmpb--primary` — **51.6×30.4** — "JOGAR"
-- `button.cmpb.cmpb--quiet` — **86.3×30.4** — "JOGAR DE NOVO"
-
-### Invocação — tela — nota 4.3
-
-Print: `docs/telas/357-invocacao-780x360.png`. Contagens: a=17, b=5, c=0, d=4. (textos visíveis: 22; tocáveis: 7.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.iv-off` — **7.57px** ⚠<11 — "10% OFF"
-- `span.iv-hero__tag` — **8.4px** ⚠<11 — "RATE-UP"
-- `button.iv-oferta` — **8.42px** ⚠<11 — "— 10× grátis, SS garantido"
-- `b` — **8.42px** ⚠<11 — "Bênção do Iniciante"
-- `button.iv-hero__det` — **9.24px** ⚠<11 — "Ver detalhes"
-- `button.iv-plus` — **9.26px** ⚠<11 — "+"
-- `span.iv-pity__lbl` — **9.26px** ⚠<11 — "SS garantido"
-- `p.iv-hero__cite` — **10.08px** ⚠<11 — "“Declarou primeiro. Perguntou depois.”"
-- `span.iv-c.iv-cess` — **10.1px** ⚠<11 — "✦"
-- `#iv-essencia` — **10.1px** ⚠<11 — "—"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.iv-plus` — **15.1×15.1** — "+"
-- `button.iv-pity__q` — **18.5×18.5** — "?"
-- `button.iv-oferta` — **245.2×23.6** — "Bênção do Iniciante — 10× grát"
-- `button.iv-hbtn` — **25.2×25.2** — "‹"
-- `button.iv-hero__det` — **108.5×26.9** — "⌕ Ver detalhes"
-
-**d) cortes:**
-
-- [sobreposto] **importante** `span.iv-off × span.iv-pb__t` — "10% OFF / Invocação ×10"
-- [encoberto] **importante** `p.iv-hero__cite` — "“Declarou primeiro. Perguntou depois.”"
-- [encoberto] **importante** `button.iv-hero__det` — "Ver detalhes"
-- [encoberto] **importante** `span.iv-hero__lupa` — "⌕"
-
-### Home — nota 4.7
-
-Print: `docs/telas/357-home-780x360.png`. Contagens: a=21, b=1, c=0, d=1. (textos visíveis: 21; tocáveis: 9.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.ilha__camptxt` — **8.41px** ⚠<11 — "Capítulo I · Grécia"
-- `span.ilha__campnum` — **8.41px** ⚠<11 — "0/6"
-- `span.ilha__cont` — **8.41px** ⚠<11 — "91"
-- `span.ilha__cont` — **8.41px** ⚠<11 — "100"
-- `span.ilha__cont` — **8.41px** ⚠<11 — "0/60"
-- `span.ilha__cont` — **8.41px** ⚠<11 — "9/100"
-- `span.ilha__breveTag` — **8.41px** ⚠<11 — "· em breve"
-- `span.mmoeda__ic.mmoeda__ic--gema` — **10.1px** ⚠<11 — "💎"
-- `span.mmoeda__ic.mmoeda__ic--ess` — **10.1px** ⚠<11 — "◈"
-- `span.ilha__nome` — **10.93px** ⚠<11 — "Campanha"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.mperfil` — **98.7×33.6** — "Jogador"
-
-**d) cortes:**
-
-- [fora-tela] **importante** `img.mapa__art` — "Mapa de INCURSION"
-
-### Em breve (marcador) — nota 6.8
-
-Print: `docs/telas/357-embreve-780x360.png`. Contagens: a=1, b=1, c=0, d=2. (textos visíveis: 5; tocáveis: 1.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `#bvoltar` — **10.1px** ⚠<11 — "‹ Início"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **78×33.6** — "‹ Início"
-
-**d) cortes:**
-
-- [sobreposto] **importante** `div.stagemark × #bvoltar` — "INCURSION / ‹ Início"
-- [encoberto] **importante** `div.stagemark` — "INCURSION"
-
 ### Carregamento (splash) — nota 10
 
 Print: `docs/telas/357-carregamento-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 1; tocáveis: 0.)
+
+_Sem achados._
+
+### Home — nota 10
+
+Print: `docs/telas/357-home-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 21; tocáveis: 9.)
 
 _Sem achados._
 
@@ -373,6 +235,32 @@ _Sem achados._
 ### Domínio HUB — nova corrida — nota 10
 
 Print: `docs/telas/357-dominio-hub-nova-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 41; tocáveis: 3.)
+
+_Sem achados._
+
+### Invocação — tela — nota 10
+
+Print: `docs/telas/357-invocacao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 22; tocáveis: 7.)
+
+_Sem achados._
+
+### Invocação — revelação — nota 10
+
+Print: `docs/telas/357-invocacao-reveal-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 2; tocáveis: 2.)
+
+> Nota: A revelação é autoritativa do SERVIDOR; no modo arquivo (sem WS) as cartas não chegam. Aqui a sobreposição é aberta com o esqueleto REAL (`#iv-reveal`) para auditar a moldura (dica + "Invocar mais"); as cartas (`.iv-card`) precisam do servidor vivo.
+
+_Sem achados._
+
+### Guia (folha de componentes, dev) — nota 10
+
+Print: `docs/telas/357-guia-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 26; tocáveis: 5.)
+
+_Sem achados._
+
+### Em breve (marcador) — nota 10
+
+Print: `docs/telas/357-embreve-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 6; tocáveis: 2.)
 
 _Sem achados._
 

@@ -98,47 +98,39 @@ console.log('== §306/§326 MAPA — 3) só a Loja fica "em breve"; Domínios es
 console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem das ilhas (780..1200) ==');
 {
   home();
-  // §310: a arte MUDOU (2400×999, 2,40; era 1524×856, 1,78) e a caixa DEIXOU de ser travada em 1,78 — a arte agora
-  //  PREENCHE o palco. A caixa tem a ALTURA do palco (428) e a LARGURA natural da arte a essa altura (≈1028px), fora do
-  //  fluxo (absolute). Mantém a lição do §308b: px EXPLÍCITO + FORA DO FLUXO (um filho absoluto não é flex-item, o motor
-  //  do S24 não estica). O que corta as laterais no piso é o overflow:hidden da .mapa, não uma trava de proporção.
+  // §367: a HOME (o MAPA) migrou para o canvas FIXO de 780×360 (px de design = px real, como as demais telas §358–§366).
+  //  A caixa do mapa PREENCHE o canvas (780×360), fora do fluxo (absolute); a arte (2400×999) entra por COVER (corta as
+  //  sobras). Os ícones ancoram em % DO CANVAS → ficam fixos em relação à arte em qualquer tela (o fit escala o canvas
+  //  INTEIRO, uniforme — não há mais corte variável por largura como no antigo sistema fluido).
   const caixa = $('.mapa__caixa');
   const cs = w.getComputedStyle(caixa);
-  ok(cs.width === '1028px' && cs.height === '428px', `§310: a caixa é px explícito 1028×428 — altura do palco × largura natural da arte (é ${cs.width}×${cs.height})`);
+  ok(cs.width === '780px' && cs.height === '360px', `§367: a caixa do mapa PREENCHE o canvas 780×360 (é ${cs.width}×${cs.height})`);
   ok(cs.position === 'absolute', `§308b/§310: a caixa fica FORA DO FLUXO (position:absolute) — flex-item o S24 estica; absoluto não (veio "${cs.position}")`);
-  ok(!cs.aspectRatio || cs.aspectRatio === 'auto', `§308/§310: a caixa NÃO depende de aspect-ratio (motor da WebView não honra; veio "${cs.aspectRatio}")`);
-  ok(Math.abs(1028 / 428 - 2400 / 999) < 0.001, `§310: a razão da caixa (1028/428=${(1028/428).toFixed(4)}) casa a arte nova (2400/999=${(2400/999).toFixed(4)}) — cover preenche sem corte perceptível`);
-  // §309b/§310: a EXTENSÃO desfocada continua (agora reserva p/ palco > 2,40). Mesmo arquivo em cache → PESO ZERO (sem
-  // 404, sem base64); decorativa (aria-hidden); atrás da caixa nítida (z-index menor).
+  // §309b/§310: a EXTENSÃO desfocada continua. Mesmo arquivo em cache → PESO ZERO (sem 404, sem base64); decorativa
+  // (aria-hidden); atrás da caixa nítida (z-index menor).
   const fundo = $('.mapa__fundo');
   ok(!!fundo && fundo.getAttribute('src') === 'banners/mapa.webp', '§309/§310: a extensão usa o MESMO arquivo (banners/mapa.webp) — peso zero');
   ok(!!fundo && !/^data:/.test(fundo.getAttribute('src') || ''), '§309: a extensão NÃO é base64 (arquivo externo em cache)');
   ok(!!fundo && (fundo.getAttribute('aria-hidden') === 'true'), '§309: a extensão é decorativa (aria-hidden) — não entra na leitura');
   const zF = parseInt(w.getComputedStyle(fundo).zIndex) || 0, zC = parseInt(cs.zIndex) || 0;
   ok(zF < zC, `§309: a extensão fica ATRÁS da caixa nítida (z-index fundo ${zF} < caixa ${zC})`);
-  // §310: com a arte PREENCHENDO (caixa 1028 centrada, overflow corta), todo ÍCONE (62px) fica INTEIRO no quadro em
-  //  780/893/1075/1200 — inclusive no PISO (780, corte 24%: janela visível 12,1%..87,9%). Cálculo analítico (o mesmo do
-  //  motor: caixa 1028 centrada em cada largura, meia-âncora do ícone 24px = 48/2 §311).
-  const ART_W = 2400, ART_H = 999, CX = 428 * ART_W / ART_H, MEIA = 24;   // §311: ícone 62→48 → meia-âncora 31→24
-  const larguras = [780, 893, 1075, 1200];
-  const ilhas310 = $$('.ilha').map(il => ({ c: il.dataset.dest || il.querySelector('.ilha__nome').textContent, x: parseFloat(il.style.left) }));
+  // §367: no canvas FIXO 780×360, todo ÍCONE (meia-âncora 24px = 48/2 §311) fica INTEIRO dentro do quadro — ancorado em %
+  //  do canvas (x% de 780, y% de 360). Cálculo analítico direto (o canvas não é mais recortado por largura variável).
+  const CW = 780, CH = 360, MEIA = 24;
+  const ilhas310 = $$('.ilha').map(il => ({ c: il.dataset.dest || il.querySelector('.ilha__nome').textContent, x: parseFloat(il.style.left), y: parseFloat(il.style.top) }));
   const foraQuadro = [];
-  for (const S of larguras) {
-    const left = (S - CX) / 2;
-    for (const it of ilhas310) {
-      const cxStage = left + it.x / 100 * CX;
-      if (cxStage - MEIA < 0 || cxStage + MEIA > S) foraQuadro.push(`${it.c}@${it.x}% (${S}px)`);
-    }
+  for (const it of ilhas310) {
+    const cx = it.x / 100 * CW, cy = it.y / 100 * CH;
+    if (cx - MEIA < 0 || cx + MEIA > CW || cy - MEIA < 0 || cy + MEIA > CH) foraQuadro.push(`${it.c}@${it.x},${it.y}%`);
   }
-  ok(foraQuadro.length === 0, `§310/§311: todo ícone (48px) fica INTEIRO no quadro em 780/893/1075/1200 (fora: ${foraQuadro.join(' | ')})`);
-  // as posições são % (não px): garante independência de largura
-  ok($$('.ilha').every(il => /%$/.test(il.style.left) && /%$/.test(il.style.top)), 'as ilhas ancoram em % (independe da largura do palco)');
-  // §311: ÍCONE 62→48px de design. A 48 dá ~40 físicos no S24 (escala ~0,84), acima do piso de toque do projeto (28–34,
-  // §301); e o alvo de toque real é a .ilha inteira (100px), não só o glifo. A guarda crava que o glifo não encolheu
+  ok(foraQuadro.length === 0, `§367/§311: todo ícone (48px) fica INTEIRO no canvas 780×360 (fora: ${foraQuadro.join(' | ')})`);
+  // as posições são % (não px): garante independência da escala do canvas
+  ok($$('.ilha').every(il => /%$/.test(il.style.left) && /%$/.test(il.style.top)), 'as ilhas ancoram em % (independe da escala do palco)');
+  // §311: ÍCONE 48px de design. O alvo de toque real é a .ilha inteira (100px); a guarda crava que o glifo não encolheu
   // abaixo do alvo (44–52px) — quebra se alguém voltar a 62 (tapa a ilha) ou encolher demais (perde o toque).
   const icW = parseFloat(w.getComputedStyle($('.ilha__ic')).width);
-  ok(icW >= 44 && icW <= 52, `§311: o ícone mede ~48px de design (é ${icW}px) — ~40 físicos no S24, acima do piso de toque 28–34`);
-  console.log(`  arte preenche o palco (caixa 1028×428) · ícone 48px · 9 ícones inteiros no quadro em ${larguras.join('/')}`);
+  ok(icW >= 44 && icW <= 52, `§311: o ícone mede ~48px de design (é ${icW}px) — acima do piso de toque`);
+  console.log(`  arte preenche o canvas 780×360 · ícone 48px · 9 ícones inteiros no quadro`);
 }
 
 console.log('== §306 MAPA — 5) arte ausente → carrossel de hoje (fallback), sem 404 nem base64 ==');
@@ -276,14 +268,15 @@ console.log('>>> §306/§310 MAPA (jsdom) OK');
       // fill vertical = a caixa COBRE a altura do quadro (.mapa), sem faixa em cima/baixo (pode transbordar ~1px pela borda do palco)
       return { ratio: +(c.width / c.height).toFixed(4), fillV: c.height >= m.height - 0.5, fora, bate };
     });
-    if (Math.abs(r.ratio - 2.4024) > 0.01 || !r.fillV) semFill.push(`${D}(r${r.ratio} fillV${r.fillV})`);
+    // §367: a caixa é o canvas FIXO 780×360 (razão 2,1667) escalado uniforme — a razão é constante em toda a faixa.
+    if (Math.abs(r.ratio - (780 / 360)) > 0.01 || !r.fillV) semFill.push(`${D}(r${r.ratio} fillV${r.fillV})`);
     if (r.fora.length) iconeFora.push(`${D}:${[...new Set(r.fora)].join(',')}`);
     if (r.bate.length) colide.push(`${D}:${[...new Set(r.bate)].join(',')}`);
   }
-  ok2(semFill.length === 0, `§310: a arte PREENCHE (razão 2,40 + fill vertical) em TODA a faixa 780..1200 (falhou em: ${semFill.join(' ') || '—'})`);
-  ok2(iconeFora.length === 0, `§310: todo ícone fica INTEIRO no quadro em TODA a faixa 780..1200 (ícone fora em: ${iconeFora.join(' ') || '—'})`);
+  ok2(semFill.length === 0, `§367: a caixa é o canvas 780×360 (razão 2,1667 + fill vertical) em TODA a faixa 780..1200 (falhou em: ${semFill.join(' ') || '—'})`);
+  ok2(iconeFora.length === 0, `§367: todo ícone fica INTEIRO no quadro em TODA a faixa 780..1200 (ícone fora em: ${iconeFora.join(' ') || '—'})`);
   ok2(colide.length === 0, `§311: nenhum ícone colide com o painel JOGADOR nem com as moedas em 780..1200 (colisão em: ${colide.join(' ') || '—'})`);
-  console.log(`  §310/§311 varredura 780..1200/10: ${(semFill.length || iconeFora.length || colide.length) ? ('FALHAS ' + [...semFill, ...iconeFora, ...colide].join(' ')) : 'arte preenche + 9 ícones inteiros + sem colisão com JOGADOR/moedas em TODAS (Chromium) — não cobre o motor da WebView, ver nota'}`);
+  console.log(`  §367/§311 varredura 780..1200/10: ${(semFill.length || iconeFora.length || colide.length) ? ('FALHAS ' + [...semFill, ...iconeFora, ...colide].join(' ')) : 'canvas 780×360 escala uniforme + 9 ícones inteiros + sem colisão com JOGADOR/moedas em TODAS (Chromium) — não cobre o motor da WebView, ver nota'}`);
   await browser.close();
   if (cf) { console.log(`\n>>> ${cf} FALHA(S) em §310 MAPA (Chromium)`); process.exit(1); }
   console.log('>>> §306/§310 MAPA OK');

@@ -202,7 +202,7 @@ function fit(){
   const emNiveis = (_rM === 'niveis') && document.getElementById('nlfix');
   // §351: a LISTA de DESAFIOS DE COMPOSIÇÃO ('composicao') também é a TELA FIXA de 1846×852 escalada (visual §339).
   const emCompos = (_rM === 'composicao') && document.getElementById('compfix');
-  // §352: a FOLHA DE COMPONENTES ('guia', dev) usa a mesma TELA FIXA de 1846×852 escalada.
+  // §352: a FOLHA DE COMPONENTES ('guia', dev). §367: migrou da TELA FIXA de 1846×852 para o canvas PEQUENO de 780×360.
   const emGuia = (_rM === 'guia') && document.getElementById('guiafix');
   // §346b: a COLEÇÃO vira uma TELA FIXA escalada (como batalha/montador): enche a tela. O design é 1100×508 (MESMA
   // proporção 2.166 da batalha 1846×852), onde o CSS atual da Coleção já cabe — e escalado garante os filtros em 2
@@ -212,17 +212,22 @@ function fit(){
   const emCampanha = (_rM === 'campanha') && document.getElementById('campfix');
   // §365: HUB do Domínio e SELEÇÃO dos 5 Domínios passam ao canvas PEQUENO de 780×360 (como §358–§364).
   const emDominios = (_rM === 'dominios') && document.getElementById('domselfix');
+  // §367: as ÚLTIMAS telas também passam ao canvas PEQUENO de 780×360 — INVOCAÇÃO, HOME (o mapa), o marcador EM BREVE
+  // (Loja) e a FOLHA DO GUIA (que deixa o canvas de 1846×852 e adota o mesmo padrão: px de design = px real).
+  const emInvocacao = (_rM === 'invocacao') && document.getElementById('invfix');
+  const emHome = (_rM === 'home') && document.getElementById('homefix');
+  const emEmbreve = (_rM === 'embreve') && document.getElementById('embrevefix');
   // §358: Coleção, FICHA e NÍVEIS usam um canvas PEQUENO de 780×360 (= o celular) — assim os px de design SÃO os
   // px reais no 780×360 e cumprem o padrão §357 sem escala contra; nas telas maiores o fit() escala p/ cima.
   // §359: os MONTADORES (Domínio/Campanha/Composição/PvP/Batalha CPU) passam ao canvas PEQUENO de 780×360 (como §358):
   // o px de design é o px REAL no 780×360 e cumpre o §357 direto; nas telas maiores o fit() escala p/ cima.
   // §360: DESAFIOS (renderProvacoes) e COMPOSIÇÃO (renderDesafios) também passam ao canvas PEQUENO de 780×360.
-  const fixaPeq = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv || emBatalha || emCampanha || emDomHub || emDominios;
-  const fixa = emGuia;
-  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('deusfix2', !!emDeus); stage.classList.toggle('nlfix2', !!emNiveis); stage.classList.toggle('cmp2', !!emCompos); stage.classList.toggle('guia2', !!emGuia); stage.classList.toggle('col2fix', !!emColecao); stage.classList.toggle('campfix2', !!emCampanha); stage.classList.toggle('domsel2', !!emDominios);
-    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emdeus', !!emDeus); document.body.classList.toggle('emniveis', !!emNiveis); document.body.classList.toggle('emcompos', !!emCompos); document.body.classList.toggle('emguia', !!emGuia); document.body.classList.toggle('emcolecao', !!emColecao); document.body.classList.toggle('emcampanha', !!emCampanha); document.body.classList.toggle('emdominios', !!emDominios); }catch(e){}   // §339/§342/§346b/§348/§349/§350/§351/§352/§364: carimbo build + botão conta somem destas telas (vivem na home/menu)
+  const fixaPeq = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv || emBatalha || emCampanha || emDomHub || emDominios || emInvocacao || emHome || emEmbreve || emGuia;
+  const fixa = false;   // §367: nada usa mais o canvas de 1846×852 (a guia migrou para 780×360)
+  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('deusfix2', !!emDeus); stage.classList.toggle('nlfix2', !!emNiveis); stage.classList.toggle('cmp2', !!emCompos); stage.classList.toggle('guia2', !!emGuia); stage.classList.toggle('col2fix', !!emColecao); stage.classList.toggle('campfix2', !!emCampanha); stage.classList.toggle('domsel2', !!emDominios); stage.classList.toggle('inv2', !!emInvocacao); stage.classList.toggle('home2', !!emHome); stage.classList.toggle('embreve2', !!emEmbreve);
+    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emdeus', !!emDeus); document.body.classList.toggle('emniveis', !!emNiveis); document.body.classList.toggle('emcompos', !!emCompos); document.body.classList.toggle('emguia', !!emGuia); document.body.classList.toggle('emcolecao', !!emColecao); document.body.classList.toggle('emcampanha', !!emCampanha); document.body.classList.toggle('emdominios', !!emDominios); document.body.classList.toggle('eminvocacao', !!emInvocacao); document.body.classList.toggle('emhomefix', !!emHome); document.body.classList.toggle('emembreve', !!emEmbreve); }catch(e){}   // §339/§342/§346b/§348/§349/§350/§351/§352/§364/§367: carimbo build + botão conta somem destas telas (vivem na home/menu)
   if(fixaPeq && !fixa){
-    const alvo = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv || emBatalha || emCampanha || emDomHub || emDominios;
+    const alvo = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv || emBatalha || emCampanha || emDomHub || emDominios || emInvocacao || emHome || emEmbreve || emGuia;
     const CW = 780, CH = 360, s = Math.min(u.w / CW, u.h / CH);   // §358: canvas = o celular
     ultimaEscala = s; ultimaLarguraDesign = CW; if(emBatalha) ultimaEscalaBatalha = s;   // §362: batalha no canvas 780×360
     stage.style.width = u.w + 'px'; stage.style.height = u.h + 'px';

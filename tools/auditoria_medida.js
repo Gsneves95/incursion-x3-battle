@@ -209,7 +209,11 @@ function medirNaPagina(cfg){
   // halo do orbe, que transborda o slot de propósito (margem negativa); não é conteúdo que se lê e pode ser recortado).
   const ehConteudo = el => {
     if (/^(IMG|SVG|CANVAS|VIDEO|PICTURE)$/.test(el.tagName)) return (el.getAttribute('alt') || '').trim().length > 0;
-    return interativo(el) || getComputedStyle(el).cursor === 'pointer' || !!txtDe(el);
+    if (interativo(el) || !!txtDe(el)) return true;
+    // §367: `cursor:pointer` é HERDADO — um filho DECORATIVO (glow/halo/poça) dentro de um cartão clicável herda o
+    // pointer e transbordava de propósito; só conta o TOPO da região clicável (pai NÃO é pointer), como no eixo (b).
+    const cs = getComputedStyle(el); if (cs.cursor !== 'pointer') return false;
+    const p = el.parentElement; return !p || getComputedStyle(p).cursor !== 'pointer';
   };
   const renderavel = el => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return false; const r = el.getBoundingClientRect(); return r.width >= 0.5 && r.height >= 0.5; };
   const clipAncestral = el => { let n = el.parentElement; for (let i = 0; i < 14 && n && n !== document.body; i++) { if (temClip(getComputedStyle(n))) return n; n = n.parentElement; } return null; };
@@ -234,6 +238,114 @@ function medirNaPagina(cfg){
   return { a, b, c, d, textTotal, tapTotal };
 }
 
+// ===================== §367 — eixo (e) CONTRASTE (WCAG) contra o FUNDO REAL =====================
+// Roda no Node (precisa de screenshot): (1) coleta, na página, cada texto visível (caixa + cor efetiva + se é "grande");
+// e ESCONDE o texto (cor transparente; texto-gradiente via visibility:hidden, já que a caixa é transparente); (2) tira
+// 1 screenshot do canvas SEM os textos (o fundo real que fica atrás de cada um); (3) amostra, na caixa de cada texto, a
+// luminância do fundo mais DESFAVORÁVEL (percentil) e calcula a razão WCAG com a cor do texto; (4) restaura os textos.
+// Exige ≥4.5:1 p/ corpo e ≥3:1 p/ título grande (≥18px, ou ≥14px negrito). Decorativo (texto sem conteúdo) não entra.
+function _coletarContraste(cfg){
+  const { MIN_CORPO } = cfg;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const vis = el => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return false; const r = el.getBoundingClientRect(); if (r.width < 0.5 || r.height < 0.5) return false; if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw) return false; return true; };
+  const escalaDe = el => { let n = el; for (let i = 0; i < 16 && n; i++) { const ow = n.offsetWidth; if (ow >= 400) { const w = n.getBoundingClientRect().width; if (w > 0) return w / ow; } n = n.parentElement; } n = el; for (let i = 0; i < 16 && n; i++) { const ow = n.offsetWidth; if (ow >= 160) { const w = n.getBoundingClientRect().width; if (w > 0) return w / ow; } n = n.parentElement; } return 1; };
+  const txtDe = el => { let t = ''; el.childNodes.forEach(n => { if (n.nodeType === 3) t += n.textContent; }); return t.replace(/\s+/g, ' ').trim(); };
+  const sel = el => { if (el.id) return '#' + el.id; let s = el.tagName.toLowerCase(); const cls = (el.getAttribute('class') || '').trim().split(/\s+/).filter(Boolean).slice(0, 2); if (cls.length) s += '.' + cls.join('.'); return s; };
+  const parseCor = s => { const m = String(s).match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(x => parseFloat(x)); return [p[0] || 0, p[1] || 0, p[2] || 0, p.length >= 4 ? p[3] : 1]; };
+  const corGrad = bg => { const ms = String(bg).match(/rgba?\([^)]+\)/g); if (!ms) return null; let r = 0, g = 0, b = 0, n = 0; for (const c of ms) { const p = parseCor(c); if (p && p[3] > 0.1) { r += p[0]; g += p[1]; b += p[2]; n++; } } return n ? [r / n, g / n, b / n, 1] : null; };
+  // §367: mesma regra de MODAL do a/b/c/d — se há uma camada que cobre a tela (overlay/scrim), só medimos o contraste
+  // DENTRO dela (o que está atrás está encoberto de propósito e não é lido pelo jogador).
+  const _tagOK = e => !/^(SCRIPT|STYLE|NOSCRIPT|TITLE|svg|path|defs|g|use|DEFS)$/i.test(e.tagName);
+  const _cobreTudo = el => { const r = el.getBoundingClientRect(); return r.width * r.height >= 0.9 * vw * vh && r.left <= 2 && r.top <= 2 && r.right >= vw - 2 && r.bottom >= vh - 2; };
+  const _bgAlpha = el => { const m = (getComputedStyle(el).backgroundColor || '').match(/rgba?\(([^)]+)\)/); if (!m) return 0; const p = m[1].split(',').map(x => parseFloat(x)); return p.length >= 4 ? p[3] : 1; };
+  let _modal = null;
+  for (const el of document.querySelectorAll('body *')) { if (_tagOK(el) && vis(el) && _cobreTudo(el) && _bgAlpha(el) >= 0.3) _modal = el; }
+  const todos = (_modal ? [_modal, ...(_modal.querySelectorAll('*'))] : [...document.querySelectorAll('body *')]).filter(_tagOK);
+  const out = [];
+  const esconder = [];   // §367: só escondemos DEPOIS de ler todas as cores (ver nota abaixo)
+  for (const el of todos) {
+    const t = txtDe(el); if (!t || !vis(el)) continue;
+    if (!/[0-9A-Za-zÀ-ÿ]/.test(t)) continue;   // §367: contraste é p/ TEXTO legível; glifo decorativo puro (⚿ ◈ ♛ ⊕ ○ ✓) é ÍCONE, não entra
+    if (el.closest('[disabled]') || el.closest('[aria-disabled="true"]')) continue;   // §367: controle INATIVO é isento de contraste (WCAG 1.4.3) — é apagado de propósito
+    // §367: texto SVG (<text> dentro de um CARTÃO, ex.: o nome do deus na revelação) é parte de uma ilustração vetorial
+    // AUTOCONTIDA, que carrega o próprio fundo desenhado (a "lavagem" clara atrás do nome + o selo). Amostrar o glifo de um
+    // vetor escalado a ~71px no raster é impreciso (lê a cor herdada, não o fill; localiza mal o glifo); o eixo (a) de
+    // TAMANHO continua valendo p/ esse texto. O contraste real que o jogador lê (caso CHINESA do §367) é sempre HTML.
+    if (el.ownerSVGElement) continue;
+    const cs = getComputedStyle(el);
+    const esc = escalaDe(el);
+    const fpx = (parseFloat(cs.fontSize) || 0) * esc;
+    const bold = (parseInt(cs.fontWeight, 10) || 400) >= 700;
+    const grande = fpx >= 18 || (fpx >= 14 && bold);
+    let grad = cs.webkitBackgroundClip === 'text' || cs.backgroundClip === 'text';
+    let cor = parseCor(cs.color) || [0, 0, 0, 1];
+    if (grad || cor[3] < 0.05) {
+      let cg = corGrad(cs.backgroundImage);
+      // §367: texto-gradiente recortado num ANCESTRAL (background-clip:text no pai; o texto vive em <span> filhos que
+      // herdam color:transparent). Sobe a árvore até quem tem o recorte e usa o gradiente DELE — senão a tinta do filho
+      // seria lida como "preto" (luminância 0) e a razão colaria em ~1,0 contra qualquer fundo.
+      if (!cg) { let p = el.parentElement; for (let i = 0; i < 6 && p; i++, p = p.parentElement) { const pcs = getComputedStyle(p); if (pcs.webkitBackgroundClip === 'text' || pcs.backgroundClip === 'text') { const pg = corGrad(pcs.backgroundImage); if (pg) { cg = pg; grad = true; break; } } } }
+      if (cg) cor = cg;
+    }
+    const r = el.getBoundingClientRect();
+    const x = Math.max(0, Math.round(r.left)), y = Math.max(0, Math.round(r.top));
+    const w = Math.min(vw, Math.round(r.right)) - x, h = Math.min(vh, Math.round(r.bottom)) - y;
+    if (w < 2 || h < 2) continue;
+    out.push({ sel: sel(el), txt: t.slice(0, 30), cor: [cor[0], cor[1], cor[2]], grande, x, y, w, h });
+    esconder.push({ el, grad: (grad || cor[3] < 0.05) });
+  }
+  // §367: esconde o texto SÓ depois de já ter lido TODAS as cores. Se escondêssemos cada folha dentro do mesmo laço,
+  // um filho <b>/<span> (iterado depois do pai na ordem do DOM) teria sua cor HERDADA lida já transparente — porque o
+  // pai já estaria com color:transparent — e a tinta do filho viraria "preto" (luminância 0), derrubando a razão p/ ~1,1
+  // contra qualquer fundo escuro. Lendo tudo antes, a cor de cada folha é a real.
+  // Escondemos só o PREENCHIMENTO do glifo, MANTENDO a text-shadow (o dono lista "sombra de texto" como correção legítima):
+  // com o preenchimento transparente a área do glifo passa a mostrar a sombra/fundo que realmente fica atrás da letra.
+  for (const { el, grad } of esconder) {
+    el.setAttribute('data-ec', el.getAttribute('style') || '§none');
+    if (grad) { el.style.visibility = 'hidden'; }   // texto-gradiente: caixa transparente → some com a letra
+    else { el.style.setProperty('color', 'transparent', 'important'); el.style.setProperty('-webkit-text-fill-color', 'transparent', 'important'); }
+  }
+  return out;
+}
+function _restaurarContraste(){
+  document.querySelectorAll('[data-ec]').forEach(el => { const s = el.getAttribute('data-ec'); if (s === '§none') el.removeAttribute('style'); else el.setAttribute('style', s); el.removeAttribute('data-ec'); });
+}
+function _relLum(r, g, b){ const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); }
+function _ratio(l1, l2){ const a = Math.max(l1, l2), b = Math.min(l1, l2); return (a + 0.05) / (b + 0.05); }
+// mede o eixo (e) numa página já renderizada. `page` = Playwright page; `cfg` = CFG. Devolve array de reprovados.
+async function medirContraste(page, cfg){
+  let sharp; try { sharp = require('sharp'); } catch (e) { return []; }
+  const vp = page.viewportSize() || { width: 780, height: 360 };
+  const clip = { x: 0, y: 0, width: vp.width, height: vp.height };
+  const normalBuf = await page.screenshot({ clip });          // COM texto (p/ localizar os glifos)
+  const infos = await page.evaluate(_coletarContraste, cfg);  // coleta + ESCONDE o texto
+  const hiddenBuf = await page.screenshot({ clip });          // SEM texto (o fundo real)
+  await page.evaluate(_restaurarContraste);
+  const N = await sharp(normalBuf).raw().toBuffer({ resolveWithObject: true });
+  const Hd = await sharp(hiddenBuf).raw().toBuffer({ resolveWithObject: true });
+  const nd = N.data, hd = Hd.data, W = N.info.width, Ht = N.info.height, ch = N.info.channels;
+  const sx = W / vp.width, sy = Ht / vp.height;
+  const e = [];
+  for (const t of infos) {
+    const textLum = _relLum(t.cor[0], t.cor[1], t.cor[2]);
+    const x0 = Math.max(0, Math.floor(t.x * sx)), x1 = Math.min(W, Math.ceil((t.x + t.w) * sx));
+    const y0 = Math.max(0, Math.floor(t.y * sy)), y1 = Math.min(Ht, Math.ceil((t.y + t.h) * sy));
+    const ratios = [];
+    for (let yy = y0; yy < y1; yy++) for (let xx = x0; xx < x1; xx++) {
+      const i = (yy * W + xx) * ch;
+      const dif = Math.abs(nd[i] - hd[i]) + Math.abs(nd[i + 1] - hd[i + 1]) + Math.abs(nd[i + 2] - hd[i + 2]);
+      if (dif < 45) continue;                                  // só os pixels do GLIFO (onde o texto pintava)
+      ratios.push(_ratio(textLum, _relLum(hd[i], hd[i + 1], hd[i + 2])));   // contraste do glifo contra o fundo REAL atrás dele
+    }
+    if (ratios.length < 8) continue;                           // pouca tinta detectada → não mede (evita ruído)
+    ratios.sort((a, b) => a - b);
+    const pior = ratios[Math.floor(ratios.length * 0.20)];     // percentil 20% mais desfavorável (robusto a antialias/bordas de glifo)
+    const req = t.grande ? 3 : 4.5;
+    if (pior + 0.05 < req) e.push({ sel: t.sel, txt: t.txt, ratio: +pior.toFixed(2), req, grande: t.grande });
+  }
+  return e;
+}
+
 function nota(r){
   const aFrac = r.textTotal ? r.a.length / r.textTotal : 0;
   const bFrac = r.tapTotal ? r.b.length / r.tapTotal : 0;
@@ -244,4 +356,4 @@ function nota(r){
   return Math.max(0, Math.min(10, +n.toFixed(1)));
 }
 
-module.exports = { medirNaPagina, nota, CFG, MIN_CORPO, MIN_ROTULO, MIN_TOQUE, SCROLL_OK };
+module.exports = { medirNaPagina, medirContraste, nota, CFG, MIN_CORPO, MIN_ROTULO, MIN_TOQUE, SCROLL_OK };

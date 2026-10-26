@@ -165,7 +165,7 @@ function menuOverlayHTML(){
         ${item('bsair','Sair p/ o início')}
       </div>
       ${item('bsurr','RENDER-SE','rgba(232,52,60,.7)','#FF8A8F')}
-      <div id="bmenubuild" title="toque 3× para diagnóstico" style="min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:#6b6480;cursor:pointer">${H(buildStr())}</div>
+      <div id="bmenubuild" title="toque 3× para diagnóstico" style="min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:#9a93b5;cursor:pointer">${H(buildStr())}</div>
     </div></div>`;
 }
 

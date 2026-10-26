@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
-const { medirNaPagina, CFG } = require('../tools/auditoria_medida.js');
+const { medirNaPagina, medirContraste, CFG } = require('../tools/auditoria_medida.js');
 
 function acharChromium() {
   if (process.env.INCURSION_CHROMIUM) return process.env.INCURSION_CHROMIUM;
@@ -109,6 +109,14 @@ const ESTADOS = {
   'Batalha — menu ☰ aberto': BTBOOT + `menuAberto=true;render();`,
   'Batalha — confirmar encerrar sem agir': BTBOOT + `ov='confirmEnc';render();`,
   'Batalha — caixa de energia com 6 tipos': BTBOOT + `infoUnidade(st.lados[0].units[0].uid);`,
+  // §367: as ÚLTIMAS telas no canvas 780×360 — HOME (o mapa), INVOCAÇÃO (destaque + Ver detalhes), LOJA "em breve" e a
+  // FOLHA DO GUIA. A revelação ×10, o lançador e a splash do jogo são medidos em blocos próprios (precisam de servidor
+  // simulado / página separada / palco vazio) logo após este laço.
+  'Home — o mapa': `ir('home',{},{substituir:true});render();`,
+  'Invocação — destaque': `ir('invocacao',{},{substituir:true});INV.montar();`,
+  'Invocação — Ver detalhes (chances)': `ir('invocacao',{},{substituir:true});INV.montar();INV.openAudit();`,
+  'Loja — "Em breve"': `ir('embreve',{titulo:'Loja'},{substituir:true});render();`,
+  'Guia — folha de componentes': `ir('guia',{},{substituir:true});render();`,
 };
 // §363: os mesmos 10 estados da batalha também no modo RECOLHIDO (painel em barra fina; as ações de LER reabrem o painel).
 for (const [nome, setup] of Object.entries(ESTADOS)) {
@@ -130,7 +138,58 @@ for (const [nome, setup] of Object.entries(ESTADOS)) {
     ok(r.b.length === 0, `${nome}: toque ≥40×40 (b=${r.b.length})` + (r.b.length ? ' → ' + det(r.b) : ''));
     ok(r.c.length === 0, `${nome}: sem rolagem proibida (c=${r.c.length})` + (r.c.length ? ' → ' + r.c.map(x => x.sel).join(', ') : ''));
     ok(r.d.length === 0, `${nome}: sem corte (d=${r.d.length})` + (r.d.length ? ' → ' + det(r.d) : ''));
+    const eC = await medirContraste(page, CFG);   // §367: eixo (e) contraste WCAG contra o fundo real
+    ok(eC.length === 0, `${nome}: contraste ≥4.5/3 (e=${eC.length})` + (eC.length ? ' → ' + eC.slice(0, 5).map(x => x.sel + ' ' + x.ratio + ':1<' + x.req + ' "' + x.txt.slice(0, 16) + '"').join(' | ') : ''));
     await ctx.close();
+  }
+
+  // ===================== §367 — casos ESPECIAIS das últimas telas (servidor simulado / página separada / palco vazio) =====
+  console.log('\n== §367 — invocação ×10, lançador e splash (780×360) ==');
+  {
+    const det = s => s.slice(0, 4).map(x => x.sel + (x.px ? ' ' + x.px + 'px' : x.w ? ' ' + x.w + '×' + x.h : '') + (x.txt ? ' "' + x.txt.slice(0, 18) + '"' : '')).join(' | ');
+    const audita = async (page, nome) => {
+      const r = await page.evaluate(medirNaPagina, CFG);
+      const eC = await medirContraste(page, CFG);
+      ok(r.a.length === 0, `${nome}: texto ≥12/11px (a=${r.a.length})` + (r.a.length ? ' → ' + det(r.a) : ''));
+      ok(r.b.length === 0, `${nome}: toque ≥40×40 (b=${r.b.length})` + (r.b.length ? ' → ' + det(r.b) : ''));
+      ok(r.c.length === 0, `${nome}: sem rolagem proibida (c=${r.c.length})` + (r.c.length ? ' → ' + r.c.map(x => x.sel).join(', ') : ''));
+      ok(r.d.length === 0, `${nome}: sem corte (d=${r.d.length})` + (r.d.length ? ' → ' + det(r.d) : ''));
+      ok(eC.length === 0, `${nome}: contraste ≥4.5/3 (e=${eC.length})` + (eC.length ? ' → ' + eC.slice(0, 5).map(x => x.sel + ' ' + x.ratio + ':1<' + x.req + ' "' + x.txt.slice(0, 16) + '"').join(' | ') : ''));
+    };
+    // 1) REVELAÇÃO ×10 — o sorteio é AUTORITATIVO do servidor (§318 F2 E3); aqui um transporte PURO em JS devolve 10 cartas.
+    {
+      const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+      const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+      await page.evaluate(b => { eval(b); const g = document.getElementById('gsplash'); if (g) g.remove(); ir('invocacao', {}, { substituir: true }); INV.montar();
+        contaTransporte = { pedir: function () { var res = []; for (var i = 0; i < 10; i++) res.push({ key: ROSTER[i].key, raridade: i === 0 ? 'SS' : (i < 3 ? 'S' : 'A'), novo: i % 2 === 0, essencia: i < 3 ? 0 : 40, pontos: 0 }); return Promise.resolve({ tipo: 'invocado', resultados: res, saldo: { gema: 98650, essencia: 5000 }, pity: 12, conta: (typeof contaAtual !== 'undefined' ? contaAtual : null) }); } };
+        lerToken = function () { return 'tok'; };
+      }, BASE);
+      await page.evaluate(() => INV.pull(10));
+      await page.waitForFunction(() => { const r = document.getElementById('iv-reveal'); return r && r.classList.contains('iv-show') && document.querySelectorAll('#iv-cards .iv-carta').length === 10; }, { timeout: 4000 });
+      await audita(page, 'Invocação — revelação ×10 (10 cartas)');
+      await ctx.close();
+    }
+    // 2) LANÇADOR local (web/carregamento/lancador.html): carregando + sem conexão (TENTAR DE NOVO). __LAN_TEST__ trava o auto-run.
+    {
+      const lanAbs = 'file://' + path.resolve(__dirname, '..', 'web', 'carregamento', 'lancador.html');
+      const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+      await ctx.addInitScript(() => { window.__LAN_TEST__ = true; });
+      const page = await ctx.newPage(); await page.goto(lanAbs, { waitUntil: 'load' });
+      await page.evaluate(() => { document.getElementById('lanbar').style.width = '46%'; document.getElementById('landica').textContent = LAN.DICAS[0]; document.getElementById('lanfrase').textContent = LAN.FRASES[0]; });
+      await audita(page, 'Carregamento — lançador (carregando)');
+      await page.evaluate(() => { document.getElementById('lan').classList.add('lan--erro'); document.getElementById('lanerromsg').textContent = 'Sem conexão com a internet'; });
+      await audita(page, 'Carregamento — lançador (sem conexão)');
+      await ctx.close();
+    }
+    // 3) SPLASH do jogo (#gsplash): a PRIMEIRA pintura cobre o palco AINDA VAZIO (nome + barra).
+    {
+      const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+      const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+      await page.evaluate(() => { var st = document.getElementById('stage'); if (st) st.innerHTML = '';
+        var g = document.getElementById('gsplash'); if (!g) { document.body.insertAdjacentHTML('beforeend', '<div id="gsplash"><div class="gsplash__box"><h1 class="gsplash__name">INCURSION</h1><div class="gsplash__bar"><i></i></div></div></div>'); g = document.getElementById('gsplash'); } g.classList.remove('gsplash--fora'); });
+      await audita(page, 'Carregamento — splash do jogo');
+      await ctx.close();
+    }
   }
 
   // §362b — TAMANHOS MÍNIMOS da batalha (opção A do dono): em repouso o painel fica baixo e os RETRATOS/HABILIDADES

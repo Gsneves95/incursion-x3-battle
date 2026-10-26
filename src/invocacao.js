@@ -399,10 +399,10 @@ const INV = (function () {
     // §288: a frase deixa de ser campo por-deus). Escreve-se a de quem ENTRA em destaque, uma por vez. Sem frase, SOME (§252).
     const fr = (typeof INVOCACAO !== 'undefined' && INVOCACAO.destaque && INVOCACAO.destaque.frase) || '';
     const cite = fr ? `<p class="iv-hero__cite">“${esc(fr)}”</p>` : '';
+    // §367: no canvas 780×360 o selo fica AO LADO do nome (linha), economizando a altura que a trilha vertical não tem.
     document.getElementById('iv-hero').innerHTML = `
       <span class="iv-hero__tag">RATE-UP</span>
-      <h1 class="iv-hero__nome">${esc(nome)}</h1>
-      ${seloHeroHTML()}
+      <div class="iv-hero__linha">${seloHeroHTML()}<h1 class="iv-hero__nome">${esc(nome)}</h1></div>
       ${cite}
       <button class="iv-hero__det" onclick="INV.openAudit()"><span class="iv-hero__lupa">⌕</span> Ver detalhes</button>`;
 
@@ -430,7 +430,7 @@ const INV = (function () {
       <div class="iv-wallet">
         <span id="iv-devmark" class="iv-devmark" style="display:none" title="Perfil contaminado por crédito de teste (DEV) — sai antes do release">⚠ DEV</span>
         <span class="iv-c iv-cess" title="Essência — vem de repetidos">✦ <b id="iv-essencia">0</b></span>
-        <span class="iv-c">💎 <b id="iv-gemas">0</b> <button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+</button></span>
+        <span class="iv-c">💎 <b id="iv-gemas">0</b></span><button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+</button>
       </div>
     </div>
     <div class="iv-hero" id="iv-hero"></div>
@@ -450,7 +450,8 @@ const INV = (function () {
     <div class="iv-audit" id="iv-audit"><div class="iv-box" id="iv-auditBox"></div></div>
   </div>`;
 
-  function montar() { sincronizarCarteira(); document.getElementById('stage').innerHTML = SKELETON; render(); }
+  // §367: a INVOCAÇÃO passa ao canvas PEQUENO de 780×360 (px de design = px real). O #iv (inset:0) preenche o #invfix.
+  function montar() { sincronizarCarteira(); document.getElementById('stage').innerHTML = '<div id="baselayer" class="inv2"><div id="invfix">' + SKELETON + '</div></div>'; render(); if (typeof fit === 'function') fit(); }
 
   return { render, pull, claimIniciante, openAudit, topup, closeReveal, rollAgain, montar };
 })();

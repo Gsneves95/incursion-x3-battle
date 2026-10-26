@@ -97,14 +97,46 @@ reticência (`text-overflow:ellipsis`):
   esperada**, não corte; os eixos (d3) "sai da caixa do ancestral" e (d5) "estoura viewport" não valem para ele (mas o
   corte do **próprio item** — nome/custo/efeito recortado — e a **sobreposição** continuam valendo).
 
-## A tela fixa (1846×852)
+### Eixo "(e) contraste" da auditoria (§367)
 
-As telas novas são uma **canvas fixa de 1846×852** escalada por `min(w/1846, h/852)`, centrada, com `#03050B` nas sobras
-(`fit()` em `src/ui/base.js`). Cada tela tem seu id (`#batalha`, `#desafios`, `#dommontar`, `#domhub`, `#provfix`,
-`#deusfix`, `#nlfix`, `#compfix`, `#guiafix`) e o `#stage` vira a moldura. Convenções: margens laterais **32px**;
-cabeçalho no topo (~78px) e conteúdo/ grade abaixo; colunas em `position:absolute` com `left/right/top/bottom`. **Regra
-"filhos ≤ 830":** todo filho de conteúdo termina em y≤830 de design (a grade pode rolar por dentro, o conteúdo não cai
-fora). Nessas telas **"conta"/"build" somem** (classes `body.em<rota>` escondem `#build`/`#conta-botao`).
+O eixo **(e)** do `tools/auditoria_medida.js` mede o **contraste WCAG de cada texto contra o fundo REAL** que fica atrás
+dele (não a cor nominal do CSS — a arte de verdade). Como: tira 1 screenshot COM o texto, esconde o preenchimento do
+glifo (mantendo a **sombra do texto**, que é correção legítima), tira outro SEM o texto; nos pixels onde o glifo pintava,
+amostra a luminância do fundo e calcula a razão. Usa o **percentil 20% mais desfavorável** (robusto a antialias). Exige
+**≥ 4,5:1** para corpo e **≥ 3:1** para título grande (≥18px, ou ≥14px negrito). Pega o caso real que originou o eixo: o
+nome da cultura **"CHINESA" vermelho sobre arte vermelha** na seleção de Domínios. Correções aceitas (ordem de preferência):
+**sombra de texto** (halo escuro), **plaquinha** (fundo sólido atrás do texto), ou **ajuste de cor**. Detalhes:
+
+- **texto-gradiente** (ouro recortado via `background-clip:text`, inclusive quando o texto vive em `<span>` filhos e o
+  recorte está num ancestral) → a cor usada é a **média das paradas do gradiente**; o fundo precisa ficar escuro o bastante
+  (a `drop-shadow` do gradiente não é creditada, então reforça-se o **véu** atrás).
+- **controle inativo** (`[disabled]`/`aria-disabled`) é **isento** (WCAG 1.4.3 — está apagado de propósito).
+- **glifo decorativo puro** (⚿ ◈ ♛ …, sem letra/número) é ÍCONE, não entra.
+- **texto SVG** (`<text>` dentro de um cartão vetorial, ex.: o nome do deus na revelação da invocação) **não entra no (e)**:
+  é parte de uma ilustração autocontida com o próprio fundo desenhado (a "lavagem" clara atrás do nome); amostrar o glifo de
+  um vetor escalado no raster é impreciso. O eixo **(a)** de tamanho continua valendo para ele.
+- há a mesma regra de **modal** do (a–d): com uma camada cobrindo a tela (reveal da invocação, scrim), mede-se só dentro dela.
+
+### Eixo "(d7) fora da tela" da auditoria (§366)
+
+Além do corte/sobreposição, o eixo **(d)** pega **conteúdo cuja caixa cai fora do viewport** (ou da área de um ancestral que
+o recorta): imagem COM `alt`, elemento tocável, ou texto direto. Um filho **decorativo** que só herdou `cursor:pointer` do
+cartão clicável (glow/halo/poça) **não** conta — só o **topo** da região clicável, como no eixo (b).
+
+## A tela fixa — canvas 780×360 (§367: px de design = px real)
+
+Toda tela do jogo é uma **canvas fixa de 780×360** (o celular deitado) escalada por `min(w/780, h/360)`, centrada, com
+`#03050B` nas sobras (`fit()` em `src/ui/base.js`). **O px de design É o px real** no viewport de referência — o mínimo
+do §357 (≥12px, toque ≥40) vale direto, sem precisar dividir por fator de escala. Nas telas maiores o `fit()` só escala
+a canvas inteira para cima (uniforme), sem reflow. Cada tela tem seu id (`#batalha`, `#desafios`, `#dommontar`,
+`#domhub`, `#provfix`, `#deusfix`, `#nlfix`, `#compfix`, `#colfix`, `#campfix`, `#domselfix`, `#invfix`, `#homefix`,
+`#embrevefix`, `#guiafix`) e o `#stage` vira a moldura. Convenções: margens laterais ~**14px**; cabeçalho no topo
+(~40–50px) e conteúdo/grade abaixo; colunas em `position:absolute` com `left/right/top/bottom`. Nessas telas
+**"conta"/"build" somem** (classes `body.em<rota>` escondem `#build`/`#conta-botao`; eles vivem na home/menu).
+
+> **Histórico:** até o §366 a batalha e algumas telas usavam uma canvas de **1846×852**. O §367 unificou TUDO em 780×360
+> (inclusive a batalha, a Coleção e a **folha do guia**), porque na canvas grande o texto de design encolhia ~0,42× no
+> aparelho — o padrão §357 só é honesto quando o px de design é o px real. O `fit()` não usa mais 1846×852.
 
 ## Componentes
 

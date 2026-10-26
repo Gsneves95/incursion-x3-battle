@@ -221,7 +221,9 @@ function ilhaHTML(i){
 
 function renderHomeMapa(){
   const ilhas = MAPA.ilhas.map(ilhaHTML).join('');
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  // §367: a HOME (o MAPA) passa ao canvas PEQUENO de 780×360 — a caixa do mapa PREENCHE o canvas (px de design = px
+  // real), a arte continua (cover), as moedas no topo, cada ilha ≥40 de toque e rótulos/contadores ≥12px, sem corte.
+  stage.innerHTML = `<div id="baselayer" class="home2"><div id="homefix">
   <div class="mapa">
     <img class="mapa__fundo" src="banners/mapa.webp" alt="" aria-hidden="true" onerror="this.remove()">
     <header class="mapa__topo">
@@ -234,7 +236,7 @@ function renderHomeMapa(){
       ${ilhas}
     </div>
   </div>
-  </div>`;
+  </div></div>`;
   ligarHomeMapa();
   fit();
 }
@@ -297,22 +299,26 @@ function ligarHomeCarrossel(){
 function renderEmBreve(){
   const p = paramsAtuais();
   const titulo = (p && p.titulo) || 'Em breve';
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="stagemark">INCURSION</div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">${H(titulo)}</h1>
-      <span class="tela__espaco"></span>
+  // §367: marcador EM BREVE (Loja) no canvas PEQUENO de 780×360 — px de design = px real, sem rolagem, contraste ok.
+  stage.innerHTML = `<div id="baselayer" class="embreve2"><div id="embrevefix">
+    <header class="eb__cab">
+      <button class="eb__voltar" id="bvoltar">‹ Início</button>
+      <h1 class="eb__titulo">${H(titulo)}</h1>
+      <span class="eb__espaco"></span>
     </header>
-    <div class="tela__vazio">
-      <span class="tela__vazioic">◈</span>
-      <p class="tela__vaziomsg">${H(titulo)} chega numa fase adiante.<br>Por ora, a jornada é pelos Desafios.</p>
+    <div class="eb__corpo">
+      <div class="eb__card">
+        <span class="eb__ic">◈</span>
+        <p class="eb__msg">${H(titulo)} chega numa fase adiante.</p>
+        <p class="eb__sub">Por ora, a jornada é pelos Desafios.</p>
+        <button class="eb__cta" id="ebdesafios">Ir aos Desafios</button>
+      </div>
     </div>
-  </div>
-  </div>`;
+  </div></div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const d = stage.querySelector('#ebdesafios');
+  if (d) d.onclick = () => { ir('desafios'); render(); };
   fit();
 }
 
@@ -3555,7 +3561,7 @@ function renderDominioHub(){
     </header>
     <div class="dh-trilha">${_domHubTrilhaHTML(total, cleared, atual)}<div class="dh-trilha__cap">${H(cap)}</div></div>
     <section class="dh-col dh-col--time">
-      <div class="dh-col__cab"><h2 class="dh-col__t cin">SEU TIME</h2>${mostraLock ? '<span class="dh-lock"><i>🔒</i>Travado nesta corrida</span>' : ''}</div>
+      <div class="dh-col__cab"><h2 class="dh-col__t cin">SEU TIME</h2>${mostraLock ? '<span class="dh-lock"><i>⚿</i>Travado nesta corrida</span>' : ''}</div>
       <div class="dh-uns">${timeHTML}</div>
       ${bonusHTML}
     </section>

@@ -367,6 +367,10 @@ console.log('== 14. o fit APLICA o que a regra de enquadramento manda ==');
   // tests/enquadramento.test.js; a matriz de rect real em tests/moldura.test.js.
   for (const [vw, vh] of [[568,320],[667,375],[844,390],[926,428],[1180,820]]) {
     const dd = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true });
+    // §367: as telas do jogo (home/invocação/coleção/batalha/…) migraram para o canvas FIXO 780×360; a REGRA fluida
+    // (calcularEnquadramento) ainda rege a tela de RESERVA — o carrossel da home, usado quando a arte do mapa falta.
+    // Força esse caminho (MAPA_ARTE=null → renderHomeCarrossel, fluido) p/ provar que o fit aplica a regra ao #stage.
+    dd.window.eval("ir('home',{},{substituir:true}); renderHomeCarrossel();");
     Object.defineProperty(dd.window, 'innerWidth', { value: vw, configurable: true });
     Object.defineProperty(dd.window, 'innerHeight', { value: vh, configurable: true });
     dd.window.dispatchEvent(new dd.window.Event('resize'));

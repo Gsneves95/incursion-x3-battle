@@ -2,7 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §366 · AUDITORIA: fechada a cegueira do conteúdo fora da tela (d7) + reconferência de todas as telas
+## ★ §367 · As últimas telas acessíveis (780×360) + eixo (e) CONTRASTE
+- **Eixo (e) novo em `auditoria_medida.js`** (`medirContraste`): contraste WCAG de cada texto contra o FUNDO REAL (2
+  screenshots — com e sem o glifo, mantendo a sombra; amostra o fundo onde o glifo pintava; percentil 20% pior; ≥4,5 corpo,
+  ≥3 título grande). Pega o caso real "CHINESA vermelho sobre arte vermelha". Isenções: inativo (`[disabled]`, WCAG 1.4.3),
+  glifo-ícone puro, e **texto SVG** (cartão vetorial com fundo próprio — o (a) de tamanho ainda vale). Dois bugs de medição
+  consertados: (i) ler a cor ANTES de esconder (senão filho `<b>` lido como preto → razão falsa ~1,1); (ii) d7 não conta
+  filho que só herdou `cursor:pointer` (glow decorativo).
+- **e=0 em TODAS as telas §358–§366.** Consertos (sombra/plaquinha/ajuste de cor, sem mudar estilo além do necessário):
+  HP label (campo.js), #pvpultimo, vaga da Seleção (plaquinha), fgrp__l, dfb--danger, dhist__nota, rq__max, #bmenubuild,
+  títulos dourados dos Domínios (véu `dcard__scrim` mais escuro).
+- **5 últimas telas no canvas 780×360** (px design = px real): **Invocação** (`#invfix` — selo ao lado do nome, base
+  `pointer-events:none`, reveal ×10 com bg sólido, "+"/"⚠DEV" 40×40 legíveis), **Home** (`#homefix` — mapa preenche;
+  Loja/Campanha reposicionadas p/ não encostar), **Loja "em breve"** (`#embrevefix`), **Carregamento** (lançador + splash,
+  já passavam), **Guia** (`#guiafix` — saiu de 1846×852, 2 colunas que rolam; `docs/guia-visual.md` atualizado).
+- **`fit()` não usa mais 1846×852** (`fixa=false`); a regra fluida rege só o carrossel de reserva da home.
+- **⚠ Lançador precisa de APK NOVO** no celular (empacotado no APK; no navegador já vale).
+- **PROVAS:** `acessibilidade_telas` a=b=c=d=e=0 em todos os estados (inclui invocação, reveal ×10, Ver detalhes, home, loja,
+  guia, lançador carregando/sem-rede, splash); suíte + build verdes. Capturas `367-*` (780×360 e 1846×852).
+
+## §366 · AUDITORIA: fechada a cegueira do conteúdo fora da tela (d7) + reconferência de todas as telas
 - **Ponto cego (do §365) na FERRAMENTA:** o eixo (d) só olhava elementos VISÍVEIS, e `vis()` descarta o que está fora do
   viewport — então conteúdo empurrado p/ fora do canvas (abaixo de 360) e recortado por `overflow:hidden` passava batido.
   Novo **d7 `fora-tela`** em `auditoria_medida.js`: acusa qualquer elemento COM CONTEÚDO (texto, imagem com alt, tocável)
