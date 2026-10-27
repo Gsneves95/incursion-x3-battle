@@ -239,7 +239,7 @@ function _painelMinis(m, P){
     const sel=selSlot&&a.slot===selSlot;
     const sombra = sel?`inset 0 0 0 2px #FFE7A0,0 0 0 2px #C9A44C,0 0 14px rgba(240,180,60,.7)`:`inset 0 0 0 1.5px ${anel}`;
     return `<div class="b5-skill bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}" style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra}">
-      ${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}
+      ${slot('skill-'+u.key+'-'+a.slot,'',null,0,false,corEnergia(a.cost))}
       <span class="b5-mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:${anel};pointer-events:none">${H(mono(a))}</span></div>`;
   }).join('');
   return `<div class="bt-panel__minis" style="display:flex;align-items:center;gap:2px;min-width:0">${minis}</div>`;

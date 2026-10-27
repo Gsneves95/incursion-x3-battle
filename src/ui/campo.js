@@ -157,7 +157,7 @@ function btSkill(u, a, meu, g){
   const nvBadge = nvSk>1 ? `<span class="b5-sknv bt-skill__nv cin" style="position:absolute;left:3px;top:3px;padding:0 3px;border-radius:3px;background:rgba(6,5,16,.85);color:#F0DC9A;font-weight:700;font-size:12px;line-height:1.3">Nv ${nvSk}</span>` : '';
   const cls=['b5-skill','bt-skill']; if(clicavel)cls.push('is-ready'); if(cd>0)cls.push('is-cooldown'); if(!clicavel)cls.push('is-off'); if(arm)cls.push('is-armed');
   return `<div class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" data-arma="${clicavel?1:0}"${meu?'':' data-dead="1"'} style="position:relative;width:${sz}px;height:${sz}px;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra};filter:${filtro}">
-    <span class="bt-skill__disc" style="position:absolute;inset:0">${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}</span>
+    <span class="bt-skill__disc" style="position:absolute;inset:0">${slot('skill-'+u.key+'-'+a.slot,'',null,0,false,corEnergia(a.cost))}</span>
     <span class="b5-mono bt-skill__mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:${anel};pointer-events:none">${H(mono(a))}</span>
     ${cdOv}${btCustoPips(a.cost)}${armSel}${nvBadge}
   </div>`;

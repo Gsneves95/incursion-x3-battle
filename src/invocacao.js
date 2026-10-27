@@ -137,7 +137,6 @@ const INV = (function () {
           ${pecaParticulas(r, el)}
           <path d="${ARCO}" fill="url(#iv-desbota-${uid})"/>
           <path d="${ARCO}" fill="none" stroke="${r.aC}" stroke-width="10" opacity=".28"/>
-          ${pecaNome(cfg.nome, r, uid)}
         </g>
         ${r.orn > 2 ? `<path d="M92 40 C86 24 76 16 66 14 C78 24 84 34 86 46 Z M108 40 C114 24 124 16 134 14 C122 24 116 34 114 46 Z" fill="${el.d}" opacity=".85"/>` : ''}
         <path d="${ARCO}" fill="none" stroke="url(#iv-metal-${uid})" stroke-width="3.2" class="iv-moldura"/>
@@ -285,12 +284,13 @@ const INV = (function () {
   function showReveal(out, gratis) {
     const order = { SS: 3, S: 2, A: 1 };
     const scr = document.getElementById('iv');
-    const avail = (scr.clientWidth || 926) - 28, alt = (scr.clientHeight || 428) - 92;
+    // §355: reserva ~42px abaixo de cada carta p/ o NOME em TEXTO HTML (legível ≥12px, sem corte; o nome SVG saiu da carta).
+    const avail = (scr.clientWidth || 926) - 28, alt = (scr.clientHeight || 428) - 92 - 42;
     const W = out.length === 1
       ? Math.min(132, Math.floor(alt / 3.30))
       : Math.min(Math.floor((avail - 9 * 4) / 10), Math.floor(alt / 3.30));
     const cards = document.getElementById('iv-cards');
-    cards.innerHTML = out.map((o, i) => gcard(o.u, W, o.novo, S.owned[o.u.key], i * 70, o.essencia)).join('');
+    cards.innerHTML = out.map((o, i) => `<div class="iv-cartaw">${gcard(o.u, W, o.novo, S.owned[o.u.key], i * 70, o.essencia)}<div class="iv-cardnome" style="width:${W}px">${esc(o.u.nome)}</div></div>`).join('');
     const best = out.reduce((a, b) => order[b.r] > order[a.r] ? b : a);
     const btn = document.getElementById('iv-revagain');
     btn.style.display = gratis ? 'none' : 'inline-block';

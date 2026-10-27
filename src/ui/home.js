@@ -1755,7 +1755,7 @@ function _fichaAlvo(a){
 function _fichaBtnHTML(k, s, sel){
   const nv = _fichaNv(k, s.slot, s.a);
   return `<button class="dsk${s.slot === sel ? ' is-sel' : ''}" data-deussel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(FICHA_ROT[s.slot])}">
-    <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false)}</span>
+    <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false, corEnergia(s.a && s.a.cost))}</span>
     ${nv != null ? `<span class="dsk__nv">Nv ${nv}</span>` : ''}
     <span class="dsk__nome">${H(FICHA_ROT[s.slot])}</span>
   </button>`;
@@ -1779,7 +1779,7 @@ function deusDetalheHTML(k, gmEf, sel){
     : `<span class="ddet__cost">${_montCustoHTML(a.cost)}<span class="ddet__clab">Custo</span></span><span class="ddet__cd"><i>⟲</i> Recarga ${a.cd || 0}</span>`;
   return `<div class="ddet">
     <div class="ddet__head">
-      <span class="ddet__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false)}</span>
+      <span class="ddet__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false, corEnergia(a.cost))}</span>
       <div class="ddet__id"><h2 class="ddet__tit cin">${H(a.nome || '—')}</h2><div class="ddet__pills">${pills}</div></div>
     </div>
     <div class="ddet__meta">${meta}</div>
@@ -2016,7 +2016,7 @@ function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
     for (let i = 1; i <= topo; i++){ const cls = i <= cur ? 'on' : (i <= alc ? 'pode' : ''); pins += `<i class="nlpin ${cls}"></i>`; } }
   const nvbox = sem ? '' : `<div class="nlp__nvbox"><span class="nlp__nv">Nv ${cur} de ${topo}</span><span class="nlp__pins">${pins}</span></div>`;
   const cab = `<div class="nlp__cab">
-      <span class="nlp__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
+      <span class="nlp__art">${slot('skill-' + k + '-' + sl, '', null, 0, false, corEnergia(ab.cost))}</span>
       <div class="nlp__id"><b class="nlp__tipo cin">${tipo}</b><span class="nlp__nome">${H(ab.nome || '—')}</span></div>${nvbox}
     </div>`;
   // §350b: a habilidade SEM níveis (ex.: Defesa) rotula "EFEITO", não "AGORA (Nv 1)".
@@ -2105,7 +2105,7 @@ function renderNiveis(){
       </div>
       ${passiva ? `<div class="nlpas">
         <span class="nlpas__rot">PASSIVA</span>
-        <div class="nlpas__row"><span class="nlpas__art">${slot('skill-' + k + '-passiva', '', null, 0, false)}</span>
+        <div class="nlpas__row"><span class="nlpas__art">${slot('skill-' + k + '-passiva', '', null, 0, false, corEnergia(passiva && passiva.cost))}</span>
           <div class="nlpas__id"><b class="nlpas__nome">${H(passiva.nome || '—')}</b><p class="nlpas__txt">${realce(passiva.desc || '')}</p></div></div>
         <p class="nlpas__nota">A passiva não tem níveis.</p>
       </div>` : ''}
@@ -3036,7 +3036,7 @@ function renderDesafios(){
 const GUIA_COMPONENTES = [
   'botao-primario', 'botao-secundario', 'pilula', 'card-montador', 'painel', 'orbe', 'selo-raridade',
   'selo-nivel', 'gratis', 'barra-progresso', 'barra-vida', 'aviso-toast', 'confirmacao-inline',
-  'estado-vazio', 'icone-pontos', 'trilha-niveis',
+  'estado-vazio', 'icone-pontos', 'trilha-niveis', 'moldura-skill',
 ];
 function _guiaTile(id, label, sel, demo, grande){
   return `<section class="guia-tile${grande ? ' guia-tile--g' : ''}" data-comp="${id}">
@@ -3086,6 +3086,12 @@ function renderGuia(){
       : '', true));
   T.push(_guiaTile('trilha-niveis', 'Trilha de níveis (cartão de habilidade)', 'nlPainelHTML(...) · .nlp',
     (typeof nlPainelHTML === 'function' && efz) ? nlPainelHTML('zeus', G.zeus, efz, 'milagre', 'MILAGRE', true, true) : '', true));
+  // §355: a MOLDURA fina da arte de habilidade — na cor da energia (orbe de custo) + filete escuro por dentro. Mostra
+  // artes REAIS de slots com energias diferentes (slot('skill-...') + corEnergia(cost)); a última é neutra (livre/defesa).
+  T.push(_guiaTile('moldura-skill', 'Moldura da arte de habilidade (cor da energia + filete)', `slot('skill-…', …, corEnergia(cost))`,
+    (function(){ const arts=[]; ['zeus','hades'].forEach(gk=>{ const gg=(typeof deusKitEfetivo==='function'&&G[gk])?deusKitEfetivo(gk,G[gk]):null; const abs=(gg&&gg.ab)?gg.ab.slice(0,2):[]; abs.forEach(ab=>arts.push(`<span class="guia-mold1">${slot('skill-'+gk+'-'+ab.slot,'',null,0,false,corEnergia(ab.cost))}</span>`)); });
+      arts.push(`<span class="guia-mold1">${slot('skill-zeus-defesa','',null,0,false,corEnergia(null))}</span>`);
+      return `<div class="guia-molds">${arts.join('')}</div>`; })()));
 
   stage.innerHTML = `<div id="baselayer" class="guia2"><div id="guiafix">
     <header class="guia-cab">

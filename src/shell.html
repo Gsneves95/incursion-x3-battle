@@ -133,6 +133,15 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .slot__glyph{font-family:'Cinzel',serif;font-weight:900;line-height:1;text-align:center}
 /* §254: arte de bestiário presente -> esconde o monograma-reserva; se o onerror remover o <img>, ele volta */
 .slot:has(.slot__art) .slot__glyph{opacity:0}
+/* §355: MOLDURA fina da arte de HABILIDADE — na cor da energia (--sk-en) a ~55% + um FILETE escuro de 1px por dentro
+   (p/ a arte não encostar direto na moldura), nos cantos arredondados do botão, desenhada SOBRE a arte (::after, não
+   muda o tamanho/posição de nada). Os ESTADOS somam: usável → moldura a 100% (+ o brilho do botão, de hoje);
+   marcada → moldura dourada (+ ✓, por cima); inusável → apaga junto (o filtro do botão também cobre o ::after). */
+.slot--sk{position:relative}
+.slot--sk::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 1.5px var(--sk-en55,rgba(200,206,218,.55)),inset 0 0 0 2.5px rgba(0,0,0,.6)}
+.b5-skill.is-ready .slot--sk::after,.bt-skill.is-ready .slot--sk::after,.skill.nv-pronto .slot--sk::after{box-shadow:inset 0 0 0 1.5px var(--sk-en,#C8CEDA),inset 0 0 0 2.5px rgba(0,0,0,.6)}
+.b5-skill.is-armed .slot--sk::after,.bt-skill.is-armed .slot--sk::after{box-shadow:inset 0 0 0 1.5px #F0D79A,inset 0 0 0 2.5px rgba(0,0,0,.6)}
 
 /* ============ TELA DE BATALHA (§214) — zonas por ergonomia (paisagem 2.16) ============
    topo 46 · corpo 336 · rodapé 46 (palco 926×428). Polegar direito domina em paisagem: o que
@@ -919,6 +928,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #iv .iv-reveal{position:absolute;inset:0;z-index:80;background:radial-gradient(circle at 50% 45%,rgba(30,24,60,.96),rgba(5,4,10,.98));background-color:rgba(8,6,16,.97);display:none;align-items:center;justify-content:center;flex-direction:column;padding:14px}
 #iv .iv-reveal.iv-show{display:flex}
 #iv .iv-grid{display:flex;flex-wrap:nowrap;gap:5px;justify-content:center;align-items:flex-start;width:100%}
+/* §355: cada carta vira uma COLUNA (carta + NOME em TEXTO HTML abaixo) — o nome SVG dentro da carta saiu (minúsculo no
+   780×360); o nome HTML lê de relance (≥12px, contraste alto no scrim do reveal), sem corte, 2 palavras em 2 linhas. */
+#iv .iv-cartaw{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
+#iv .iv-cardnome{position:relative;z-index:4;font-family:'Cinzel',serif;font-weight:700;font-size:12px;line-height:1.14;letter-spacing:.01em;color:#F2E7CC;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.92);white-space:normal;overflow-wrap:break-word;word-break:break-word}
 #iv .iv-revfoot{margin-top:12px;display:flex;gap:10px;justify-content:center;z-index:3}
 #iv .iv-revbtn{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--iv-void);background:linear-gradient(180deg,#f4d98a,var(--iv-gold));border:1px solid #fff0c0;border-radius:10px;padding:0 18px;min-height:40px;cursor:pointer;box-shadow:0 4px 14px rgba(233,200,119,.35)}
 #iv .iv-revbtn:active{transform:translateY(1px)}
@@ -947,7 +960,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    (legível) e a faixa acompanha, sem recortar. */
 #iv .iv-carta-topo{height:max(16px,calc(var(--iv-largura)*.16));display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:max(12px,calc(var(--iv-largura)*.105));font-weight:600;letter-spacing:.18em;text-transform:uppercase;position:relative;z-index:3;white-space:nowrap}
 #iv .iv-topo-novo{color:#F2E4B8;text-shadow:0 0 6px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.95)}
-#iv .iv-topo-copias{color:#a99fc8;letter-spacing:.06em}
+#iv .iv-topo-copias{color:#c3bce0;letter-spacing:.06em;text-shadow:0 0 6px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.95)}
+/* §355: PLAQUINHA escura atrás do selo do topo (Novo/+40 ✦/×N) — sobre a arte da carta a sombra sozinha é instável
+   (o pico claro da arte varia por carta); um plinto quase sólido garante contraste ≥4,5 do selo em qualquer arte. */
+#iv .iv-topo-novo,#iv .iv-topo-ess,#iv .iv-topo-copias{display:inline-flex;align-items:center;line-height:1;background:#0a0816;padding:3px 8px;border-radius:3px;overflow:hidden}
 #iv .iv-carta-halo,#iv .iv-carta-poca{position:absolute;left:50%;z-index:0;pointer-events:none;opacity:var(--iv-h0);animation:iv-carta-respira 4.8s ease-in-out infinite}
 #iv .iv-carta-halo{top:36%;translate:-50% -50%;width:188%;aspect-ratio:1;border-radius:50%;filter:blur(calc(var(--iv-largura)*.165))}
 #iv .iv-carta-poca{bottom:calc(var(--iv-largura)*.05);translate:-50% 0;width:152%;height:calc(var(--iv-largura)*.26);border-radius:50%;filter:blur(calc(var(--iv-largura)*.10))}
@@ -1384,7 +1400,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #iv .iv-odds b{font-variant-numeric:tabular-nums;font-weight:700}
 #iv .iv-odds .iv-ssc{color:var(--iv-ss)} #iv .iv-odds .iv-sc{color:var(--iv-s)} #iv .iv-odds .iv-ac{color:var(--iv-a)}
 #iv .iv-cess b{color:#c9a6ff}
-#iv .iv-topo-ess{color:#c9a6ff;letter-spacing:.04em;font-weight:700}
+#iv .iv-topo-ess{color:#d7bcff;letter-spacing:.04em;font-weight:700;text-shadow:0 0 6px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.95)}
 
 /* ===================== F3.2 — Coleção (por panteão) + detalhe do deus ===================== */
 .csec{margin:14px 2px 4px}
@@ -2308,6 +2324,10 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 #guiafix .guia-orbes{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap}
 #guiafix .guia-cards{display:flex;gap:10px;flex-wrap:wrap}
 #guiafix .guia-cards .dm-card{width:150px}
+/* §355: demo da moldura da arte de habilidade na folha do guia */
+#guiafix .guia-molds{display:flex;gap:12px;flex-wrap:wrap}
+#guiafix .guia-mold1{display:inline-block;width:46px;height:46px;border-radius:6px;overflow:hidden}
+#guiafix .guia-mold1 .slot{width:100%;height:100%}#guiafix .guia-mold1 .slot>img{object-fit:cover}
 .stage.col2fix{border:0;border-radius:0;box-shadow:none;background:#03050B}  /* §346b: Coleção em tela fixa 1846×852 escalada */
 #baselayer.col2fix{position:absolute;inset:0;background:#03050B;overflow:hidden}
 #colfix{position:absolute;left:50%;top:50%;width:780px;height:360px;transform-origin:center;overflow:hidden}  /* §358: canvas = o celular (780×360); fit() escala p/ cima — px reais ≥ §357 */

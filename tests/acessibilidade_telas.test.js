@@ -166,6 +166,12 @@ for (const [nome, setup] of Object.entries(ESTADOS)) {
       }, BASE);
       await page.evaluate(() => INV.pull(10));
       await page.waitForFunction(() => { const r = document.getElementById('iv-reveal'); return r && r.classList.contains('iv-show') && document.querySelectorAll('#iv-cards .iv-carta').length === 10; }, { timeout: 4000 });
+      // §355: espera FONTES e ARTE das cartas carregarem ANTES de medir — senão a arte termina de carregar ENTRE os dois
+      // screenshots do medirContraste (com/sem texto) e a diferença de carregamento é confundida com "glifo", amostrando
+      // arte recém-pintada (falso baixo contraste nos selos do topo). Pré-carrega os href das <image> das cartas.
+      try { await page.evaluate(() => document.fonts && document.fonts.ready); } catch (e) {}
+      try { await page.waitForLoadState('networkidle'); } catch (e) {}   // toda a arte das cartas carregada (sem corrida entre os 2 screenshots)
+      await page.waitForTimeout(400);
       await audita(page, 'Invocação — revelação ×10 (10 cartas)');
       await ctx.close();
     }

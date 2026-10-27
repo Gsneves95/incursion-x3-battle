@@ -51,12 +51,23 @@ function medirNaPagina(cfg){
   const todos = (_modal ? [_modal, ...(_modal.querySelectorAll('*'))] : [...document.querySelectorAll('body *')]).filter(_tagOK);
 
   // a) TEXTO pequeno
+  // §355: TEXTO SVG (<text> dentro de uma carta vetorial, ex.: o nome do deus na revelação) escala pelo viewBox, não pelo
+  // transform do enquadramento — `escalaDe` (offsetWidth dos ancestrais HTML) não enxerga esse encolhimento e daria o
+  // tamanho de DESIGN. Para esses, o tamanho REAL na tela = font-size × a escala do getScreenCTM (viewBox + transforms
+  // até a tela). Fecha o ponto cego dos nomes minúsculos das cartas.
   const a = [];
   for (const el of todos) {
     const t = txtDe(el); if (!t) continue; if (!vis(el)) continue;
     const cs = getComputedStyle(el);
     const fpx = parseFloat(cs.fontSize) || 0; if (!fpx) continue;
-    const real = +(fpx * escalaDe(el)).toFixed(2);
+    let real;
+    if (el.ownerSVGElement && typeof el.getScreenCTM === 'function') {
+      const m = el.getScreenCTM();
+      const sc = m ? Math.sqrt(Math.abs(m.a * m.d - m.b * m.c)) : 1;   // escala uniforme (área) do user-unit até o px de tela
+      real = +(fpx * sc).toFixed(2);
+    } else {
+      real = +(fpx * escalaDe(el)).toFixed(2);
+    }
     if (real < MIN_CORPO) a.push({ sel: sel(el), txt: t.slice(0, 40), px: real, abaixoRotulo: real < MIN_ROTULO });
   }
 

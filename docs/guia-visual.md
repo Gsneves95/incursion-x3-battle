@@ -163,6 +163,12 @@ Cada item: **quando usar** + **seletor/função de referência**. A folha viva (
   `_pontoIcSVG()` / `.nltop__ic` / `nlTopoPtsHTML`.
 - `trilha-niveis` — cartão de habilidade dos Níveis: AGORA | PRÓXIMO (só o que muda em dourado) + ação por estado. Ref.:
   `nlPainelHTML(...)` → `.nlp` (`.nlb`, `.nl-hi`, `.nlpin`).
+- `moldura-skill` — **acabamento da arte de habilidade** (§355): uma moldura fina de ~1,5px na **cor da energia** da
+  habilidade (a mesma da orbe de custo; livre/neutra em cinza-claro), a ~55% de opacidade, com um **filete escuro** de 1px
+  (`rgba(0,0,0,.6)`) por dentro (p/ a arte não encostar na moldura), nos cantos arredondados do botão. Desenhada SOBRE a
+  arte (`::after`), **não muda o tamanho/posição** do botão. Os estados somam: usável → moldura a 100% + o brilho do
+  elemento; marcada → moldura dourada + ✓; inusável → apaga junto. Ref.: `slot('skill-…', …, corEnergia(cost))` →
+  `.slot--sk` (`--sk-en`); vale em TODO lugar que mostra arte de habilidade (batalha, miniaturas, kit "i", ficha, Níveis).
 
 ## Princípios (as lições das rodadas)
 

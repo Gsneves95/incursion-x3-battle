@@ -2,7 +2,20 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §367 · As últimas telas acessíveis (780×360) + eixo (e) CONTRASTE
+## ★ §355 · Acabamento das artes de habilidade (moldura) + nomes das cartas da revelação
+- **Moldura da arte de habilidade:** toda arte de habilidade (`slot('skill-…')` — batalha, miniaturas, kit "i", ficha,
+  Níveis, guia) ganha moldura de ~1,5px na **cor da energia** (orbe de custo dominante; livre→cinza) a ~55%, com **filete
+  escuro** de 1px por dentro, cantos do botão. `corEnergia(cost)` (base.js) → 6º arg do `slot()` → `.slot--sk` + `--sk-en`;
+  CSS num `::after box-shadow:inset` SOBRE a arte — **não muda o tamanho** de nada. Estados somam: usável→100%,
+  marcada→dourada+✓, inusável→apaga. Novo componente `moldura-skill` na folha do guia + `docs/guia-visual.md`.
+- **Nomes da revelação:** o nome SVG saiu da carta (ilegível, ~5,7px no 780×360) e virou **texto HTML abaixo de cada
+  carta** (`.iv-cardnome`, ≥12px, sem corte, 2 linhas quando precisa). A raridade segue no selo (imagem).
+- **Eixo (a) mede SVG:** `font-size × getScreenCTM` para `<text>` SVG — fecha o ponto cego dos nomes minúsculos.
+- **PROVAS (`arte_moldura`):** pixel da borda do botão = cor da energia + filete escuro 1–2px p/ dentro; 10 nomes da
+  revelação ≥12px sem corte; eixo (a) acusa SVG minúsculo; botões com largura estável. Auditoria 37/37 nota 10 (a–e, com
+  (a) medindo SVG). Suíte + build verdes. Capturas `355-{batalha,ficha,niveis,kit-i,revelacao}-{780,1846}`.
+
+## §367 · As últimas telas acessíveis (780×360) + eixo (e) CONTRASTE
 - **Eixo (e) novo em `auditoria_medida.js`** (`medirContraste`): contraste WCAG de cada texto contra o FUNDO REAL (2
   screenshots — com e sem o glifo, mantendo a sombra; amostra o fundo onde o glifo pintava; percentil 20% pior; ≥4,5 corpo,
   ≥3 título grande). Pega o caso real "CHINESA vermelho sobre arte vermelha". Isenções: inativo (`[disabled]`, WCAG 1.4.3),

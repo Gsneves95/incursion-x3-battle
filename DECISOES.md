@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §355 · Acabamento das artes de habilidade (moldura fina) + nomes das cartas da revelação
+
+**1. MOLDURA fina da arte de habilidade (na cor da energia).** Desde o §353b a arte de habilidade é quadrada e CHEIA, até
+a borda do botão — sangrava sem contorno. Agora toda arte de habilidade (o `slot('skill-…')` em base.js — batalha,
+miniaturas do painel, kit "i", ficha, Níveis, folha do guia) ganha uma **moldura de ~1,5px na cor da ENERGIA** da
+habilidade (a cor da orbe de custo DOMINANTE; livre/sem custo → cinza-claro neutro), a **~55% de opacidade**, com um
+**filete escuro de 1px** (`rgba(0,0,0,.6)`) por dentro (p/ a arte não encostar na moldura), nos cantos arredondados do
+botão. A cor sai de `corEnergia(cost)` (base.js, pura — sem dep. de home.js); passa ao `slot()` num 6º parâmetro, que
+marca a `.slot--sk` + a var `--sk-en`. O CSS desenha a moldura num **`::after` com `box-shadow:inset`** SOBRE a arte
+(`inset 0 0 0 1.5px energia@55%, inset 0 0 0 2.5px #000@.6`) — **não muda o tamanho/posição** de nenhum botão (prova:
+`arte_moldura`, todos os botões com a mesma largura; §362c/§363b seguem verdes). Os ESTADOS somam à moldura (sem
+substituí-la): usável (`.is-ready`) → moldura a **100%** + o brilho do elemento de hoje; marcada (`.is-armed`) → moldura
+**dourada** + ✓ por cima; inusável → o filtro do botão apaga tudo junto. **Por que no slot() e não no botão:** o botão já
+tinha um anel inset, mas a arte CHEIA (§353b) o cobria — a moldura no `::after` fica POR CIMA da arte. **Componente novo**
+`moldura-skill` na folha do guia + `docs/guia-visual.md` (o teste §352 garante doc ↔ folha).
+
+**2. NOMES das cartas da revelação em TEXTO HTML.** Os nomes eram `<text>` SVG dentro da carta vetorial (viewBox 200);
+numa carta de ~71px no 780×360 isso rende ~5,7px reais — ilegível, e a auditoria não via (media o SVG como se fosse px de
+design). Decisão: **o nome SAI da carta** (removido o `pecaNome`/`text.iv-nome`) e vira **texto HTML logo abaixo de cada
+carta** (`.iv-cardnome`, ≥12px, Cinzel, alto contraste no scrim do reveal, sem corte e sem "…", quebra em 2 linhas quando
+precisa). A revelação vira uma COLUNA por carta (`.iv-cartaw`): carta + nome. Reserva-se ~42px de altura p/ o nome no
+cálculo do tamanho da carta (`showReveal`). O nome HTML leva `z-index` p/ o glow vetorial da carta vizinha não o cobrir
+(d6). A raridade continua no SELO da carta (imagem `selos/seal-*`, não texto) — nada a medir ali.
+
+**3. Eixo (a) passa a medir o tamanho REAL de texto SVG.** Fecha o ponto cego: para `<text>` SVG, o tamanho na tela é
+`font-size × escala do getScreenCTM` (viewBox + transforms), não `font-size × escalaDe` (que só vê o transform HTML). Com
+isso o eixo (a) pegaria o nome minúsculo se alguém o reintroduzisse na carta (prova `arte_moldura`: um `<text>` de design
+20px num viewBox exibido a 40px mede 4px reais e é acusado). As 37 telas seguem nota 10 (o único texto SVG do app era o
+nome da carta, agora em HTML; o selo de raridade é imagem).
+
+---
+
 ## §367 · As últimas telas acessíveis (780×360) + eixo (e) CONTRASTE na auditoria
 
 **1. Novo eixo (e) — contraste WCAG contra o FUNDO REAL.** A auditoria media tamanho (a), toque (b), rolagem (c) e

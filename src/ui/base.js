@@ -346,7 +346,18 @@ function ligarModoApp(){
 }
 
 /* ---------- encaixes de arte ---------- */
-function slot(chave,glifo,cor,tam,redondo){
+// §355: cor da ENERGIA de uma habilidade = a cor (HEX) da orbe de custo DOMINANTE (a que tem mais pips); livre/sem custo →
+// cinza-claro neutro. Usada pela MOLDURA fina da arte de habilidade (slot('skill-...')). Pura (sem dep. de home.js).
+// HEX (não var()) p/ o slot poder derivar a versão a 55% em rgba — sem color-mix (não suportado em toda WebView antiga).
+const EHEX = { Aurora:'#ffc94a', Tempestade:'#9fd8ff', Verdejante:'#58d68d', Chama:'#ff5c8a', Umbra:'#a06bff', 'Maré':'#4ad3c7' };
+function corEnergia(cost){
+  if(!cost) return '#C8CEDA';
+  let best=null,n=0;
+  for(const k in cost){ if(k==='livre')continue; const v=cost[k]||0; if(v>n){n=v;best=k;} }
+  return best?(EHEX[best]||'#C8CEDA'):'#C8CEDA';
+}
+function _skRGBA(hex,a){ const h=String(hex).replace('#',''); const n=parseInt(h.length===3?h.replace(/(.)/g,'$1$1'):h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+function slot(chave,glifo,cor,tam,redondo,energia){
   const m=/^god-(.+)$/.exec(chave);
   const arteGod=m&&IMG[m[1]];
   // arte de habilidade (F1.7): ARQUIVO em web/skills/skill-<deus>-<slot>.webp (não base64 — 401 imagens embutidas
@@ -370,7 +381,11 @@ function slot(chave,glifo,cor,tam,redondo){
     inner=`<img class="slot__art slot__art--cheia" src="skills/${H(arq)}.webp" alt="" loading="lazy" onerror="this.remove()">`;
   }
   else inner=glifoHtml;
-  return `<div class="slot${redondo?' slot--round':''}" data-slot="${H(chave)}">`+inner+`</div>`;
+  // §355: arte de habilidade ganha a MOLDURA fina na cor da energia (classe slot--sk + var --sk-en); o CSS desenha a
+  // moldura (energia @55%) + o filete escuro por dentro, sobre a arte, sem mudar o tamanho/posição do botão.
+  const _en = energia||'#C8CEDA';
+  const skAttr = ehSkill ? ` slot--sk" style="--sk-en:${_en};--sk-en55:${_skRGBA(_en,.55)}` : '';
+  return `<div class="slot${redondo?' slot--round':''}${skAttr}" data-slot="${H(chave)}">`+inner+`</div>`;
 }
 const ini = n => n.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2).toUpperCase();
 const MONO_FIXO={defesa:'DEF'};
@@ -482,7 +497,7 @@ function _montKitPanelHTML(k, cfg){
     if (!a) return '';
     const nv = sl === 'defesa' ? 1 : nlNivel(k, sl);   // §342b: nível REAL da conta, sempre visível ao lado do tipo
     return `<div class="dmk-ab">
-      <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
+      <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false, corEnergia(a.cost))}</span>
       <div class="dmk-ab__body">
         <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span><span class="dmk-ab__nv">Nv ${nv}</span></div>
         <div class="dmk-ab__meta">${_montCustoHTML(a.cost, 16)}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
