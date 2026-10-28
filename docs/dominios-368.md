@@ -122,3 +122,52 @@ mediana, 30)`:
   teto por corrida de 30 passa a morder a partir de ~15 níveis limpos — reportar antes de mudar valores.)
 
 **Valores de economia não foram alterados** (o §368 pede consulta ao dono antes de mudá-los).
+
+---
+
+## Estado aplicado (§368b) — decisão do dono: o MEIO-TERMO
+
+O dono escolheu, a partir da tabela acima, o **meio-termo** e aceitou que a meta exata não fecha (a variância por
+cultura é propriedade do dado, §325; e a IA jogando pelo jogador vai menos fundo que uma pessoa):
+
+- **`fatorDano` = 0,45** — fator UNIFORME sobre a rampa de dano (`danoMult` da faixa × `fatorDano`), em TODAS as
+  faixas e TODAS as culturas. A forma da rampa (1.00/1.05/1.10/1.15) se mantém; o fator só a multiplica.
+- **`curaPorNivel` = 0,35** (35% da vida máxima) nas 5 culturas.
+
+**Como foi aplicado (só no DADO):** cada `data/dominios/<cultura>.json` ganhou `"fatorDano": 0.45` (+ nota `_fatorDano`)
+e `"curaPorNivel": 0.35`. O motor (`src/dominios.js` → `domMontarBatalha`) lê `ladder.fatorDano` e escala o inimigo por
+`danoMult × fatorDano`; `domEscadaSemana` carrega o campo p/ o servidor re-simular igual. O gerador
+(`tools/gerar_dominios.js`) também grava o campo. **Trocar o número num lugar só afina a dificuldade** — nada no código.
+
+**Portões:** P1–P5, o do chefe final (§348b) e o P3 (nv1 vencível) continuam passando — o nv1 agora é jogado em
+`danoMult × 0,45`, ainda mais fácil (P3 = 100% nas 5 culturas). A **monotonia (P2) não precisou de regeração:** o campo
+`dificuldade` é a FORMA da régua medida no danoMult de referência (que o gerador usa p/ escolher as composições); o
+`fatorDano` é um amaciador UNIFORME de play-time que não altera a ORDEM da dificuldade, só a abaixa por igual. As
+composições, seeds e a régua seguem idênticas — **nada foi regerado**.
+
+### Medianas no estado aplicado (sim_dominios_368.js, fatorDano 0,45 · cura 0,35 · N=30)
+
+| time | Grega | Nórdica | Egípcia | Japonesa | Chinesa |
+|---|---|---|---|---|---|
+| **INICIAL** (mediana) | 6 | 7 | 6 | 6 | 5 |
+| **INICIAL** (faixa) | 3–8 | 3–8 | 4–8 | 3–9 | 3–12 |
+| **FORTE** (mediana) | 40 | 40 | 40 | 40 | 8.5 |
+| **FORTE** (faixa) | 16–40 | 28–40 | 24–40 | 20–40 | 2–31 |
+| **FORTE %40** | 97% | 97% | 93% | 77% | 0% |
+
+Leitura honesta (já aceita pelo dono): o INICIAL sobe de ~1 (§325b) para **~5–7** (bem mais justo que o estado anterior,
+ainda abaixo da meta 8–12 porque a IA v2 joga pelo jogador). O FORTE vai fundo nas 4 culturas "fáceis" (mediana 40, a
+maioria chega ao 40) e trava na **Chinesa** (~8,5, 0% no 40) — o outlier de dado do §325. Uma pessoa jogando vai mais
+fundo que a IA, então a profundidade real do jogador tende a ser maior que estas medianas.
+
+### Economia no estado aplicado (valores INALTERADOS: 2/nível, teto 30/corrida, 90/dia)
+
+Ganho médio de Essência por corrida = `min(2 × profundidade, 30)`:
+
+- **INICIAL** (~5–7 níveis): ~**10–14** de Essência por corrida — **abaixo** do teto por corrida (30).
+- **FORTE** (~40 níveis nas 4 culturas fáceis): 2 × 40 = 80, mas o **`tetoRunEssencia` (30) agora MORDE** — o crédito
+  satura em **30 por corrida** (a partir do 15º nível limpo). Na Chinesa (~8,5) fica em ~**17**, sem bater o teto.
+- **Teto diário (90)** inalterado: segura ~3 corridas FORTE no teto, ou ~6–9 corridas INICIAL, por dia.
+
+Ou seja: com o meio-termo, **o teto por corrida (30) passa a morder para o time forte** (antes do §368b nenhuma corrida
+típica chegava aos 15 níveis). Nenhum valor de economia foi mudado — só a dificuldade (fatorDano/cura).

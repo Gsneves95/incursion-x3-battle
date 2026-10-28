@@ -103,7 +103,7 @@ function domChaveSemanaAnterior(d) { d = d || new Date(); return domSemanaChave(
 // vista PLANA de UMA semana da escada (o que as funções de corrida consomem: .niveis + trio/cura/teto).
 function domEscadaSemana(ladder, weekIndex) {
   const sem = (ladder.semanas || [])[weekIndex] || (ladder.semanas || [])[0] || { niveis: ladder.niveis || [] };
-  return { cultura: ladder.cultura, trio: ladder.trio, curaPorNivel: ladder.curaPorNivel, tetoBonusDano: ladder.tetoBonusDano, faixa: ladder.faixa, niveis: sem.niveis };
+  return { cultura: ladder.cultura, trio: ladder.trio, curaPorNivel: ladder.curaPorNivel, fatorDano: ladder.fatorDano, tetoBonusDano: ladder.tetoBonusDano, faixa: ladder.faixa, niveis: sem.niveis };
 }
 
 // ---- a CORRIDA (estado run-scoped; zera com a corrida — não fere o invariante 3) ----
@@ -157,7 +157,10 @@ function domMontarBatalha(run, ladder, opc = {}) {
   if (!def) return null;
   const seed = (opc.seed != null) ? opc.seed : ((run.nivel * 7919) >>> 0) || 1;
   // §325: catálogos POR LADO (o time pode conter um deus da cultura que também é inimigo — kits distintos).
-  const cats = domCatalogosPorLado(gods, fieldKeys, run.bonus, def.inimigos, def.danoMult || 1);
+  // §368b: o dano do inimigo = danoMult da faixa × fatorDano (fator UNIFORME da escada, escolha do dono = 0,45).
+  // A forma da rampa (1.00/1.05/1.10/1.15) se mantém; o fatorDano só a multiplica. Lido do DADO — trocar o número afina.
+  const fdano = (ladder.fatorDano != null) ? ladder.fatorDano : 1;
+  const cats = domCatalogosPorLado(gods, fieldKeys, run.bonus, def.inimigos, (def.danoMult || 1) * fdano);
   // §323 P2: níveis do jogador (lado 0). opc.niveis = [ mapaLado0, {} ] | null (mapa por CHAVE — vale p/ quem está
   // no campo, inclusive um reserva que entrou). Aplica sobre o catálogo JÁ escalado da corrida; null → base.
   const st = novoEstado(fieldKeys, def.inimigos, seed, 0, null, cats, opc.niveis || null);   // comeca=0: o jogador abre
@@ -298,6 +301,8 @@ function domValidarLadder(ladder, catalogoKeys) {
   if (!(ladder.tetoBonusDano <= DOM_TETO_BONUS + 1e-9)) erros.push(`${nome}: tetoBonusDano ${ladder.tetoBonusDano} passa do teto ${DOM_TETO_BONUS}`);
   // §368: curaPorNivel é uma FRAÇÃO da vida máxima (0..1), não mais um valor absoluto de HP.
   if (ladder.curaPorNivel != null && !(ladder.curaPorNivel >= 0 && ladder.curaPorNivel <= 1)) erros.push(`${nome}: curaPorNivel ${ladder.curaPorNivel} fora de 0..1 (fracao da vida maxima)`);
+  // §368b: fatorDano = fator uniforme sobre a rampa de dano (0,45 = escolha do dono). Deve ser > 0 e razoavel (<= 2).
+  if (ladder.fatorDano != null && !(ladder.fatorDano > 0 && ladder.fatorDano <= 2)) erros.push(`${nome}: fatorDano ${ladder.fatorDano} fora de (0,2]`);
   // §325 F: a régua é um CONJUNTO FIXO de times de referência (regua.times). Validação de FORMA (sem simular):
   // a viabilidade de fato (nv1 vencível pelo mais barato) é o portão P3, medido em tools/dominio_p3_guard.js.
   const times = ladder.regua && ladder.regua.times;

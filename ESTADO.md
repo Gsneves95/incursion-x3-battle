@@ -2,7 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §368 · DOMÍNIOS mais justos: reservas (5) + cura fração + recalibragem reportada
+## ★ §368b · DOMÍNIOS: aplicada a dificuldade do dono (meio-termo)
+- **Decisão do dono:** `fatorDano` = **0,45** (fator UNIFORME sobre a rampa de dano, todas as faixas/culturas) +
+  `curaPorNivel` = **0,35**. Aplicado SÓ no DADO (`data/dominios/*.json`): `"fatorDano":0.45` + `"curaPorNivel":0.35`.
+- **Motor:** `domMontarBatalha` escala o inimigo por `danoMult × fatorDano` (lido de `ladder.fatorDano`);
+  `domEscadaSemana` carrega o campo (servidor re-simula igual); gerador grava o campo; guarda `fatorDano ∈ (0,2]`.
+  Afinar depois = trocar o número num lugar só.
+- **Portões:** P1–P5 + chefe final + P3 verdes (nv1 em `danoMult×0,45` = 100%). Monotonia (P2) **sem regeração** — o
+  `fatorDano` é amaciador uniforme de play-time; `dificuldade` segue a forma da régua; composições/seeds idênticas.
+- **Medianas aplicadas (N=30):** INICIAL `[6,7,6,6,5]`; FORTE `[40,40,40,40,8.5]`; FORTE %40 `[97,97,93,77,0]`
+  (Chinesa = outlier de dado §325). Relatório: `docs/dominios-368.md` seção "Estado aplicado (§368b)".
+- **Textos:** ajuda "?" e overlay de nível vencido dizem **35% da vida máxima**. **Economia inalterada** (2/nível, tetos
+  30/90) — o teto por corrida (30) AGORA MORDE para o time forte (~40 níveis → satura em 30).
+- **Prova:** `dominio_reservas.test.js` §368b (dado tem fatorDano 0.45+cura 0.35; motor escala por round(base×danoMult×
+  fatorDano); cura 0,35 do dado). Suíte + build verdes; acessibilidade do Domínio a=b=c=d=e=0.
+
+## §368 · DOMÍNIOS mais justos: reservas (5) + cura fração + recalibragem reportada
 - **Reservas:** a corrida monta 5 deuses = 3 titulares + 2 reservas. `run.time`(5) + `run.campo`(3 índices das vagas,
   começa `[0,1,2]`). O 1º reserva vivo assume a vaga do titular caído no próximo nível (`domSubstituirReservas`); joga com
   até 3 vivos; a corrida só acaba com os **5 caídos** (derrota com reserva vivo = `retomar`, refaz o nível). REVIVER escolhe

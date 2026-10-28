@@ -6,6 +6,43 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §368b · DOMÍNIOS: aplicada a dificuldade escolhida pelo dono (o MEIO-TERMO)
+
+A partir da tabela do §368 (`docs/dominios-368.md`), o dono escolheu o **meio-termo** e aceitou que a meta exata não
+fecha (a variância por cultura é propriedade do dado, §325; a IA jogando pelo jogador vai menos fundo que uma pessoa):
+**`fatorDano` = 0,45** (fator UNIFORME sobre a rampa de dano, todas as faixas e culturas) e **`curaPorNivel` = 0,35**.
+
+**Aplicado SÓ no DADO (afinar = trocar um número).** Cada `data/dominios/<cultura>.json` ganhou `"fatorDano": 0.45`
+(+ nota `_fatorDano`) e `"curaPorNivel": 0.35`. O MOTOR (`src/dominios.js` → `domMontarBatalha`) lê `ladder.fatorDano` e
+escala o inimigo por **`danoMult` da faixa × `fatorDano`** (a forma da rampa 1.00/1.05/1.10/1.15 se mantém, só é
+multiplicada); `domEscadaSemana` carrega o campo p/ o servidor re-simular igual; o GERADOR (`tools/gerar_dominios.js`)
+também grava o campo. Guarda de build nova: `fatorDano ∈ (0,2]`. **Alternativa recusada:** assar o 0,45 em cada
+`danoMult` por nível (5×8×40 valores) — recusada: o pedido é "um lugar só, explícito, trocar o número afina".
+
+**Portões.** P1–P5 + chefe final (§348b) + P3 (nv1 vencível) seguem verdes — o nv1 agora joga em `danoMult × 0,45`
+(ainda mais fácil; P3 = 100% nas 5). A **monotonia (P2) NÃO precisou de regeração:** `dificuldade` é a FORMA da régua
+medida no danoMult de referência (que o gerador usa p/ escolher composições); o `fatorDano` é um amaciador UNIFORME de
+play-time que abaixa tudo por igual sem mudar a ORDEM. Composições/seeds/régua idênticas — **nada regerado**.
+
+**Medianas aplicadas (sim, fatorDano 0,45 · cura 0,35 · N=30):** INICIAL `[6,7,6,6,5]` (G/N/E/J/C), FORTE
+`[40,40,40,40,8.5]`, FORTE %40 `[97,97,93,77,0]`. O INICIAL sobe de ~1 (§325b) p/ ~5–7; o FORTE vai fundo nas 4 culturas
+fáceis e trava na Chinesa (~8,5, o outlier de dado do §325). Tabela completa em `docs/dominios-368.md` (seção "Estado
+aplicado (§368b)").
+
+**Textos.** A ajuda "?" e o overlay de nível vencido passam a dizer **35% da vida máxima** (eram "fração"/"parcial").
+
+**Economia (valores INALTERADOS: 2/nível, teto 30/corrida, 90/dia).** Ganho `min(2 × profundidade, 30)`: INICIAL ~5–7 →
+~10–14 (abaixo do teto); FORTE ~40 → satura no **`tetoRunEssencia` 30 por corrida** (o teto AGORA MORDE p/ o time forte,
+do 15º nível limpo em diante; antes do §368b nenhuma corrida típica chegava lá). Teto diário (90) inalterado. Nenhum
+valor de economia mudado.
+
+**Prova.** `dominio_reservas.test.js` ganhou a seção §368b: as 5 culturas têm `fatorDano 0.45` + `curaPorNivel 0.35` no
+dado; o motor escala o dano do inimigo por `round(base × danoMult × fatorDano)` (lido do dado, não hardcoded);
+`domCurarParcial` usa 0,35 do dado; `domEscadaSemana` carrega o `fatorDano`. Suíte + build verdes; acessibilidade das
+telas do Domínio segue a=b=c=d=e=0.
+
+---
+
 ## §368 · DOMÍNIOS mais justos: RESERVAS no time + cura como FRAÇÃO + recalibragem por metas (reportada)
 
 Queixa do dono (jogando): a torre de 40 níveis está dura demais; com um time só é impossível avançar vários níveis

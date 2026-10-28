@@ -33,7 +33,8 @@ function medir(ladder, seeds = 24) {
   const nv1 = sem0.niveis[0];
   if (!cheapest || !nv1) return { tx: 0, vit: 0, seeds, cheapest, nv1: nv1 && nv1.inimigos };
   let vit = 0;
-  for (let s = 1; s <= seeds; s++) vit += _jogo(cheapest, nv1.inimigos, (s * 7919) >>> 0, nv1.danoMult || 1);
+  const fdano = (ladder.fatorDano != null) ? ladder.fatorDano : 1;   // §368b: o nv1 é jogado no danoMult × fatorDano (como o motor)
+  for (let s = 1; s <= seeds; s++) vit += _jogo(cheapest, nv1.inimigos, (s * 7919) >>> 0, (nv1.danoMult || 1) * fdano);
   return { tx: vit / seeds, vit, seeds, cheapest, nv1: nv1.inimigos };
 }
 

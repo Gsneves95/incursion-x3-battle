@@ -102,5 +102,37 @@ console.log('\n== §368 (6) migração v7→v8: corrida do formato antigo (3 deu
   ok(mb.dominios.porDominio['nórdica'].run && mb.dominios.porDominio['nórdica'].run.campo, 'uma corrida já no formato novo (5 + campo) é MANTIDA na migração');
 }
 
-console.log(`\n== §368 RESERVAS — ${n} asserções, ${falhas} falha(s) ==`);
+console.log('\n== §368b (7) o DADO tem fatorDano 0.45 + cura 0.35, e o MOTOR os aplica ==');
+{
+  // o primeiro valor de dano (recursivo) de um kit
+  function primeiroDmg(kit) { let v = null; (function rec(fx) { for (const e of (fx || [])) { if (!e || typeof e !== 'object') continue; if (v == null && e.t === 'dmg' && typeof e.v === 'number') { v = e.v; return; } for (const kk of ['entao', 'senao', 'agenda', 'faz']) if (Array.isArray(e[kk])) rec(e[kk]); } })((kit.ab || []).flatMap(a => a.fx || [])); return v; }
+  // DADO: as 5 culturas trazem fatorDano 0.45 e curaPorNivel 0.35
+  const files = ['grega', 'nórdica', 'egípcia', 'japonesa', 'chinesa'];
+  let dadoOk = true, viu = '';
+  for (const f of files) { const lad = JSON.parse(require('fs').readFileSync(path.join(__dirname, '..', 'data', 'dominios', f + '.json'), 'utf8')); if (lad.fatorDano !== 0.45 || lad.curaPorNivel !== 0.35) { dadoOk = false; viu = f + ' fd=' + lad.fatorDano + ' cura=' + lad.curaPorNivel; } }
+  ok(dadoOk, 'as 5 culturas têm fatorDano 0.45 e curaPorNivel 0.35 no DADO' + (dadoOk ? '' : ' — ' + viu));
+  // MOTOR: o dano do inimigo = base × danoMult × fatorDano (lido do dado, não hardcoded)
+  const inimigo = 'atena', baseKit = GODS[inimigo], baseV = primeiroDmg(baseKit);
+  const mk = fd => ({ cultura: 'Grega', trio: ['zeus', 'poseidon', 'atena'], curaPorNivel: 0.35, fatorDano: fd, tetoBonusDano: 0.5, faixa: 10, niveis: [{ n: 1, chefe: false, inimigos: ['atena', 'hera', 'dionisio'], danoMult: 1, dificuldade: 0.1 }] });
+  function dmgInimigo(fd) {
+    const lad = mk(fd); const run = D.domNovaCorrida(lad, 0, '', 0, time5);
+    const st = D.domMontarBatalha(run, lad, { seed: 1 });
+    const u = st.lados[1].units.find(x => x.key === inimigo);
+    return primeiroDmg(E.kitDe(st, u));
+  }
+  ok(typeof baseV === 'number' && baseV > 0, `o inimigo de prova (${inimigo}) tem dano base (${baseV})`);
+  ok(dmgInimigo(1) === baseV, 'com fatorDano 1.0 o dano do inimigo é o base (sem escala)');
+  ok(dmgInimigo(0.45) === Math.round(baseV * 0.45), `com fatorDano 0.45 o dano do inimigo = round(base × 0.45) = ${Math.round(baseV * 0.45)} (danoMult 1 × fatorDano 0.45)`);
+  ok(dmgInimigo(0.45) < baseV, 'o fatorDano 0.45 REDUZ o dano do inimigo (a escada afrouxa)');
+  // CURA: domCurarParcial usa o curaPorNivel do dado (0.35)
+  const ladG = JSON.parse(require('fs').readFileSync(path.join(__dirname, '..', 'data', 'dominios', 'grega.json'), 'utf8'));
+  const escG = D.domEscadaSemana(ladG, 0);
+  const runC = D.domNovaCorrida(escG, 0, '', 0, time5); runC.vida[0] = { hp: 10, vivo: true };
+  D.domCurarParcial(runC, escG);
+  const mxZeus = (GODS.zeus.hp || 120);
+  ok(runC.vida[0].hp === Math.min(mxZeus, 10 + Math.round(mxZeus * 0.35)), `domCurarParcial usa 0.35 do dado: zeus 10 → ${runC.vida[0].hp}`);
+  ok(escG.fatorDano === 0.45, 'domEscadaSemana carrega o fatorDano (0.45) para o motor/servidor');
+}
+
+console.log(`\n== §368/§368b RESERVAS — ${n} asserções, ${falhas} falha(s) ==`);
 if (falhas) process.exit(1);

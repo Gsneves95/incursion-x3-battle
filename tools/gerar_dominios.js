@@ -24,7 +24,7 @@ const CULT = {}; for (const k of KEYS) { const f = GODS[k].faccao; (CULT[f] = CU
 const V2 = s => iaProximaAcao(s, 'normal', 2);   // §325: o lado do jogador (e o inimigo) joga sob a IA v2 do modo
 
 const arg = (n, d) => { const p = process.argv.find(a => a.startsWith('--' + n + '=')); return p ? parseInt(p.split('=')[1], 10) : d; };
-const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 0.25, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.08 };   // §368: curaPorNivel agora é FRAÇÃO da vida máxima (0..1)
+const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 0.35, fatorDano: 0.45, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.08 };   // §368: curaPorNivel = FRAÇÃO da vida (0..1). §368b (dono): curaPorNivel 0.35 + fatorDano 0.45 (fator uniforme sobre a rampa de dano)
 // `trio` = §325 o TRIO ICÔNICO INIMIGO da cultura (o chefe final, mostrado no cartão como INIMIGO). `frase`/`curtos`: cartão.
 const CFGS = {
   Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'O raio, o tridente e a lança que pensa.', curtos: {}, ...COMUM },
@@ -234,6 +234,7 @@ function gerar(CFG, REF) {
       + 'Reproduzir: node tools/gerar_dominios.js --todas --semanas=' + SEMANAS,
     cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio, frase: CFG.frase, curtos: CFG.curtos || {},
     faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
+    fatorDano: CFG.fatorDano,   // §368b: fator UNIFORME sobre a rampa de dano (danoMult × fatorDano), lido pelo motor; a régua/dificuldade mede a FORMA no danoMult de referência (sem o fatorDano), que só suaviza no play
     tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS, tolMonotonia: CFG.tolMonotonia,
     regua: {
       metodo: '1 − média de vitória (vida cheia, IA v2) dos 6 times de referência (2 fracos/2 médios/2 fortes por força v2), no danoMult da faixa',

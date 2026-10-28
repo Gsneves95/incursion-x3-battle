@@ -3312,7 +3312,7 @@ function abrirAjudaDominios(){
     <div class="dhist__topo"><h2>Como funciona</h2><button class="b b--quiet b--md" id="dajudax">Fechar</button></div>
     <p class="dhist__nota">Cada Domínio é uma ESCADA de batalhas 3×3 que muda toda semana. Você desce o quanto conseguir numa corrida; a vida carrega entre os níveis e a cada 10 vem um chefe. O placar é SÓ SEU: você compete com o seu próprio recorde da semana passada e com o seu melhor de sempre — guardado só neste aparelho, sem comparação com outros jogadores e sem recompensa.</p>
     <p class="dhist__nota"><b>Reservas.</b> Você monta 5 deuses: 3 titulares (nas vagas) + 2 reservas. Quando um titular cai, no começo do próximo nível o primeiro reserva vivo entra na vaga dele. Cada nível é jogado com até 3 vivos; se só sobrarem 1 ou 2, joga-se com eles. A corrida só acaba quando os 5 estão caídos.</p>
-    <p class="dhist__nota"><b>Cura entre níveis.</b> Depois de cada nível vencido, todos os vivos (titulares e reservas) recuperam uma fração da vida máxima. O prêmio REVIVER de chefe pode trazer de volta qualquer um dos 5 caídos.</p>
+    <p class="dhist__nota"><b>Cura entre níveis.</b> Depois de cada nível vencido, todos os vivos (titulares e reservas) recuperam <b>35% da vida máxima</b>. O prêmio REVIVER de chefe pode trazer de volta qualquer um dos 5 caídos.</p>
   </div>`;
   stage.querySelector('#baselayer').appendChild(ov);
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
@@ -3911,7 +3911,7 @@ function dominioResultadoOverlay(){
     selo = 'Chefe · nível ' + f.nivel; titulo = 'CHEFE VENCIDO'; msg = 'Reivindique a recompensa da corrida antes de descer.';
     acoes = '<button class="b b--primary b--md" id="dfpremio">Reivindicar recompensa ›</button>';
   } else {   // nível comum vencido
-    selo = 'Nível ' + f.nivel; titulo = 'NÍVEL VENCIDO'; msg = 'A vida carrega para o próximo nível (cura parcial aplicada).';
+    selo = 'Nível ' + f.nivel; titulo = 'NÍVEL VENCIDO'; msg = 'A vida carrega para o próximo nível (cura de 35% da vida máxima aplicada).';
     acoes = '<button class="b b--primary b--md" id="dfprox">Próximo nível ›</button>';
   }
   // §275: o INSTANTE da superação — bateu a marca da semana passada AGORA (o único momento comemorável).
