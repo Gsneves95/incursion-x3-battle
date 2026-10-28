@@ -43,10 +43,11 @@ function servirEstatico(req, res) {
   // §354: VERIFICAÇÃO EM PRODUÇÃO — {armazenamento, banco, contas}, SEM nenhum segredo. Para o dono conferir pós-deploy.
   if (rel === '/saude') {
     const cors = { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache, no-store, must-revalidate' };
+    const lojaSimulada = require('./pagamento.js').lojaSimulada();   // §370: expõe o MODO (true/false), nunca um segredo
     Promise.resolve().then(() => contas.saude()).then(s => {
       res.writeHead(200, Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, cors));
-      res.end(JSON.stringify({ armazenamento: s.armazenamento, banco: s.banco, contas: s.contas }));
-    }).catch(() => { res.writeHead(200, Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, cors)); res.end(JSON.stringify({ armazenamento: 'desconhecido', banco: 'fora', contas: null })); });
+      res.end(JSON.stringify({ armazenamento: s.armazenamento, banco: s.banco, contas: s.contas, lojaSimulada }));
+    }).catch(() => { res.writeHead(200, Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, cors)); res.end(JSON.stringify({ armazenamento: 'desconhecido', banco: 'fora', contas: null, lojaSimulada })); });
     return;
   }
   if (rel === '/' || rel === '/index.html') return enviar(res, path.join(ROOT, 'dist', 'incursion.html'));
@@ -154,9 +155,10 @@ wss.on('connection', (ws) => {
       // ---- §318 F2 E3: INVOCAÇÃO no servidor. O sorteio, o débito de gema e a conversão (posse/pontos/
       // essência) são autoritativos. O cliente só pede (avulso/pacote) e mostra o que volta. ----
       case 'invocar': {
-        const r = contas.invocar(msg.token, { pacote: !!msg.pacote, iniciante: !!msg.iniciante, destaque: msg.destaque || null }, Date.now());
+        // §370: msg.bilhete usa 1 BILHETE (grátis, conta p/ o pity) em vez de pagar gema. Precedência: iniciante > bilhete > pago.
+        const r = contas.invocar(msg.token, { pacote: !!msg.pacote, iniciante: !!msg.iniciante, bilhete: !!msg.bilhete, destaque: msg.destaque || null }, Date.now());
         if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
-        return responder('invocado', { resultados: r.resultados, saldo: r.saldo, pity: r.pity, pontos: r.pontos, inicianteUsado: r.inicianteUsado, conta: r.conta });
+        return responder('invocado', { resultados: r.resultados, saldo: r.saldo, pity: r.pity, pontos: r.pontos, bilhetes: r.bilhetes, inicianteUsado: r.inicianteUsado, conta: r.conta });
       }
       case 'devCredito': {
         const r = contas.devCredito(msg.token);
@@ -182,6 +184,55 @@ wss.on('connection', (ws) => {
         const r = contas.chancesInvocacao(msg.token);
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
         return responder('chancesInvocacao', { faixa: r.faixa, faixaNome: r.faixaNome, faixaNomes: r.faixaNomes, linhaFaixa: r.linhaFaixa, raridade: r.raridade, pity: r.pity });
+      }
+
+      // ---- §370: LOJA. Tudo autoritativo no servidor: compra/crédito ATÔMICO + IDEMPOTENTE (recibo). O cliente só
+      // PEDE e mostra o que volta. Compra/anúncio só valem com a confirmação SIMULADA (LOJA_SIMULADA=1); sem ela,
+      // "pagamento indisponível". Os wrappers são async (recibo pelo §354) — respondemos pelo .then, como o /saude. ----
+      case 'lojaEstado': {
+        const r = contas.estadoLoja(msg.token, Date.now());
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('lojaEstado', { loja: r.loja, conta: r.conta });
+      }
+      case 'lojaComprarPacote': {
+        contas.comprarPacote(msg.token, msg.pacoteId, msg.idCompra, msg.confirmacao || null)
+          .then(r => r.ok ? responder('lojaCompra', { o: 'pacote', duplicado: !!r.duplicado, gemas: r.gemas, emDobro: r.emDobro, saldo: r.saldo, conta: r.conta })
+                          : responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro }))
+          .catch(() => responder('erro', { erro: 'falha na compra' }));
+        return;
+      }
+      case 'lojaComprarPasse': {
+        contas.comprarPasse(msg.token, msg.idCompra, msg.confirmacao || null, Date.now())
+          .then(r => r.ok ? responder('lojaCompra', { o: 'passe', duplicado: !!r.duplicado, passe: r.passe, conta: r.conta })
+                          : responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro }))
+          .catch(() => responder('erro', { erro: 'falha na compra' }));
+        return;
+      }
+      case 'lojaResgatarPasse': {
+        const r = contas.resgatarPasse(msg.token, Date.now());
+        if (!r.ok) return responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro });
+        return responder('lojaPasseResgate', { premio: r.premio, saldo: r.saldo, bilhetes: r.bilhetes, conta: r.conta });
+      }
+      case 'lojaComprarDeusSemana': {
+        contas.comprarDeusSemana(msg.token, msg.idCompra, Date.now())
+          .then(r => r.ok ? responder('lojaCompra', { o: 'deusSemana', duplicado: !!r.duplicado, deus: r.deus, concedido: r.concedido, saldo: r.saldo, conta: r.conta })
+                          : responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro }))
+          .catch(() => responder('erro', { erro: 'falha na compra' }));
+        return;
+      }
+      case 'lojaAnuncio': {
+        contas.creditarAnuncio(msg.token, msg.anuncio, msg.id, msg.confirmacao || null, { escolha: msg.escolha, deus: msg.deus, runId: msg.runId }, Date.now())
+          .then(r => r.ok ? responder('lojaAnuncio', { duplicado: !!r.duplicado, premio: r.premio, uso: r.uso, saldo: r.saldo, conta: r.conta })
+                          : responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro }))
+          .catch(() => responder('erro', { erro: 'falha no anúncio' }));
+        return;
+      }
+      case 'lojaComprarVagaProvacao': {
+        contas.comprarVagaProvacao(msg.token, msg.idCompra)
+          .then(r => r.ok ? responder('lojaCompra', { o: 'vagaProvacao', duplicado: !!r.duplicado, vagas: r.vagas, vagasExtra: r.vagasExtra, saldo: r.saldo, conta: r.conta })
+                          : responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro }))
+          .catch(() => responder('erro', { erro: 'falha na compra' }));
+        return;
       }
 
       // ---- §314: PROVAÇÃO ATIVA. O cliente só PEDE ativar/trocar; o servidor valida (ranque + nomes

@@ -2,6 +2,27 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §370 · LOJA, parte 1: SERVIDOR + DADOS (sem telas — as telas são o §371)
+- **Dados:** bloco `loja` em `data/economia.json` (fonte única): pacotes (1ª em dobro), passe (calendário 30 dias),
+  bilhete, anúncios (teto 8/dia + limite por tipo), Deus da Semana (S, janela 12, 5 marcas, 1.800), vaga Provação
+  (500, +2). **Fechada a pendência `_pendencias.bilhetes`** (sim, existem). O código só LÊ daqui.
+- **Servidor:** `server/loja.js` (regra pura sobre `conta`) + wrappers em `server/contas.js` — cada compra/crédito é
+  **atômico** (muta no Map + persiste) e **idempotente** por `reservarRecibo(id)` (tabela `recibos` do §354). O cliente
+  nunca soma. `server/pagamento.js` é o **único** ponto de verificação (compra/anúncio): hoje só aceita `{simulado:true}`
+  com `LOJA_SIMULADA=1`; sem a env → **"pagamento indisponível"**. Trocar por Google Play/AdMob SSV é mudar só esse arquivo.
+- **Regras:** bilhete = 1 avulso grátis que conta p/ o pity (`invocar` c/ `opts.bilhete`); passe 1 resgate/dia, dia pulado
+  PERDIDO, dia 30 = SS pela regra da Invocação (`invocacao.sortearSSPasse`, faixa ≤ jogador, inédito; tudo-tendo → pontos);
+  Deus da Semana determinístico/semana (segunda UTC), só S, nunca repete em 12, 5 marcas (2/dia c/ passe), 1.800 direto;
+  anúncios com passe creditam **sem assistir**; vaga Provação = `slotsGratis` + extra (a *enforcement* de múltiplas ativas
+  fica p/ a tela do §371 — o §314 é slot único).
+- **Decisão (reportada):** recomprar o passe **ativo** → **RECUSAR** (não soma 30 dias). **Hook de pagamento real:**
+  `server/pagamento.js`. `/saude` mostra `"lojaSimulada": true|false`.
+- **Endpoints WS:** `lojaEstado`, `lojaComprarPacote`, `lojaComprarPasse`, `lojaResgatarPasse`, `lojaComprarDeusSemana`,
+  `lojaAnuncio`, `lojaComprarVagaProvacao`; `invocar` ganhou `msg.bilhete`.
+- **Prova:** `tests/loja.test.js` (arquivo **E** pg-mem, como §354) — 64 asserções verdes. Suíte + build verdes.
+- **Antes da loja de verdade:** desligar `LOJA_SIMULADA` + ligar a verificação real (Google Play Billing / AdMob SSV) em
+  `server/pagamento.js`. Ver `docs/monetizacao.md` §10.
+
 ## ★ §369 · Desenho da monetização APROVADO (só documentação)
 - `docs/monetizacao.md` atualizado com o desenho final do dono (fecha as partes em aberto do §343): pacotes de gemas
   (1ª compra em dobro), passe mensal R$ 29,90 (calendário de 30 dias → 4.350 gemas + 11 bilhetes + 1 SS no dia 30),

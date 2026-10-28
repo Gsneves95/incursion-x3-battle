@@ -331,7 +331,7 @@ function validarTime(token, time) {
 function paraDono(c) {
   if (!c) return null;
   _garantirNiveis(c);
-  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), niveis: c.niveis, pontos: c.pontos || {}, pity: (c.gacha && c.gacha.pity) || 0, perfil: c.perfil, criadaEm: c.criadaEm };
+  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), niveis: c.niveis, pontos: c.pontos || {}, pity: (c.gacha && c.gacha.pity) || 0, bilhetes: c.bilhetes || 0, vagasProvacao: _loja.vagasProvacao(c), perfil: c.perfil, criadaEm: c.criadaEm };
 }
 // publica: o que OUTRO jogador poderá ver (perfil competitivo). Sem token, sem perfil, sem faixa etária.
 // Inclui nick + faixa (do servidor) + ratio EXIBIDO (não classifica; o jogador quer ver).
@@ -387,6 +387,8 @@ function creditarPve(token, replays, agora) {
 // §318 F2 E3 — INVOCAÇÃO e CÓPIAS no servidor. O cliente só PEDE; o sorteio, o débito de gema e a conversão
 // (posse/pontos/essência) rodam aqui, autoritativos. Devolve a conta atualizada para o cliente redesenhar.
 const _invoc = require('./invocacao.js');
+const _loja = require('./loja.js');
+const _pagamento = require('./pagamento.js');
 function invocar(token, opts, agora) {
   _carregar();
   const c = _contas.get(token);
@@ -421,6 +423,84 @@ function fecharDesafio(token, deus, cumpriu) {
   if (r.ok) _persistir(c);
   return Object.assign({}, r, { conta: paraDono(c) });
 }
+// ============================================================================================
+// §370 — LOJA. Wrappers AUTORITATIVOS: cada compra/crédito é ATÔMICO (muta a conta no Map e persiste write-through,
+// Node single-thread) e IDEMPOTENTE (reservarRecibo do §354: o MESMO id não paga de novo). Verificação de pagamento/
+// anúncio num ÚNICO lugar (server/pagamento.js). O cliente nunca soma. A regra de negócio pura vive em server/loja.js.
+//
+// IDEMPOTÊNCIA: a chave de recibo dedupe o reenvio/retry de UMA tentativa (semântica de idempotency-key). Uma NOVA
+// tentativa do jogador (ex.: após "gemas insuficientes") usa um id NOVO — o id gasto numa falha não a bloqueia.
+// Em compra de DINHEIRO verificamos o pagamento ANTES de reservar (não se queima recibo num pagamento recusado).
+function _lojaConta(token) { _carregar(); return _contas.get(token) || null; }
+
+// PACOTE DE GEMA (dinheiro). confirmacao = { simulado:true } no modo de teste (LOJA_SIMULADA=1).
+async function comprarPacote(token, pacoteId, idCompra, confirmacao) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const pg = _pagamento.verificarCompra(confirmacao);
+  if (!pg.ok) return { ok: false, codigo: pg.codigo, erro: pg.erro };
+  if (!(await reservarRecibo('pacote:' + idCompra))) return { ok: true, duplicado: true, saldo: _invoc_saldo(c), conta: paraDono(c) };
+  const r = _loja.comprarPacote(c, pacoteId, Date.now());
+  if (r.ok) _persistir(c);
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// PASSE MENSAL (dinheiro).
+async function comprarPasse(token, idCompra, confirmacao, agora) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const pg = _pagamento.verificarCompra(confirmacao);
+  if (!pg.ok) return { ok: false, codigo: pg.codigo, erro: pg.erro };
+  if (!(await reservarRecibo('passe:' + idCompra))) return { ok: true, duplicado: true, passe: _loja.estadoPasse(c, agora), conta: paraDono(c) };
+  const r = _loja.comprarPasse(c, agora);
+  if (r.ok) _persistir(c);
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// RESGATE do dia do passe — sem dinheiro, idempotente por dia (resgatados[dia]); sem recibo.
+function resgatarPasse(token, agora, rng) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const r = _loja.resgatarPasse(c, agora, rng);
+  if (r.ok) _persistir(c);
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// COMPRA DIRETA do Deus da Semana (GEMA, não dinheiro) — recibo só p/ dedupe de reenvio.
+async function comprarDeusSemana(token, idCompra, agora) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  if (!(await reservarRecibo('deussemana:' + idCompra))) return { ok: true, duplicado: true, conta: paraDono(c) };
+  const r = _loja.comprarDeusSemana(c, agora);
+  if (r.ok) _persistir(c);
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// MARCA via recarga diária (sem anúncio): usada quando o passe credita sem assistir, ou pela via do anúncio.
+// ANÚNCIO: liberado por (passe ativo → credita SEM assistir) OU (confirmação de anúncio verificada). id único por crédito.
+async function creditarAnuncio(token, tipo, id, confirmacao, extra, agora) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const liberado = _loja.passeAtivo(c, agora) || _pagamento.verificarAnuncio(confirmacao).ok;
+  if (!liberado) return { ok: false, codigo: 'pagamento_indisponivel', erro: 'pagamento indisponível' };
+  if (!(await reservarRecibo('anuncio:' + id))) return { ok: true, duplicado: true, conta: paraDono(c) };
+  const r = _loja.creditarAnuncio(c, tipo, agora, extra || {});
+  if (r.ok) _persistir(c);
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// VAGA EXTRA DE PROVAÇÃO (GEMA) — recibo p/ dedupe.
+async function comprarVagaProvacao(token, idCompra) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  if (!(await reservarRecibo('vagaprov:' + idCompra))) return { ok: true, duplicado: true, vagas: _loja.vagasProvacao(c), conta: paraDono(c) };
+  const r = _loja.comprarVagaProvacao(c);
+  if (r.ok) _persistir(c);
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// LEITURA do estado da loja (saldo, pacotes, calendário do passe, deus da semana, anúncios do dia, vagas).
+function estadoLoja(token, agora) {
+  const c = _lojaConta(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  return { ok: true, loja: _loja.estadoLoja(c, agora), conta: paraDono(c) };
+}
+function _invoc_saldo(c) { const m = (c.perfil && c.perfil.moedas) || {}; return { gema: m.gema || 0, essencia: m.essencia || 0 }; }
+
 // §318 F2 — RENDA DE GEMA por vitória de PvP. Chamado por server/salas.js no fim da partida (por ID de
 // conta, não token — a partida é keyed por conta). Persiste e devolve o resultado p/ o snapshot mostrar.
 function creditarPvPVitoria(idVenc, rodadas, agora) {
@@ -480,6 +560,7 @@ module.exports = {
   FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX, RANQ,
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, creditarPve, planoDoNick,
   invocar, subirNivel, comprarPergaminho, fecharDesafio, devCredito, chancesInvocacao, creditarPvPVitoria,
+  comprarPacote, comprarPasse, resgatarPasse, comprarDeusSemana, creditarAnuncio, comprarVagaProvacao, estadoLoja,   // §370 Loja
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,

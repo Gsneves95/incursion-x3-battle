@@ -126,6 +126,7 @@ function garantir(conta) {
   if (typeof conta.gacha.pity !== 'number') conta.gacha.pity = 0;
   if (typeof conta.gacha.inicianteUsado !== 'boolean') conta.gacha.inicianteUsado = false;
   if (!conta.pontos || typeof conta.pontos !== 'object') conta.pontos = {};
+  if (typeof conta.bilhetes !== 'number' || conta.bilhetes < 0) conta.bilhetes = 0;   // §370: saldo de bilhetes de invocação (creditado pela Loja; gasto por opts.bilhete)
   return conta;
 }
 
@@ -185,6 +186,14 @@ function invocar(conta, opts, agora, rngInj) {
     }
     conta.gacha.pity = estado.pity;
     conta.gacha.inicianteUsado = true;
+  } else if (opts.bilhete) {
+    // §370: USAR BILHETE — 1 bilhete = 1 invocação avulsa grátis (mesmo sorteio, sem gastar gema). CONTA para o
+    // pity 60, igual a uma paga (usa o mesmo conta.gacha.pity). Débito do saldo de bilhetes, no servidor.
+    if ((conta.bilhetes || 0) < 1) return { ok: false, motivo: 'sem_bilhete', saldo: _saldo(conta), bilhetes: conta.bilhetes || 0 };
+    conta.bilhetes -= 1;
+    const estado = { pity: conta.gacha.pity };
+    bruto = sortearLote(estado, fJog, 1, rng, opts.destaque || null);
+    conta.gacha.pity = estado.pity;
   } else {
     const custo = opts.pacote ? INV.custo.pacote10 : INV.custo.avulso;
     const saldo = (conta.perfil && conta.perfil.moedas && conta.perfil.moedas.gema) || 0;
@@ -195,21 +204,42 @@ function invocar(conta, opts, agora, rngInj) {
     bruto = sortearLote(estado, fJog, n, rng, opts.destaque || null);
     conta.gacha.pity = estado.pity;
   }
+  const resultados = bruto.map(o => aplicarResultado(conta, o, agora));
+  return { ok: true, resultados, saldo: _saldo(conta), pity: conta.gacha.pity, pontos: conta.pontos, inicianteUsado: conta.gacha.inicianteUsado, bilhetes: conta.bilhetes };
+}
+
+// APLICAR um deus sorteado na conta: 1ª cópia fica (posse); duplicata → PONTOS (A1/S2/SS4); excedente de deus
+// MAXIMIZADO → Essência (15/40/120). Extraído de invocar() p/ o SS do dia 30 do passe reusar a MESMA regra (§370).
+function aplicarResultado(conta, o, agora) {
   const PONTOS = INV.pontosPorDuplicata || {}, ESS = INV.essenciaPorDuplicata || {};
-  const resultados = bruto.map(o => {
-    const r = { key: o.key, raridade: o.raridade, faixa: o.faixa, novo: false, pontos: 0, essencia: 0 };
-    if (!o.key) return r;   // faixa/raridade sem deus (não deveria acontecer com pools cheios)
-    if (!_possui(conta, o.key)) {
-      conta.perfil.deuses[o.key] = { copias: 1, favorito: false, obtidoEm: (typeof agora === 'number' ? agora : Date.now()) };
-      r.novo = true;
-    } else if (_maximizado(conta, o.key)) {
-      const e = ESS[o.raridade] || 0; _addMoeda(conta, 'essencia', e); r.essencia = e;   // EXCEDENTE do deus MAX → Essência
-    } else {
-      const p = PONTOS[o.raridade] || 0; conta.pontos[o.key] = (conta.pontos[o.key] || 0) + p; r.pontos = p;   // duplicata → PONTOS
-    }
-    return r;
-  });
-  return { ok: true, resultados, saldo: _saldo(conta), pity: conta.gacha.pity, pontos: conta.pontos, inicianteUsado: conta.gacha.inicianteUsado };
+  const r = { key: o.key, raridade: o.raridade, faixa: o.faixa, novo: false, pontos: 0, essencia: 0 };
+  if (!o.key) return r;   // faixa/raridade sem deus (não deveria acontecer com pools cheios)
+  if (!_possui(conta, o.key)) {
+    conta.perfil.deuses[o.key] = { copias: 1, favorito: false, obtidoEm: (typeof agora === 'number' ? agora : Date.now()) };
+    r.novo = true;
+  } else if (_maximizado(conta, o.key)) {
+    const e = ESS[o.raridade] || 0; _addMoeda(conta, 'essencia', e); r.essencia = e;   // EXCEDENTE do deus MAX → Essência
+  } else {
+    const p = PONTOS[o.raridade] || 0; conta.pontos[o.key] = (conta.pontos[o.key] || 0) + p; r.pontos = p;   // duplicata → PONTOS
+  }
+  return r;
+}
+
+// §370 — o SS do DIA 30 do passe: sorteado entre os SS da FAIXA do jogador e ABAIXO, de preferência um que ele
+// AINDA NÃO TEM; se já tem todos, vira duplicata (pontos SS=4, ou Essência se o deus estiver maximizado). Mesma
+// conversão da Invocação (aplicarResultado). Determinístico com rng injetado nos testes.
+function sortearSSPasse(conta, rng, agora) {
+  garantir(conta);
+  const r = rng || Math.random;
+  const fJog = faixaDoJogador(conta);
+  const pool = [];
+  for (let f = 0; f <= fJog && f < NFAIXAS; f++) for (const k of POOL[f].SS) pool.push({ key: k, faixa: f });
+  if (!pool.length) return { ok: false, motivo: 'sem_ss_na_faixa' };
+  const ineditos = pool.filter(o => !_possui(conta, o.key));
+  const alvo = ineditos.length ? ineditos : pool;
+  const escolha = alvo[Math.floor(r() * alvo.length)] || alvo[0];
+  const res = aplicarResultado(conta, { key: escolha.key, raridade: 'SS', faixa: escolha.faixa }, agora);
+  return Object.assign({ ok: true }, res);
 }
 
 // crédito de TESTE (afordância de protótipo, botão +): credita gema NO SERVIDOR (a economia é do servidor)
@@ -279,6 +309,7 @@ function fecharDesafio(conta, deus, cumpriu) {
 
 module.exports = {
   linhaFaixa, faixaDoJogador, sortearUm, sortearLote, invocar, subirNivel, comprarPergaminho, fecharDesafio, devCredito, garantir,
+  aplicarResultado, sortearSSPasse,
   mulberry32, NFAIXAS, CONTA_FAIXA, FAIXA_DEUS, POOL, FAIXAS_COM_SS, _maximizado, _niveisDeus, NIVEIS_LIBERADOS,
   _raridadeNaFaixa, _pesoPick,
 };

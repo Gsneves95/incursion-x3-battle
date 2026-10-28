@@ -109,6 +109,63 @@
     },
     "tetoDia": 5
   },
+  "loja": {
+    "_fonte": "§370 (desenho do §369 aprovado pelo dono). FONTE UNICA dos valores da Loja. O servidor LE daqui; nao ha literal de Loja no codigo. Toda compra/credito e ATOMICO, na conta, pelo SERVIDOR, idempotente por recibo (§354). O cliente NUNCA soma. Precos em R$ sao a intencao de desenho; no cadastro serao ajustados as faixas da Play Store.",
+    "pacotesGema": [
+      { "id": "p1", "reais": 4.90, "gemas": 450 },
+      { "id": "p2", "reais": 9.90, "gemas": 950 },
+      { "id": "p3", "reais": 24.90, "gemas": 2500 },
+      { "id": "p4", "reais": 49.90, "gemas": 5200 },
+      { "id": "p5", "reais": 99.90, "gemas": 10800 },
+      { "id": "p6", "reais": 249.90, "gemas": 28000 }
+    ],
+    "primeiraCompraEmDobro": true,
+    "_pacotes_nota": "§370: a PRIMEIRA compra de cada pacote (por id) vem em DOBRO — gancho de conversao, marcado por conta (loja.pacotesComprados). Idempotencia por recibo: repetir a MESMA compra (mesmo idCompra) nao credita de novo. Pagamento SIMULADO sem rede ainda (LOJA_SIMULADA).",
+    "passe": {
+      "reais": 29.90,
+      "dias": 30,
+      "diaComum": { "gema": 150 },
+      "marcos": {
+        "7": { "gema": 150, "bilhetes": 3 },
+        "14": { "gema": 150, "bilhetes": 3 },
+        "21": { "gema": 150, "bilhetes": 3 },
+        "28": { "gema": 150, "bilhetes": 2 }
+      },
+      "diaFinal": { "dia": 30, "ss": true },
+      "recomprarAtivo": "recusar",
+      "_nota": "§370: 30 dias de CALENDARIO a partir da compra (dia em UTC). 1 resgate por dia; o dia nao resgatado e PERDIDO (nao se recupera depois). Total 29 dias de gema (23 comuns + marcos 7/14/21/28) = 4.350 gemas + 11 bilhetes; o dia 30 e 1 deus SS pela MESMA regra da Invocacao (faixa do jogador e abaixo, de preferencia inedito; se tem todos, vira pontos de duplicata). recomprarAtivo='recusar': comprar com o passe ativo e RECUSADO (decisao do §370; evita empilhar e e claro pro jogador). Enquanto ativo: anuncios creditam sem assistir e o Deus da Semana da 2 marcas/dia."
+    },
+    "bilhete": {
+      "_nota": "§369/§370: 1 bilhete = 1 invocacao avulsa GRATIS (mesmo sorteio, sem gastar gema) e CONTA para o pity 60, igual a uma paga. Saldo na conta (conta.bilhetes), creditado pelo passe; gasto pela Invocacao (opts.bilhete)."
+    },
+    "anuncios": {
+      "tetoDia": 8,
+      "_teto_nota": "§369/§370: TETO TOTAL de 8 anuncios por dia (UTC). Cada tipo tem seu limite; todos somam a este teto. Anuncio e sempre OPCIONAL e RECOMPENSADO; a recompensa so e creditada pelo SERVIDOR.",
+      "tipos": {
+        "invocacaoGratis": { "limiteDia": 1, "_r": "1 invocacao (conta para o pity 60)" },
+        "marcaDeusSemana": { "limiteDia": 1, "_r": "1 marca no Deus da Semana (2 com o passe)" },
+        "dobrarSemanal": { "limiteDia": 1, "_r": "2x a recompensa do Desafio da Semana" },
+        "dobrarDominio": { "limiteDia": 1, "_r": "2x a recompensa de fim de corrida do Dominio" },
+        "reviverExtra": { "limiteCorrida": 1, "_r": "+1 reviver no Dominio (1 por corrida)" },
+        "acelerarRecarga": { "limiteDia": 2, "horas": 4, "_r": "-4h na recarga do Desafio por deus" },
+        "ofertaDia": { "limiteDia": 3, "gema": 50, "essencia": 10, "_r": "Oferta do dia: 50 gemas OU 10 de Essencia" }
+      }
+    },
+    "deusSemana": {
+      "raridade": "S",
+      "janelaRepeticaoSemanas": 12,
+      "marcasParaGanhar": 5,
+      "marcasPorDia": 1,
+      "marcasPorDiaPasse": 2,
+      "compraDireta": { "gema": 1800 },
+      "_nota": "§370: rotacao semanal (segunda 00:00 UTC) DETERMINISTICA — um deus de raridade S que nao foi Deus da Semana nas ultimas 12 semanas (lista S ordenada, indexada pela semana absoluta; 31 deuses S > 12, logo nunca repete na janela). Mesma semana = mesmo deus pra todos. 5 marcas na semana ganham o deus (perdoa 2 faltas); marcas NAO passam de semana. Ja tem o deus -> vira pontos de duplicata (S=2). Compra direta por 1.800 gemas."
+    },
+    "vagaProvacao": {
+      "gema": 500,
+      "maxExtra": 2,
+      "_nota": "§370: +1 vaga de Provacao permanente por 500 gemas, ate +2. Credita a vaga (conta.loja.vagasProvacaoExtra) e expoe o total (loja.vagasProvacao = slotsGratis do §314 + extra). A ENFORCEMENT de varias Provacoes ativas ao mesmo tempo entra com a tela (§371+); o modelo de slot unico do §314 nao muda agora — so o CONTADOR por conta e comprado e exposto."
+    }
+  },
   "_pendencias": {
     "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
     "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },

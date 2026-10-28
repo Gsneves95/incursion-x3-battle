@@ -138,3 +138,31 @@ Pré-requisito já atendido: **persistência das contas (§274)** — sem ela n�
 2. **A nova Invocação:** invocação grátis diária e o Deus da Semana.
 3. **Integração real (junto da fase de publicação):** Google Play Billing / App Store, o AdMob com **verificação no
    servidor**, e a **tela de consentimento** (LGPD/GDPR) + o formulário de dados da loja.
+
+---
+
+## 10. §370 — implementado: SERVIDOR + DADOS da Loja (sem telas ainda)
+
+O §370 pôs no **servidor** e nos **dados** tudo o que o desenho acima descreve — **as telas são o §371**. O que entrou:
+
+- **Fonte única:** todos os valores viraram o bloco **`loja`** de `data/economia.json` (pacotes, passe + calendário,
+  bilhete, anúncios + teto, Deus da Semana, vaga de Provação, oferta do dia). O código só **lê** daqui. A pendência
+  `_pendencias.bilhetes` foi **fechada** (sim, existem; são o que o §4 descreve).
+- **Tudo no servidor, atômico e idempotente** (§354): cada compra/crédito muta a conta e persiste write-through, e tem
+  um **id de recibo** — repetir o mesmo id **não paga de novo** (tabela `recibos`). O cliente nunca soma.
+- **Regras:** bilhete (1 invocação grátis que conta p/ o pity); pacotes (1ª de cada em dobro); passe (30 dias de
+  calendário, resgate 1×/dia, dia perdido não volta, dia 30 = SS pela regra da Invocação); Deus da Semana (rotação
+  determinística, só S, 5 marcas, 2/dia com passe, compra direta 1.800); anúncios (limite por tipo + teto 8/dia, com
+  passe credita sem assistir); vaga extra de Provação (500 gemas, até +2 — **só o contador** por ora; a *enforcement* de
+  várias Provações ativas entra com a tela do §371).
+- **Recompra do passe ATIVO:** decisão do §370 = **recusar** (`loja.passe.recomprarAtivo: "recusar"`) — não empilha
+  30 dias; é claro pro jogador e sem abuso.
+
+### Antes da loja de verdade (acrescenta à lista do §9)
+
+- [ ] **Desligar a `LOJA_SIMULADA`** (tirar a env `LOJA_SIMULADA=1` do servidor). Com ela, a compra/anúncio aceitam uma
+  confirmação **simulada** (modo de teste); sem ela, respondem **"pagamento indisponível"**. O `/saude` mostra
+  `"lojaSimulada": true|false` (nunca um segredo).
+- [ ] **Ligar a verificação real** no **único lugar**: `server/pagamento.js` (`verificarCompra`/`verificarAnuncio`).
+  Trocar o corpo por: **compra** → validar o recibo do Google Play Billing / App Store no servidor; **anúncio** → validar
+  o callback **SSV do AdMob** (assinatura + nonce). Nenhum outro módulo sabe como um pagamento é verificado.

@@ -6,6 +6,55 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §370 · LOJA, parte 1: SERVIDOR + DADOS (pacotes, passe, bilhetes, Deus da Semana, anúncios, compra SIMULADA)
+
+Implementa no **servidor** e nos **dados** todo o desenho aprovado no §369 — **sem telas** (as telas são o §371).
+
+**DADOS (fonte única).** Todos os valores entraram no bloco **`loja`** de `data/economia.json`: `pacotesGema`
+(1ª compra em dobro), `passe` (calendário de 30 dias: comuns 150 gemas, marcos 7/14/21 = +3 bilhetes, 28 = +2, dia 30 =
+SS), `bilhete`, `anuncios` (teto 8/dia + limite por tipo), `deusSemana` (S, janela 12 semanas, 5 marcas, 1.800 gemas),
+`vagaProvacao` (500 gemas, +2). O código **só lê** daqui. **Fechada a pendência `_pendencias.bilhetes`** (sim, existem).
+
+**TUDO NO SERVIDOR, atômico e idempotente (§354).** A regra pura vive em `server/loja.js` (funções sobre `conta`, como
+`invocacao.js`/`pve.js`); os **wrappers** em `server/contas.js` fazem a atomicidade (muta a conta no Map + persiste
+write-through; Node é single-thread) e a **idempotência** por `reservarRecibo(id)` (a tabela `recibos` do §354): o MESMO
+id não paga de novo. O cliente nunca soma. A `1ª-compra-em-dobro` é marcada por conta (`loja.pacotesComprados`), ortogonal
+ao recibo (o recibo dedupe o reenvio de UMA tentativa; uma tentativa nova usa id novo).
+
+**Regras entregues.** (a) **Bilhete**: `invocar` aceita `opts.bilhete` — 1 bilhete = 1 avulso grátis, sem gema, e
+**conta para o pity 60** (mesmo `conta.gacha.pity`). (b) **Pacotes**: creditam gema (dobro na 1ª de cada). (c) **Passe**:
+30 dias de calendário a partir da compra (dia em UTC); resgate 1×/dia; **dia pulado é PERDIDO**; estado por dia
+(resgatado/perdido/hoje/futuro). **Dia 30 = 1 SS** pela MESMA regra da Invocação — `invocacao.sortearSSPasse` sorteia um
+SS da **faixa do jogador e abaixo**, de preferência **inédito**; se tem todos, vira **pontos** (SS=4). (d) **Deus da
+Semana**: rotação **determinística** por semana (segunda 00:00 UTC) — lista S ordenada indexada pela semana absoluta
+(31 S > 12 ⇒ nunca repete na janela; mesma semana = mesmo deus p/ todos); 1 marca/dia via anúncio (**2 com o passe**);
+5 marcas dão o deus (duplicata → pontos); marcas zeram na virada; compra direta 1.800 gemas. (e) **Anúncios**: endpoint
+por tipo, **limite por tipo + teto 8/dia** (UTC); com o passe **credita sem assistir**; a invocação grátis **conta p/ o
+pity**. (f) **Vaga extra de Provação**: 500 gemas, até **+2** (`loja.vagasProvacao` = `slotsGratis` do §314 + extra).
+
+**DECISÃO — recomprar o passe ATIVO:** **RECUSAR** (`loja.passe.recomprarAtivo: "recusar"`). Recusada a alternativa
+"somar 30 dias" — empilhar prazo é confuso pro jogador e abre abuso; recusar é claro e simples.
+
+**ESCOPO da vaga de Provação:** o §370 entrega a **compra** e o **contador** por conta (`vagasProvacaoExtra`, exposto em
+`paraDono.vagasProvacao`). A *enforcement* de **várias Provações ativas ao mesmo tempo** NÃO entra agora: o §314 tem um
+único `led.ativa` (escalar) e sua tela/testes dependem disso; mudar o modelo é trabalho da tela (§371+). Recusado refatorar
+o §314 dentro de uma tarefa "parte 1, sem telas".
+
+**COMPRA/ANÚNCIO SIMULADOS + hook real num lugar só.** `server/pagamento.js` é o **único** ponto de verificação:
+`verificarCompra`/`verificarAnuncio` hoje só aceitam `{simulado:true}` **e** com `process.env.LOJA_SIMULADA === '1'`;
+sem a env → **"pagamento indisponível"** (segredo nunca em código: lê `process.env` na hora, como o `DATABASE_URL`). Com o
+passe, o anúncio é liberado **sem** confirmação (credita sem assistir). Trocar por Google Play Billing / AdMob SSV é mudar
+só esse arquivo (comentado). O `/saude` passou a mostrar **`"lojaSimulada": true|false`** (sem segredo).
+
+**Endpoints WS** (em `server/server.js`, token exigido): `lojaEstado`, `lojaComprarPacote`, `lojaComprarPasse`,
+`lojaResgatarPasse`, `lojaComprarDeusSemana`, `lojaAnuncio`, `lojaComprarVagaProvacao`; e `invocar` ganhou `msg.bilhete`.
+
+**Provas** (`tests/loja.test.js`, em **arquivo E pg-mem**, como o §354): 1ª-em-dobro só na 1ª de cada pacote; mesmo id
+paga 1×; passe (resgate hoje / dia pulado perdido / 30 dias / dia 30 SS pela regra, inédito e tudo-tendo→pontos / recompra
+ativa recusa); bilhete (desconta 1, sem gema, avança pity); Deus da Semana (determinístico, nunca repete em 12, só S,
+5 marcas, 2/dia com passe, zera na virada); anúncios (limite por tipo + teto 8/dia, passe credita sem assistir, grátis
+avança pity); vaga até +2; sem `LOJA_SIMULADA` → "pagamento indisponível"; 20 compras simultâneas somam certo. **64 ok.**
+
 ## §368b · DOMÍNIOS: aplicada a dificuldade escolhida pelo dono (o MEIO-TERMO)
 
 A partir da tabela do §368 (`docs/dominios-368.md`), o dono escolheu o **meio-termo** e aceitou que a meta exata não
