@@ -209,8 +209,8 @@ const LOJA = (function () {
       ${artinhaDeus(ds.deus)}
       <div class="loja-card__linha"><b class="loja-card__nome">${esc(nomeDeus(ds.deus))}</b><span class="loja-selo">${esc(ds.raridade || 'S')}</span></div>
       <div class="loja-card__row"><span class="loja-card__marcas">${marcas} de ${meta} marcas</span><span class="loja-dots">${pontos}</span></div>
+      <p class="loja-card__nota">termina em ${terminaEm()}</p>
       ${btn}
-      <p class="loja-card__nota">ou ${fmt((ds.compraDireta) || 1800)} gemas</p>
     </section>`;
   }
   function cardOfertaDestaque() {
@@ -234,7 +234,7 @@ const LOJA = (function () {
 
   function abaDestaques() {
     return `<div class="loja-destaques">${cardPasseDestaque()}${cardDeusDestaque()}${cardOfertaDestaque()}</div>
-      <button class="loja-rodape" onclick="LOJA.verChances()">ⓘ Itens de sorteio mostram as chances em <b>Ver detalhes</b>.</button>`;
+      <button class="loja-rodape" onclick="LOJA.verChances()">ⓘ Itens de sorteio mostram as chances em <b>Ver detalhes</b></button>`;
   }
   function abaGemas() {
     const pacs = (LST && LST.pacotes) || [];
@@ -268,33 +268,42 @@ const LOJA = (function () {
     const hoje = pa.diaAtual;
     const faltam = (pa.dias.length) - hoje;
     const cells = pa.dias.map(di => cellDia(di)).join('');
+    const diaHoje = pa.dias[hoje - 1] || {};
+    const jaResgatou = diaHoje.estado === 'resgatado';
+    const blocoHoje = jaResgatou
+      ? `<div class="loja-cta loja-cta--off loja-passe__hoje" aria-disabled="true">✓ Resgatado hoje</div>`
+      : `<div class="loja-passe__hoje"><span class="loja-passe__hojerot">Hoje: ${recTexto(diaHoje.recompensa)}</span><button class="loja-cta" onclick="LOJA.resgatarPasse()">Resgatar</button></div>`;
     return `<div class="loja-passe">
       <aside class="loja-passe__painel">
         <h2 class="loja-card__tit">Passe Mensal</h2>
         <p class="loja-passe__dia">Dia ${hoje} de ${pa.dias.length}</p>
         <p class="loja-passe__faltam">Faltam ${Math.max(0, faltam)} dias</p>
         <p class="loja-passe__aviso">O dia não resgatado é perdido.</p>
+        ${blocoHoje}
         <div class="loja-cta loja-cta--off" aria-disabled="true">✓ Passe ativo</div>
       </aside>
-      <div class="loja-grade loja-grade--passe">${cells}
+      <div class="loja-passe-grade">${cells}
         <p class="loja-passe__incluso">🎁 Também incluso: recompensas dos anúncios sem assistir · 2 marcas por dia no Deus da Semana.</p>
       </div>
     </div>`;
   }
+  function recTexto(rec) {
+    rec = rec || {}; if (rec.ss) return '1 deus SS';
+    const p = []; if (rec.gema) p.push(rec.gema + ' gemas'); if (rec.bilhetes) p.push(rec.bilhetes + ' bilhetes');
+    return p.join(' + ') || '—';
+  }
+  // §371b: a grade volta a ser 10×3 FIXA (cada dia numa célula; o dia 30 sempre visível). A célula de HOJE é só
+  // DESTACADA (moldura dourada) e clicável (atalho de resgate); o botão Resgatar vive no painel da esquerda.
   function cellDia(di) {
     const rec = di.recompensa || {}, isSS = !!rec.ss, est = di.estado;
     let inner = `<span class="loja-dia__n">${di.dia}</span>`;
-    if (est === 'hoje') {
-      // o dia de hoje: número + a recompensa em UMA linha + o botão Resgatar (sem o ícone, p/ caber sem estourar a célula)
-      inner += isSS ? `<span class="loja-dia__ss">SS</span>` : `<span class="loja-dia__val">${rec.gema ? rec.gema + ' 💎' : (rec.bilhetes ? rec.bilhetes + ' 🎫' : '')}</span>`;
-      inner += `<button class="loja-dia__btn" onclick="LOJA.resgatarPasse()">Resgatar</button>`;
-    } else {
-      if (isSS) inner += `<span class="loja-dia__ss">SS</span>`;
-      else { const bil = (rec.bilhetes && est === 'futuro') ? `<span class="loja-dia__bil">🎫 ×${rec.bilhetes}</span>` : ''; inner += `<span class="loja-dia__gem">💎</span>${bil}`; }
-      if (est === 'resgatado') inner += `<span class="loja-dia__ok">✓</span>`;
-      else if (est === 'perdido') inner += `<span class="loja-dia__x">✕</span>`;
-    }
-    return `<div class="loja-dia loja-dia--${est}${isSS ? ' loja-dia--ssbox' : ''}">${inner}</div>`;
+    if (isSS) inner += `<span class="loja-dia__ss">SS</span>`;
+    else { const bil = (rec.bilhetes && (est === 'hoje' || est === 'futuro')) ? `<span class="loja-dia__bil">🎫 ×${rec.bilhetes}</span>` : ''; inner += `<span class="loja-dia__gem">💎</span>${bil}`; }
+    if (est === 'resgatado') inner += `<span class="loja-dia__ok">✓</span>`;
+    else if (est === 'perdido') inner += `<span class="loja-dia__x">✕</span>`;
+    const cls = `loja-dia loja-dia--${est}${isSS ? ' loja-dia--ssbox' : ''}`;
+    if (est === 'hoje') return `<button class="${cls}" onclick="LOJA.resgatarPasse()" title="Resgatar hoje">${inner}</button>`;
+    return `<div class="${cls}">${inner}</div>`;
   }
   function abaDeusSemana() {
     const ds = (LST && LST.deusSemana) || {}; const bloq = _anuncioBloqueado('marcaDeusSemana');

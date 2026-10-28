@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §371b · Loja — três ajustes (vistos nas capturas 371-*-780x360)
+
+1. **Aba Passe — o dia 30 voltou.** No §371 a célula de HOJE ocupava 2 colunas; os dias seguintes deslizavam e o dia 30
+   (o SS, o atrativo) ia para uma 4ª fileira cortada embaixo. Agora a grade é **10×3 FIXA** (`grid-template-rows:
+   repeat(3,1fr) auto`, sem rolagem): cada dia numa célula, o **dia 30 sempre no canto**. A célula de HOJE fica só
+   **destacada** (moldura dourada) e é **clicável** (atalho de resgate, vira `<button>`). O botão **RESGATAR** mudou para o
+   **painel da esquerda**, numa linha "Hoje: <recompensa>" acima de "✓ Passe ativo"; depois de resgatar vira "✓ Resgatado
+   hoje".
+   - **Por que a auditoria não pegou o dia 30 fora:** o `SCROLL_OK` da auditoria tinha `'.loja'` e `'#loja'`, e o d7/d5
+     usam `closest()` — então a TELA INTEIRA da Loja ficava isenta da checagem de "fora da tela". **Caso fechado:** tirei
+     `.loja`/`#loja` do `SCROLL_OK` (só a grade de **gemas**, `.loja-grade`, rola); a grade do passe (`.loja-passe-grade`)
+     **não é lista rolável** e agora o d7 a guarda.
+2. **Deus da Semana — o retrato mostra o rosto.** O retrato (512×590, vertical) virava uma faixa estreita (só o topo).
+   Agora usa `background-position:center 18%` (como os montadores, `object-position:center 16–18%`) e, no cartão de
+   Destaques, uma caixa com altura (48px) em vez de uma faixa — o rosto (Baldur) aparece. E o cartão de Destaques mostra
+   **"termina em Xd Yh"** (o §371 pedia e faltava). Para caber sem estourar, o "ou 1.800 gemas" saiu do TEASER (segue
+   inteiro na aba Deus da Semana).
+3. **Rodapé:** tirei o ponto solto depois de "Ver detalhes".
+
+**Prova:** `tests/loja_tela.test.js` — os 30 dias numa grade 10×3, a 30ª célula é o selo SS, o Resgatar no painel e o
+atalho de tocar na célula de hoje (26 asserções). `acessibilidade_telas` segue a=b=c=d=e=0 nos estados da Loja (agora com
+o d7 guardando a grade do passe de verdade). Capturas `371b-*` (passe, destaques, deus da semana) em 780×360 e 1846×852.
+
 ## §371 · LOJA, parte 2: AS TELAS (5 abas, calendário do passe, compra/anúncio SIMULADOS, bilhete na Invocação)
 
 As TELAS do §370 (o servidor já existia e só é consumido). Novo módulo `src/loja.js` (IIFE `LOJA`, como `src/invocacao.js`),

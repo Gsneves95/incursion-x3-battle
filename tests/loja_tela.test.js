@@ -80,12 +80,18 @@ function montar(cfgResp) {
       lojaResgatarPasse: { tipo: 'lojaPasseResgate', premio: { dia: 12, gema: 150 }, saldo: { gema: 1390, essencia: 180 }, bilhetes: 3, conta: null } });
     P.w.eval("ir('loja',{},{substituir:true}); render();"); await sleep(40);
     P.w.eval("LOJA.ir('passe')");
-    ok(P.$$('.loja-dia').length === 30, 'o calendário mostra 30 dias');
+    ok(P.$$('.loja-dia').length === 30, 'o calendário mostra 30 dias (grade 10×3 fixa, dia 30 sempre visível)');
     ok(P.$$('.loja-dia--perdido').length === 2, 'os dias não resgatados aparecem como PERDIDOS');
-    ok(!!P.$('.loja-dia--hoje') && !!P.$('.loja-dia__btn'), 'o dia de hoje tem o botão Resgatar');
-    ok(!!P.$('.loja-dia--ssbox'), 'o dia 30 é o selo SS');
-    P.clk(P.$('.loja-dia__btn')); await sleep(40);
-    ok(P.calls().some(c => c.tipo === 'lojaResgatarPasse'), 'resgatar envia lojaResgatarPasse');
+    ok(!!P.$('.loja-dia--hoje') && P.$('.loja-dia--hoje').tagName === 'BUTTON', 'a célula de hoje é destacada e clicável (atalho)');
+    ok(!!P.$('.loja-passe__hoje .loja-cta') && /Resgatar/.test(P.$('.loja-passe__hoje').textContent), '§371b: o botão Resgatar fica no painel da esquerda (Hoje: …)');
+    ok(!!P.$('.loja-dia--ssbox') && !!P.$$('.loja-dia')[29].querySelector('.loja-dia__ss'), 'o dia 30 é o selo SS (última célula)');
+    P.clk(P.$('.loja-passe__hoje .loja-cta')); await sleep(40);
+    ok(P.calls().some(c => c.tipo === 'lojaResgatarPasse'), 'resgatar (painel) envia lojaResgatarPasse');
+    // atalho: tocar na célula de hoje também resgata
+    const P2 = montar({ lojaEstado: { tipo: 'lojaEstado', loja: estadoBase(), conta: null }, lojaResgatarPasse: { tipo: 'lojaPasseResgate', premio: { dia: 12, gema: 150 }, conta: null } });
+    P2.w.eval("ir('loja',{},{substituir:true}); render();"); await sleep(40); P2.w.eval("LOJA.ir('passe')");
+    P2.clk(P2.$('.loja-dia--hoje')); await sleep(40);
+    ok(P2.calls().some(c => c.tipo === 'lojaResgatarPasse'), 'tocar na célula de hoje também resgata (atalho)');
   }
 
   // 4) dia 30 → a REVELAÇÃO do SS (reusa a carta da Invocação).

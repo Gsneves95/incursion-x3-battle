@@ -1309,7 +1309,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #loja .loja-dots{display:flex;gap:4px}
 #loja .loja-dot{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
 #loja .loja-dot.is-on{background:radial-gradient(circle at 40% 35%,#f4d98a,#d9a32e)}
-#loja .loja-deusart{width:100%;flex:1;min-height:70px;border-radius:10px;background-size:cover;background-position:center top;box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#loja .loja-deusart{width:100%;flex:1;min-height:70px;border-radius:10px;background-size:cover;background-position:center 18%;box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
 #loja .loja-deusart--ph{background:radial-gradient(60% 60% at 50% 35%,rgba(201,164,76,.25),rgba(20,16,38,.6))}
 #loja .loja-card__arte{display:grid;place-items:center;font-size:40px;flex:1;min-height:56px;border-radius:10px;background:radial-gradient(60% 60% at 50% 40%,rgba(201,164,76,.18),rgba(20,16,38,.5))}
 
@@ -1324,7 +1324,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #loja .loja-card--passe{flex:1.7}
 #loja .loja-card--passe .loja-card__arte{min-height:28px;flex:0 1 auto;font-size:30px}
 #loja .loja-card--meio{flex:1;gap:5px}
-#loja .loja-card--meio .loja-card__arte,#loja .loja-card--meio .loja-deusart{flex:0 1 auto;min-height:32px}
+#loja .loja-card--meio .loja-card__arte{flex:0 1 auto;min-height:30px}
+#loja .loja-card--meio .loja-deusart{flex:0 0 auto;height:48px;min-height:48px}
 #loja .loja-card--meio .loja-cta{margin-top:4px}
 #loja .loja-rodape{flex:none;margin:6px auto 0;min-height:40px;display:flex;align-items:center;justify-content:center;gap:4px;background:none;border:0;cursor:pointer;font-family:inherit;font-size:12px;color:var(--ink-dim);padding:0 10px}
 #loja .loja-rodape b{color:var(--gold-text)}
@@ -1354,9 +1355,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #loja .loja-passe__dia{margin:2px 0 0;font-family:'Cinzel',serif;font-weight:700;font-size:20px;color:var(--gold-text)}
 #loja .loja-passe__faltam{margin:0;font-size:13px;color:#EDE7FF}
 #loja .loja-passe__aviso{margin:4px 0 0;font-size:12px;color:var(--ink-dim)}
-#loja .loja-passe__painel .loja-cta--off{margin-top:auto}
-#loja .loja-grade--passe{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(10,1fr);grid-auto-rows:minmax(74px,auto);gap:5px;align-content:start;padding-right:4px}
-#loja .loja-dia{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;padding:4px 2px;border-radius:8px;background:rgba(14,16,30,.78);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);min-height:66px}
+#loja .loja-passe__hoje{margin-top:auto;display:flex;flex-direction:column;gap:4px}
+#loja .loja-passe__hojerot{font-size:12px;color:var(--gold-text);font-weight:700}
+#loja .loja-passe-grade{flex:1;min-height:0;overflow:hidden;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(3,1fr) auto;gap:5px}
+#loja .loja-dia{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;padding:4px 2px;border:0;border-radius:8px;background:rgba(14,16,30,.78);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);min-height:60px}
 #loja .loja-dia__n{font-size:12px;font-weight:700;color:#CFC9E4;line-height:1.1}
 #loja .loja-dia__gem{font-size:17px;line-height:1}
 #loja .loja-dia__ss{font-family:'Cinzel',serif;font-weight:900;font-size:16px;color:#2A1A04;background:radial-gradient(circle at 40% 32%,#f4d98a,#e9c877);border-radius:6px;padding:1px 7px}
@@ -1365,7 +1367,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #loja .loja-dia--perdido{opacity:.5}
 #loja .loja-dia__ok{position:absolute;bottom:3px;font-size:13px;color:#7BE08A;font-weight:900}
 #loja .loja-dia__x{position:absolute;bottom:3px;font-size:13px;color:#C98A8A;font-weight:900}
-#loja .loja-dia--hoje{grid-column:span 2;box-shadow:inset 0 0 0 2px var(--gold-text);background:rgba(40,30,14,.9)}
+#loja .loja-dia--hoje{cursor:pointer;font-family:inherit;color:inherit;box-shadow:inset 0 0 0 2px var(--gold-text);background:rgba(40,30,14,.9)}
 #loja .loja-dia--ssbox{box-shadow:inset 0 0 0 1px rgba(201,164,76,.6)}
 #loja .loja-dia__val{font-size:12px;color:var(--ink-dim);text-align:center;line-height:1.05;white-space:nowrap}
 #loja .loja-dia__btn{margin-top:auto;min-height:40px;width:100%;border:0;border-radius:6px;cursor:pointer;font-family:'Cinzel',serif;font-weight:700;font-size:12px;color:#231503;background:#F3CE63;text-shadow:0 1px 0 rgba(255,246,214,.55)}

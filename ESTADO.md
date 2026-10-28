@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §371b · Loja — três ajustes (passe, Deus da Semana, rodapé)
+- **Passe:** grade **10×3 FIXA** (sem rolagem) — o **dia 30 (SS) sempre visível**; a célula de HOJE é só destacada e
+  clicável (atalho); o botão **Resgatar** foi para o painel da esquerda ("Hoje: <recompensa>" → vira "✓ Resgatado hoje").
+  Caso fechado: tirei `.loja`/`#loja` do `SCROLL_OK` da auditoria (isentavam a tela toda do d7 via closest); só a grade de
+  **gemas** rola; a grade do passe não é rolável e agora o d7 a guarda.
+- **Deus da Semana:** retrato mostra o **rosto** (`background-position:center 18%`; caixa com altura no Destaque) e o
+  cartão de Destaques mostra **"termina em Xd Yh"**.
+- **Rodapé:** sem o ponto solto depois de "Ver detalhes".
+- **Prova:** `tests/loja_tela.test.js` (26 ok); `acessibilidade_telas` a=b=c=d=e=0 na Loja (d7 agora guarda o passe).
+  Capturas `371b-*` (passe, destaques, deus da semana) 780×360 e 1846×852. Suíte + build verdes.
+
 ## ★ §371 · LOJA, parte 2: AS TELAS (5 abas + calendário + compra/anúncio simulados + bilhete na Invocação)
 - **Novo:** `src/loja.js` (IIFE `LOJA`), rota `loja` em `view.js`, canvas 780×360 (`emloja`/`#lojafix` em `base.js`+CSS). A
   ilha "Loja" da home abre a rota (`data/mapa.json`: `rota:'loja'`, sem `emBreve`). O cliente só consome o §370; nunca soma.

@@ -3,7 +3,10 @@
 const MIN_CORPO = 12, MIN_ROTULO = 11, MIN_TOQUE = 40;
 // lista BRANCA de rolagem: SÓ listas podem rolar (grade de personagens, Provações, Loja, Desafios/Composição).
 const SCROLL_OK = ['.col2__grade', '.dm-grade', '.cgrid--pick', '#provfix .pv2-grade', '#provfix .pv2-off',
-  '.df-grade', '#compfix .cmp-grade', '.guia-grade', '.loja', '#loja', '.loja-grade'];
+  '.df-grade', '#compfix .cmp-grade', '.guia-grade', '.loja-grade'];
+// §371b: SÓ a grade de GEMAS (.loja-grade) rola na Loja. Tirados '.loja'/'#loja' — como o d7/d5 usam closest(), eles
+// isentavam a TELA INTEIRA da Loja da checagem de "fora da tela" (foi por isso que o dia 30 do passe, empurrado para
+// fora pela célula de 2 colunas, não foi acusado). A grade do passe NÃO é rolável (10×3 fixa) → agora o d7 a guarda.
 const CFG = { MIN_CORPO, MIN_ROTULO, MIN_TOQUE, SCROLL_OK };
 
 function medirNaPagina(cfg){
