@@ -24,7 +24,7 @@ const CULT = {}; for (const k of KEYS) { const f = GODS[k].faccao; (CULT[f] = CU
 const V2 = s => iaProximaAcao(s, 'normal', 2);   // §325: o lado do jogador (e o inimigo) joga sob a IA v2 do modo
 
 const arg = (n, d) => { const p = process.argv.find(a => a.startsWith('--' + n + '=')); return p ? parseInt(p.split('=')[1], 10) : d; };
-const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 25, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.08 };
+const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 0.25, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.08 };   // §368: curaPorNivel agora é FRAÇÃO da vida máxima (0..1)
 // `trio` = §325 o TRIO ICÔNICO INIMIGO da cultura (o chefe final, mostrado no cartão como INIMIGO). `frase`/`curtos`: cartão.
 const CFGS = {
   Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'O raio, o tridente e a lança que pensa.', curtos: {}, ...COMUM },

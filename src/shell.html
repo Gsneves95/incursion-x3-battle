@@ -2694,36 +2694,39 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 .dh-trilha__cap{position:absolute;left:0;right:0;top:40px;text-align:center;font-size:12px;color:#C9CED8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* colunas (3) */
 .dh-col{position:absolute;top:108px;bottom:8px}
-.dh-col--time{left:8px;width:250px;display:flex;flex-direction:column;padding:8px 9px;border-radius:9px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+.dh-col--time{left:8px;width:250px;display:flex;flex-direction:column;padding:6px 9px;border-radius:9px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
 .dh-col--meio{left:266px;width:248px;display:flex}
 .dh-col--dir{left:522px;width:250px;display:flex;flex-direction:column;gap:7px}
 /* esquerda — SEU TIME */
-.dh-col__cab{display:flex;align-items:center;margin-bottom:6px;gap:6px}
-.dh-col__t{font-size:15px;letter-spacing:.08em;color:#F0D79A;margin:0}
+.dh-col__cab{display:flex;align-items:center;margin-bottom:3px;gap:6px}
+.dh-col__t{font-size:13px;letter-spacing:.06em;color:#F0D79A;margin:0}
 .dh-lock{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:12px;color:#AEB8CA;white-space:nowrap;text-shadow:0 0 2px #000,0 0 3px #000,0 1px 2px #000;}
 .dh-lock i{font-style:normal}
-.dh-uns{display:flex;flex-direction:column;gap:5px}
-.dh-un{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:7px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
-.dh-un__p{width:40px;height:40px;flex:none;border-radius:6px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+/* §368: 5 linhas (3 titulares + 2 reservas) na coluna SEU TIME — compactas (sem a barra; a vida vira número colorido) */
+.dh-uns{display:flex;flex-direction:column;gap:1px}
+.dh-un{display:flex;align-items:center;gap:7px;padding:2px 6px;border-radius:7px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);min-height:30px}
+.dh-un__p{width:30px;height:30px;flex:none;border-radius:6px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
 .dh-un__p .slot{width:100%;height:100%}
-.dh-un__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.dh-un__n{font-family:'Cinzel',serif;font-size:13px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dh-un__meta{display:flex;align-items:center;gap:5px;font-size:12px;color:#C9CED8}
+.dh-un__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
+.dh-un__n{font-family:'Cinzel',serif;font-size:13px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.12}
+.dh-un__rot{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;color:#C9A44C;letter-spacing:.01em;margin-right:5px}
+.dh-un--reserva .dh-un__rot{color:#b89cff}
+.dh-un__meta{display:flex;align-items:center;gap:5px;font-size:12px;color:#C9CED8;line-height:1.1}
 .dh-un__meta .orbe{flex:none}
 .dh-un__f{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dh-un__entra{flex:none;font-size:12px;font-weight:700;color:#2A1A04;background:linear-gradient(180deg,#F4D98A,#E9C25A);border-radius:5px;padding:0 5px;white-space:nowrap}
 .dh-un__hp{margin-left:auto;font-size:12px;font-weight:700;color:#E8ECF4;white-space:nowrap;flex:none}
 .dh-un__hp span{color:#8893a8;font-weight:600;font-size:12px}
 .dh-un__hp--caido{color:#E0545B;letter-spacing:.06em}
-.dh-un__bar{position:relative;height:7px;border-radius:4px;background:#1a1f30;overflow:hidden}
-.dh-un__bar i{display:block;height:100%;border-radius:4px}
+.dh-un--reserva{box-shadow:inset 0 0 0 1px rgba(160,107,255,.4)}
 .dh-un--caido{opacity:.72}
 .dh-un--caido .dh-un__p{filter:grayscale(1) brightness(.6)}
 .dh-un--vazia{align-items:center}
-.dh-un__p--vazia{display:grid;place-items:center;font-size:22px;color:#5a6278;background:rgba(16,20,34,.6);box-shadow:inset 0 0 0 2px rgba(120,130,160,.35)}
+.dh-un__p--vazia{display:grid;place-items:center;font-size:20px;color:#5a6278;background:rgba(16,20,34,.6);box-shadow:inset 0 0 0 2px rgba(120,130,160,.35)}
 .dh-un__hint{font-size:12px;color:#8893a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* esquerda — bônus de dano */
-.dh-bon{margin-top:auto;padding-top:4px}
-.dh-bon__top{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#C9CED8;margin-bottom:4px}
+.dh-bon{margin-top:auto;padding-top:2px}
+.dh-bon__top{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#C9CED8;margin-bottom:2px}
 .dh-bon__top b{font-size:13px;color:#F0D79A}
 .dh-bon__rail{position:relative;height:5px;border-radius:3px;background:#1a1f30;margin:0 8px 10px}
 .dh-bon__fill{position:absolute;left:0;top:0;height:100%;border-radius:3px;background:linear-gradient(90deg,#C9962F,#F0D79A)}
@@ -2733,7 +2736,12 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 .dh-bon__mk em{position:absolute;top:7px;left:0;transform:translateX(-50%);font-style:normal;font-size:12px;color:#A3AEC2;white-space:nowrap;text-shadow:0 0 2px #000,0 0 3px #000,0 1px 2px #000;}
 /* meio */
 .dh-meio{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:4px}
-.dh-meio--premio{border-radius:10px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);background:rgba(16,13,26,.5);justify-content:flex-start;padding:6px;gap:5px}
+.dh-meio--premio{border-radius:10px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);background:rgba(16,13,26,.5);justify-content:flex-start;padding:5px;gap:3px}
+/* §368: no estado PRÊMIO o REVIVER pode virar um bloco-escolha (mais alto) — compacta crown/título/cartões p/ os 3 caberem */
+#domhub[data-estado="premio"] .dh-crownsvg{width:60px;height:20px}
+#domhub[data-estado="premio"] .dh-meio__t{font-size:14px}
+#domhub[data-estado="premio"] .dh-premios{gap:4px}
+#domhub[data-estado="premio"] .dh-premio{min-height:36px;padding:3px 9px}
 .dh-meio__t{font-size:16px;letter-spacing:.04em;color:#F0D79A;margin:0}
 .dh-foes{display:flex;gap:10px;justify-content:center}
 .dh-foe{width:66px;display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -2762,6 +2770,16 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 .dh-premio__tx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
 .dh-premio__t{font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:#F0D79A;letter-spacing:.02em}
 .dh-premio__s{font-size:12px;line-height:1.2;color:#9AA4B8}
+/* §368: cartão REVIVER com ESCOLHA do caído (quando há mais de um) — um chip por caído (toque ≥40) */
+.dh-premio--rev{display:flex;flex-direction:column;align-items:stretch;gap:4px;width:100%;padding:5px 9px;box-sizing:border-box;border-radius:9px;background:rgba(16,20,34,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.45)}
+.dh-premio--rev .dh-premio__t{color:#F0D79A}
+.dh-revops{display:flex;gap:6px;flex-wrap:wrap}
+.dh-revop{display:flex;align-items:center;gap:5px;min-height:40px;flex:1 1 0;min-width:0;padding:3px 7px 3px 4px;border:0;border-radius:8px;cursor:pointer;font-family:inherit;background:rgba(12,16,30,.9);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4);color:#E8ECF4}
+.dh-revop:hover{box-shadow:inset 0 0 0 2px #E9C25A}
+.dh-revop__p{width:28px;height:28px;flex:none;border-radius:5px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
+.dh-revop__p .slot{width:100%;height:100%}
+.dh-revop__n{font-size:12px;font-weight:700;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dh-revop__hp{font-size:12px;font-weight:700;color:#58D68D;margin-left:auto;flex:none}
 /* direita — recordes + chefe final */
 .dh-box{padding:6px 9px;border-radius:9px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
 .dh-box__t{font-family:'Cinzel',serif;font-size:15px;letter-spacing:.08em;color:#F0D79A;margin:0 0 4px}
@@ -2813,23 +2831,41 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 .dm-chefe__p{width:54px;height:30px;border-radius:5px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(224,84,91,.75)}
 .dm-chefe__n{font-size:12px;color:#E8ECF4;max-width:54px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 /* bloco SEU TIME (coluna esquerda, baixo) */
+/* §368: 5 vagas (3 titulares + 2 reservas) na coluna esquerda — bloco cresce, cada vaga encolhe p/ caber a 780×360 */
 .dm-time{position:absolute;left:8px;top:204px;width:192px;height:152px;box-sizing:border-box;border-radius:9px;padding:4px 9px;
   background:linear-gradient(180deg,rgba(18,24,44,.92),rgba(10,14,26,.9));box-shadow:inset 0 0 0 1px rgba(201,164,76,.5);display:flex;flex-direction:column;gap:3px}
-.dm-time__cab{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dm-time__cab{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none}
 .dm-time__t{margin:0;font-size:13px;color:#F0D79A;font-weight:900;letter-spacing:.03em}
 .dm-time__lista{display:flex;flex-direction:column;gap:3px}
 /* §359: o PvP usa o ctx/time padrão (apelido/segmento/ranque/usar-último cabem na altura padrão) */
-.dm-vaga{height:40px;display:flex;align-items:center;gap:8px;padding:0 7px;border-radius:7px;background:rgba(10,13,22,.6);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
+.dm-vaga{height:40px;width:100%;display:flex;align-items:center;gap:8px;padding:0 7px;border-radius:7px;background:rgba(10,13,22,.6);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4);box-sizing:border-box;text-align:left}
+button.dm-vaga{border:0;cursor:pointer;font-family:inherit}
 .dm-vaga__num{width:15px;flex:none;font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#C9A44C;text-align:center}
 .dm-vaga__p{width:34px;height:34px;flex:none;border-radius:5px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
 .dm-vaga__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .dm-vaga__n{font-size:13px;font-weight:700;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dm-vaga__meta{display:flex;align-items:center;gap:5px;font-size:12px;color:#C9CED8}
-.dm-vaga__x{flex:none;width:40px;height:40px;border:0;border-radius:7px;cursor:pointer;background:rgba(14,18,32,.85);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);color:#C9CED8;font-size:15px}
+.dm-vaga__x{flex:none;width:34px;text-align:center;color:#9AA4B8;font-size:15px}
 .dm-vaga__lock{flex:none;color:#C9A44C;font-size:15px;padding:0 6px}
 .dm-vaga--vazia{border-style:dashed;box-shadow:none;border:1px dashed rgba(154,164,184,.45);color:#9AA4B8}
-.dm-vaga__add{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);font-size:18px;color:#9AA4B8}
-.dm-vaga__txt{font-size:12px;color:#9AA4B8}
+.dm-vaga__add{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);font-size:18px;color:#9AA4B8;flex:none}
+.dm-vaga__txt{font-size:12px;color:#9AA4B8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* §368: layout de 5 vagas (3 titulares + 2 reservas) — SÓ no montador do Domínio (classe dm--dom5), não afeta PvP/outros.
+   ctx compacto (só chefe final) em cima; bloco do time cresce; vagas mais baixas; rótulo "Titular/Reserva" na coluna num. */
+#dommontar.dm--dom5 .dm-ctx{top:46px;height:70px;padding:5px 9px}
+#dommontar.dm--dom5 .dm-ctx__t{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 1px}
+#dommontar.dm--dom5 .dm-ctx__trava{margin-bottom:2px}
+#dommontar.dm--dom5 .dm-chefe__p{height:24px}
+#dommontar.dm--dom5 .dm-chefe__n{display:none}   /* §368: só os 3 retratos (moldura vermelha) — abre espaço p/ as 5 vagas; "Chefe final" fica no title */
+#dommontar.dm--dom5 .dm-time{top:120px;height:236px;padding:3px 9px;gap:2px}
+#dommontar.dm--dom5 .dm-time__t{font-size:12px;line-height:1.1}
+#dommontar.dm--dom5 .dm-time__lista{gap:2px}
+#dommontar.dm--dom5 .dm-vaga{height:40px;gap:6px;padding:0 6px}
+#dommontar.dm--dom5 .dm-vaga__num{width:38px;flex:none;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;text-align:left;line-height:1.0;white-space:normal}
+#dommontar.dm--dom5 .dm-vaga__p{width:30px;height:30px}
+#dommontar.dm--dom5 .dm-vaga--reserva{box-shadow:inset 0 0 0 1px rgba(160,107,255,.55);background:rgba(14,11,26,.6)}
+#dommontar.dm--dom5 .dm-vaga--reserva .dm-vaga__num{color:#b89cff}
+#dommontar.dm--dom5 .dm-vaga--vazia.dm-vaga--reserva{border-color:rgba(160,107,255,.5)}
 /* área direita SEUS DEUSES (coluna direita, 564px) */
 .dm-dir{position:absolute;left:208px;top:50px;width:564px;height:268px;box-sizing:border-box;border-radius:9px;padding:6px 8px;display:flex;flex-direction:column;gap:5px;
   background:linear-gradient(180deg,rgba(16,21,38,.9),rgba(9,12,22,.9));box-shadow:inset 0 0 0 1px rgba(201,164,76,.45)}
@@ -2854,7 +2890,7 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 .dm-card__p{position:absolute;inset:0}
 .dm-card__p .slot{width:100%;height:100%}.dm-card__p img{width:100%;height:100%;object-fit:cover}
 .dm-card__grad{position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(180deg,rgba(6,8,16,0),rgba(6,8,16,.94))}
-.dm-card__i{position:absolute;right:3px;top:3px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(8,11,20,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.6);color:#F0D79A;font-size:15px;font-weight:700;font-style:italic;cursor:pointer;z-index:4}
+.dm-card__i{position:absolute;right:3px;top:3px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0a0d16;box-shadow:inset 0 0 0 1px rgba(201,164,76,.6);color:#F0D79A;font-size:15px;font-weight:700;font-style:italic;cursor:pointer;z-index:4}
 .dm-card__vaga{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#F0CE6B;color:#241603;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;box-shadow:0 1px 4px rgba(0,0,0,.6);z-index:4}
 .dm-card__id{position:absolute;left:0;right:0;bottom:0;padding:3px 6px;display:flex;flex-direction:column;gap:0;text-align:left}
 .dm-card__n{font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:#F7EEDC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 2px #000,0 0 3px #000;line-height:1.1}

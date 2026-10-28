@@ -20,7 +20,7 @@ let f = 0; const ok = (c, m) => { if (!c) { f++; console.log('  XX ' + m); } els
 const abrirCorrida = (w, c) => w.eval(`ir("dominios",{},{substituir:true}); render();`
   + `document.querySelector('.domcard[data-cultura="${c}"]').click();`
   + `document.querySelector('#dentrar').click();`
-  + `[...document.querySelectorAll('.dm-card[data-pick]')].slice(0,3).forEach(b=>b.click());`   // §342: montador novo (.dm-card)
+  + `[...document.querySelectorAll('.dm-card[data-pick]')].slice(0,5).forEach(b=>b.click());`   // §368: 5 deuses (3 titulares + 2 reservas)
   + `document.querySelector('#bcomecar').click();`);
 const primeiroDano = kit => { let v = null; (kit.ab || []).forEach(a => (a.fx || []).forEach(e => { if (e.t === 'dmg' && typeof e.v === 'number' && v == null) v = e.v; })); return v; };
 
@@ -145,7 +145,8 @@ console.log('== 6) TELA DE SELEÇÃO: os cinco aparecem, cada um abre o seu; pro
   const c0 = cards[0], c1 = cards[1];
   abrirCorrida(w, c0);
   ok(w.eval('rotaAtual()') === 'batalha', 'montar time + começar no 1º Domínio abre a batalha');
-  ok(w.eval(`(perfil.dominios.porDominio["${c0}"].run.time||[]).length===3`), '§325: a corrida gravou o TIME montado (3 deuses)');
+  ok(w.eval(`(perfil.dominios.porDominio["${c0}"].run.time||[]).length===5`), '§368: a corrida gravou o TIME montado (5 deuses: 3 titulares + 2 reservas)');
+  ok(w.eval(`JSON.stringify((perfil.dominios.porDominio["${c0}"].run.campo||[]))==='[0,1,2]'`), '§368: o CAMPO começa nos 3 titulares [0,1,2]');
   ok(w.eval(`!!(perfil.dominios.porDominio["${c0}"] && perfil.dominios.porDominio["${c0}"].run)`), 'a corrida do 1º Domínio foi persistida');
   ok(w.eval(`!perfil.dominios.porDominio["${c1}"]`), 'INDEPENDENTE: o 2º Domínio segue sem corrida (correr num não mexe no outro)');
   // RETOMÁVEL e NUNCA se perde ao SAIR: avança um nível, sai para a seleção, volta — a corrida está lá
@@ -478,6 +479,14 @@ console.log('== 17) §325 P4: o servidor recusa replay de Domínio com deus NEM 
   const comStarters = Object.assign({}, base, { run: { nivel: 1, bonus: 0, semanaIdx: 0, time: ['zeus', 'ogum', 'tyr'], vida: [{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true}], reviveGasto: [] } });
   const v2 = PVE.verificar(conta, comStarters, Date.now());
   ok(!(v2 && v2.motivo === 'time_invalido'), 'P4: time de starters (possuídos/emprestáveis) NÃO é recusado por posse (' + (v2 && v2.motivo || 'ok') + ')');
+  // §368: time de 5 (3 titulares + 2 reservas) — um RESERVA não possuído nem emprestável recusa; 5 starters monta.
+  const v5 = [{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true}];
+  const reservaEstranho = Object.assign({}, base, { run: { nivel: 1, bonus: 0, semanaIdx: 0, time: ['zeus', 'ogum', 'tyr', 'sobek', 'hades'], campo: [0,1,2], vida: v5, reviveGasto: [] } });
+  const v3 = PVE.verificar(conta, reservaEstranho, Date.now());
+  ok(v3 && v3.motivo === 'time_invalido', '§368: replay com um RESERVA (hades) não possuído é RECUSADO (' + (v3 && v3.motivo) + ')');
+  const cinco = Object.assign({}, base, { run: { nivel: 1, bonus: 0, semanaIdx: 0, time: ['zeus', 'ogum', 'tyr', 'sobek', 'brigid'], campo: [0,1,2], vida: v5, reviveGasto: [] } });
+  const v4 = PVE.verificar(conta, cinco, Date.now());
+  ok(!(v4 && v4.motivo === 'time_invalido'), '§368: time de 5 starters (3+2) NÃO é recusado por posse (' + (v4 && v4.motivo || 'ok') + ')');
 }
 
 console.log('== 18) §325b: conjunto de referência — 6 times em 3 faixas, 18 distintos fora das culturas, cobre 5 funções ==');

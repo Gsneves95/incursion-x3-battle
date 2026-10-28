@@ -30,14 +30,17 @@ const DOMHUB = estado => `(function(){
   var lads=dominioLadders(),lad=lads[0],c=String(lad.cultura).toLowerCase(),tot=domTotalNiveis(lad),sem=semanaInfo(lad);
   perfil.dominios=perfil.dominios||{porDominio:{}}; perfil.dominios.porDominio=perfil.dominios.porDominio||{};
   var prog=perfil.dominios.porDominio[c]={run:null,melhorSempre:24,semanas:{}}; prog.semanas[sem.chaveAnt]=18; prog.semanas[sem.chave]=12;
-  var team=['zeus','ogum','tyr'],vida=[{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false}];
-  function mk(o){return Object.assign({cultura:lad.cultura,time:team.slice(),semanaIdx:sem.idx,semana:sem.chave,marcaAnterior:18,nivel:12,vida:vida.map(function(v){return Object.assign({},v)}),bonus:0.2,reviveGasto:[],profundidade:11,status:'ativo',aguardandoPremio:false,id:'t'},o);}
+  // §368: time de 5 (3 titulares + 2 reservas) + campo. ANDAMENTO: um titular (vaga 2) caído e um reserva VIVO pronto a entrar.
+  var team=['zeus','ogum','tyr','sobek','brigid'];
+  var vidaAnd=[{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false},{hp:120,vivo:true},{hp:120,vivo:true}];
+  function mk(o){return Object.assign({cultura:lad.cultura,time:team.slice(),campo:[0,1,2],semanaIdx:sem.idx,semana:sem.chave,marcaAnterior:18,nivel:12,vida:vidaAnd.map(function(v){return Object.assign({},v)}),bonus:0.2,reviveGasto:[],profundidade:11,status:'ativo',aguardandoPremio:false,id:'t'},o);}
   var E=${JSON.stringify(estado)};
   if(E==='andamento') prog.run=mk({});
-  else if(E==='premio') prog.run=mk({nivel:20,profundidade:20,aguardandoPremio:true});
+  // PRÊMIO: DOIS caídos (titular+reserva) → o cartão REVIVER mostra a ESCOLHA do caído.
+  else if(E==='premio') prog.run=mk({nivel:20,profundidade:20,aguardandoPremio:true,campo:[0,3,2],vida:[{hp:60,vivo:true},{hp:0,vivo:false},{hp:0,vivo:false},{hp:90,vivo:true},{hp:120,vivo:true}]});
   else if(E==='nova') prog.run=null;
   else if(E==='morto') prog.run=mk({status:'morto',nivel:12,profundidade:11});
-  else if(E==='completo') prog.run=mk({status:'completo',nivel:tot,profundidade:tot,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:50,vivo:true}]});
+  else if(E==='completo') prog.run=mk({status:'completo',nivel:tot,profundidade:tot,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:50,vivo:true},{hp:120,vivo:true},{hp:120,vivo:true}]});
   ir('dominio',{cultura:c},{substituir:true}); render();
 })();`;
 

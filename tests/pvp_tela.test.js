@@ -40,7 +40,7 @@ ok($('#bcomecar').disabled, '"ENTRAR NA FILA" DESABILITADO sem os 3 (§344: um b
 ok($$('.dm-seg__b').length === 2, 'há a escolha segmentada AMISTOSA | RANQUEADA');
 // escolhe 3
 w.eval("['zeus','ogum','tyr'].forEach(k=>pvpToggle(k)); render();");
-ok($$('.dm-vaga__x[data-rem]').length === 3, 'os 3 escolhidos preenchem as vagas');
+ok($$('.dm-vaga[data-rem]').length === 3, 'os 3 escolhidos preenchem as vagas');   // §368: a LINHA da vaga é o botão de remover
 ok(!$('#bcomecar').disabled, 'com o time cheio, ENTRAR NA FILA HABILITA');
 // tira um deus e o botão volta a travar
 w.eval("pvpToggle('zeus'); render();");

@@ -3311,6 +3311,8 @@ function abrirAjudaDominios(){
   ov.innerHTML = `<div class="ovbox dhist" style="max-width:460px">
     <div class="dhist__topo"><h2>Como funciona</h2><button class="b b--quiet b--md" id="dajudax">Fechar</button></div>
     <p class="dhist__nota">Cada Domínio é uma ESCADA de batalhas 3×3 que muda toda semana. Você desce o quanto conseguir numa corrida; a vida carrega entre os níveis e a cada 10 vem um chefe. O placar é SÓ SEU: você compete com o seu próprio recorde da semana passada e com o seu melhor de sempre — guardado só neste aparelho, sem comparação com outros jogadores e sem recompensa.</p>
+    <p class="dhist__nota"><b>Reservas.</b> Você monta 5 deuses: 3 titulares (nas vagas) + 2 reservas. Quando um titular cai, no começo do próximo nível o primeiro reserva vivo entra na vaga dele. Cada nível é jogado com até 3 vivos; se só sobrarem 1 ou 2, joga-se com eles. A corrida só acaba quando os 5 estão caídos.</p>
+    <p class="dhist__nota"><b>Cura entre níveis.</b> Depois de cada nível vencido, todos os vivos (titulares e reservas) recuperam uma fração da vida máxima. O prêmio REVIVER de chefe pode trazer de volta qualquer um dos 5 caídos.</p>
   </div>`;
   stage.querySelector('#baselayer').appendChild(ov);
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
@@ -3392,22 +3394,45 @@ function domInimigosNivel(lad, weekIdx, nivel){
   return (def && def.inimigos) || [];
 }
 // uma UNIDADE do time (coluna esquerda): retrato + nome + orbe/função + barra de vida grande (verde/amarela/vermelha) ou CAÍDO.
-function _domHubUnHTML(k, vida){
+// §368: opts = { rotulo?, reserva?, entra? } — rótulo da vaga (Titular/Reserva), marca de reserva e "entra no próximo nível".
+function _domHubUnHTML(k, vida, opts){
+  opts = opts || {};
   const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
   const max = (typeof GODS !== 'undefined' && GODS[k] && GODS[k].hp) || 120;
   const vivo = vida ? !!vida.vivo : true;
   const hp = vivo ? (vida ? Math.max(0, Math.round(vida.hp)) : max) : 0;
   const frac = Math.max(0, Math.min(1, hp / max));
   const cor = frac > 0.5 ? '#58D68D' : frac > 0.25 ? '#E9C25A' : '#E0545B';   // §348: verde >50% · amarela até 25% · vermelha abaixo
-  return `<div class="dh-un${vivo ? '' : ' dh-un--caido'}" data-un="${H(k)}">
-    <div class="dh-un__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 32, false)}</div>
+  const tag = opts.rotulo ? `<span class="dh-un__rot">${H(opts.rotulo)}</span>` : '';
+  // §368: 5 linhas cabem a 780×360 trocando a BARRA de vida por um número de vida COLORIDO (verde/amarela/vermelha).
+  // A marca "entra no próximo nível" é um selo pequeno na linha do reserva pronto.
+  const entra = opts.entra ? `<span class="dh-un__entra">entra ▶</span>` : '';
+  // quando o selo "entra" aparece, a FUNÇÃO cede o lugar (linha estreita, 780×360) — orbe + entra + vida.
+  const func = opts.entra ? '' : `<span class="dh-un__f">${H(g.funcao || '')}</span>`;
+  const vidaHTML = vivo
+    ? `<span class="dh-un__hp" style="color:${cor}">${hp}<span>/${max}</span></span>`
+    : `<span class="dh-un__hp dh-un__hp--caido">CAÍDO</span>`;
+  return `<div class="dh-un${vivo ? '' : ' dh-un--caido'}${opts.reserva ? ' dh-un--reserva' : ''}" data-un="${H(k)}">
+    <div class="dh-un__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 30, false)}</div>
     <div class="dh-un__id">
-      <b class="dh-un__n">${H(g.nome)}</b>
-      <div class="dh-un__meta">${orbe(g.elem, 14)}<span class="dh-un__f">${H(g.funcao || '')}</span>
-        ${vivo ? `<span class="dh-un__hp">${hp}<span>/${max}</span></span>` : `<span class="dh-un__hp dh-un__hp--caido">CAÍDO</span>`}</div>
-      <div class="dh-un__bar"><i style="width:${Math.round(frac * 100)}%;background:${cor}"></i></div>
+      <b class="dh-un__n">${tag}${H(g.nome)}</b>
+      <div class="dh-un__meta">${orbe(g.elem, 14)}${func}${entra}${vidaHTML}</div>
     </div>
   </div>`;
+}
+// §368: SEU TIME = 3 TITULARES (os que estão nas VAGAS, na ordem do campo) + 2 RESERVAS (fora do campo). Marca o
+// próximo reserva vivo a ENTRAR quando há vaga de titular caído.
+function _domHubTimeHTML(run){
+  const campo = (Array.isArray(run.campo) && run.campo.length) ? run.campo : [0, 1, 2];
+  const naField = new Set(campo);
+  const vagaMorta = campo.some(i => !(run.vida[i] && run.vida[i].vivo));
+  let proximo = -1;
+  if (vagaMorta) for (let i = 0; i < run.time.length; i++) { if (naField.has(i)) continue; if (run.vida[i] && run.vida[i].vivo) { proximo = i; break; } }
+  const linhas = [];
+  campo.forEach((idx, vi) => linhas.push(_domHubUnHTML(run.time[idx], run.vida[idx], { rotulo: 'Titular ' + (vi + 1) })));
+  let ri = 0;
+  for (let i = 0; i < run.time.length; i++) { if (naField.has(i)) continue; ri++; linhas.push(_domHubUnHTML(run.time[i], run.vida[i], { rotulo: 'Reserva ' + ri, reserva: true, entra: i === proximo })); }
+  return linhas.join('');
 }
 // trilha dourada de N degraus: vencidos cheios, ATUAL com marcador brilhante maior, futuros apagados; coroa nos chefes;
 // número só no 1, nos chefes e no atual.
@@ -3451,8 +3476,25 @@ function _domPremioIcon(tipo){
   if (tipo === 'reviver') return `<svg viewBox="0 0 56 56" aria-hidden="true"><g fill="none" stroke="#E9C25A" stroke-width="3" stroke-linecap="round"><ellipse cx="28" cy="18" rx="7" ry="9"/><path d="M28 27v20 M18 35h20"/><path d="M15 30c-7 2-11 6-12 12 7-1 11-4 14-8 M41 30c7 2 11 6 12 12-7-1-11-4-14-8"/></g></svg>`;
   return `<svg viewBox="0 0 56 56" aria-hidden="true"><g fill="none" stroke="#E0545B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M28 10l6 9-6 4-6-4z" fill="#E0545B"/><path d="M28 23v21 M22 39h12"/></g><g fill="none" stroke="#E9C25A" stroke-width="3" stroke-linecap="round"><path d="M42 24v-8 M38 20l4-4 4 4"/></g></svg>`;
 }
-function _domHubPremioCard(tipo, titulo, sub){
-  return `<button class="dh-premio" data-premio="${tipo}"><span class="dh-premio__ic">${_domPremioIcon(tipo)}</span><span class="dh-premio__tx"><span class="dh-premio__t">${H(titulo)}</span><span class="dh-premio__s">${H(sub)}</span></span></button>`;
+function _domHubPremioCard(tipo, titulo, sub, opts){
+  opts = opts || {};
+  const alvo = (opts.alvo != null) ? ` data-alvo="${opts.alvo}"` : '';
+  return `<button class="dh-premio" data-premio="${tipo}"${alvo}><span class="dh-premio__ic">${_domPremioIcon(tipo)}</span><span class="dh-premio__tx"><span class="dh-premio__t">${H(titulo)}</span><span class="dh-premio__s">${H(sub)}</span></span></button>`;
+}
+// §368: cartão REVIVER — 1 caído → botão direto (revive esse); >1 caído → ESCOLHA (um botão por caído, com rosto+nome).
+function _domHubReviverHTML(run){
+  const caidos = []; run.vida.forEach((c, i) => { if (c && !c.vivo) caidos.push(i); });
+  if (!caidos.length) return '';
+  if (caidos.length === 1){
+    const i = caidos[0], rk = run.time[i], rhp = Math.min((GODS[rk] && GODS[rk].hp) || 120, DOM_HP_REVIVER);
+    return _domHubPremioCard('reviver', 'REVIVER', `${domNomeDeus(rk)} volta com ${rhp} de vida.`, { alvo: i });
+  }
+  const chips = caidos.map(i => { const rk = run.time[i], g = HRM[rk] || { nome: rk, elem: 'Umbra' }, rhp = Math.min((GODS[rk] && GODS[rk].hp) || 120, DOM_HP_REVIVER);
+    return `<button class="dh-revop" data-premio="reviver" data-alvo="${i}"><span class="dh-revop__p">${slot('god-' + rk, ini(g.nome), COR(g.elem), 22, false)}</span><span class="dh-revop__n">${H(g.nome)}</span><span class="dh-revop__hp">+${rhp}</span></button>`; }).join('');
+  // §368: layout em COLUNA (sem o ícone grande à esquerda) p/ os chips de escolha caberem na largura (780×360).
+  return `<div class="dh-premio dh-premio--rev">
+    <span class="dh-premio__t">REVIVER — escolha quem volta (${caidos.length} caídos)</span>
+    <span class="dh-revops">${chips}</span></div>`;
 }
 function _domCoroaSVG(){ return `<svg viewBox="0 0 170 60" class="dh-crownsvg" aria-hidden="true"><g fill="none" stroke="#C9A44C" stroke-width="2.5" stroke-linecap="round"><path d="M40 50c-16-3-27-13-31-27 M130 50c16-3 27-13 31-27"/></g><g fill="#E9C25A"><path d="M55 44l-9-24 18 13 21-21 21 21 18-13-9 24z"/><circle cx="46" cy="18" r="4"/><circle cx="85" cy="9" r="5"/><circle cx="124" cy="18" r="4"/></g></svg>`; }
 
@@ -3506,9 +3548,11 @@ function renderDominioHub(){
   const mostraLock = (estado === 'andamento' || estado === 'premio');
   let timeHTML;
   if (estado === 'nova'){
-    timeHTML = [1, 2, 3].map(n => `<div class="dh-un dh-un--vazia"><div class="dh-un__p dh-un__p--vazia">+</div><div class="dh-un__id"><b class="dh-un__n">Vaga ${n}</b><span class="dh-un__hint">Você monta o time ao começar</span></div></div>`).join('');
+    // §368: 3 titulares + 2 reservas (vazias até montar)
+    const rots = ['Titular 1', 'Titular 2', 'Titular 3', 'Reserva 1', 'Reserva 2'];
+    timeHTML = rots.map((r, i) => `<div class="dh-un dh-un--vazia${i >= 3 ? ' dh-un--reserva' : ''}"><div class="dh-un__p dh-un__p--vazia">+</div><div class="dh-un__id"><b class="dh-un__n"><span class="dh-un__rot">${r}</span></b><span class="dh-un__hint">Você monta o time ao começar</span></div></div>`).join('');
   } else {
-    timeHTML = (run.time || []).map((k, i) => _domHubUnHTML(k, run.vida ? run.vida[i] : null)).join('');
+    timeHTML = _domHubTimeHTML(run);   // §368: titulares (campo) + reservas, com "entra no próximo nível"
   }
   const bonusHTML = (estado === 'nova') ? '' : _domHubBonusHTML(run.bonus || 0, lad.tetoBonusDano || DOM_TETO_BONUS);
 
@@ -3523,12 +3567,11 @@ function renderDominioHub(){
       <p class="dh-meio__nota">A vida carrega entre os níveis. A cada chefe vencido,<br>você escolhe uma recompensa.</p>
       <button class="dhb dhb--go" id="ddescer">DESCER AO NÍVEL ${nivel} ›</button>`;
   } else if (estado === 'premio'){
-    const opc = domPremiosDisponiveis(run), caido = run.vida.findIndex(x => !x.vivo);
+    const opc = domPremiosDisponiveis(run);
     const bonusPct = Math.round((run.bonus || 0) * 100), tetoPct = Math.round((lad.tetoBonusDano || DOM_TETO_BONUS) * 100);
     const cards = [];
     if (opc.includes('cura')) cards.push(_domHubPremioCard('cura', 'CURA TOTAL', 'Todos os deuses vivos voltam à vida cheia.'));
-    if (opc.includes('reviver')){ const rk = (run.time || [])[caido]; const rhp = Math.min((GODS[rk] && GODS[rk].hp) || 120, DOM_HP_REVIVER);
-      cards.push(_domHubPremioCard('reviver', 'REVIVER', `${domNomeDeus(rk)} volta com ${rhp} de vida.`)); }   // §348: run.time (TIME do jogador, §325), não lad.trio
+    if (opc.includes('reviver')) cards.push(_domHubReviverHTML(run));   // §368: REVIVER escolhe QUALQUER caído dos 5 (chooser quando >1)
     if (opc.includes('bonus')) cards.push(_domHubPremioCard('bonus', 'BÔNUS DE DANO', `+${Math.round(DOM_PASSO_BONUS * 100)}% de dano (agora +${bonusPct}%, teto +${tetoPct}%).`));
     meio = `<div class="dh-crown">${_domCoroaSVG()}</div>
       <h2 class="dh-meio__t cin">CHEFE VENCIDO — NÍVEL ${prof}</h2>
@@ -3585,7 +3628,8 @@ function renderDominioHub(){
   const en = q('#dentrar'); if (en) en.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const nv = q('#dnova'); if (nv) nv.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const de = q('#ddescer'); if (de) de.onclick = () => descerDominio(c);
-  [...stage.querySelectorAll('.dh-premio')].forEach(btn => { btn.onclick = () => escolherPremioDominio(c, btn.getAttribute('data-premio')); });
+  // §368: prêmios — cartões diretos (.dh-premio[data-premio]) + chips de escolha do REVIVER (.dh-revop[data-premio][data-alvo]).
+  [...stage.querySelectorAll('[data-premio]')].forEach(btn => { btn.onclick = () => { const al = btn.getAttribute('data-alvo'); escolherPremioDominio(c, btn.getAttribute('data-premio'), al != null ? Number(al) : undefined); }; });
   fit();
 }
 
@@ -3593,7 +3637,7 @@ function renderDominioHub(){
 function iniciarCorridaDominio(cultura, time){
   const lad = dominioPorCultura(cultura); if (!lad) return;
   const c = String(cultura).toLowerCase(), sem = semanaInfo(lad);
-  if (!(Array.isArray(time) && time.length === 3)) { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); return; }   // §325: sem time montado → volta ao montador
+  if (!(Array.isArray(time) && time.length === 5)) { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); return; }   // §368: sem time de 5 montado → volta ao montador
   // §325: a corrida carrega A SUA semana (índice + chave), a MARCA a bater (recorde da semana anterior) e o
   // TIME que o jogador montou (travado pela corrida, regra B).
   const run = domNovaCorrida(lad, sem.idx, sem.chave, recSemanaDominio(c, sem.chaveAnt), time.slice());
@@ -3622,13 +3666,18 @@ function _montFreeCount(cfg){ return cfg.vagas.filter(v => v.tipo === 'livre').l
 // §345: _montCardHTML e _montKitPanelHTML foram para src/ui/base.js (a FUNDAÇÃO), para a seleção (outro ui/) poder reusá-los.
 function _montVagaHTML(i, k, v){
   const n = i + 1;
-  if (!k) return `<div class="dm-vaga dm-vaga--vazia"><span class="dm-vaga__num">${n}</span><span class="dm-vaga__add">+</span><span class="dm-vaga__txt">Escolha um deus</span></div>`;
+  // §368: rótulo da vaga (ex.: "Titular 1" / "Reserva 1") quando o modo o define; senão, só o número (PvP etc.).
+  const rot = (v && v.rotulo) ? v.rotulo : String(n);
+  const res = !!(v && v.reserva);   // §368: vaga de RESERVA (marcada visualmente)
+  const cls = 'dm-vaga' + (res ? ' dm-vaga--reserva' : '');
+  if (!k) return `<div class="${cls} dm-vaga--vazia"><span class="dm-vaga__num">${H(rot)}</span><span class="dm-vaga__add">+</span><span class="dm-vaga__txt">Escolha um deus</span></div>`;
   const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' }, trav = v.tipo === 'travada';
-  return `<div class="dm-vaga"><span class="dm-vaga__num">${n}</span>
+  const corpo = `<span class="dm-vaga__num">${H(rot)}</span>
     <span class="dm-vaga__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 24)}</span>
-    <span class="dm-vaga__id"><b class="dm-vaga__n">${H(g.nome)}</b><span class="dm-vaga__meta">${orbe(g.elem, 16)}</span></span>
-    ${trav ? `<span class="dm-vaga__lock">🔒</span>` : `<button class="dm-vaga__x" data-rem="${k}" aria-label="remover">✕</button>`}
-  </div>`;
+    <span class="dm-vaga__id"><b class="dm-vaga__n">${H(g.nome)}</b><span class="dm-vaga__meta">${orbe(g.elem, 16)}</span></span>`;
+  // §368: a LINHA inteira é o alvo de toque p/ remover (≥40px) — o ✕ vira ícone (não um botão separado), p/ caber 5 vagas.
+  if (trav) return `<div class="${cls}">${corpo}<span class="dm-vaga__lock">🔒</span></div>`;
+  return `<button class="${cls} dm-vaga--rem" data-rem="${H(k)}" aria-label="remover ${H(g.nome)}">${corpo}<span class="dm-vaga__x" aria-hidden="true">✕</span></button>`;
 }
 // rótulo padrão do botão do kit (montador de 3 vagas): ESCOLHER / TIRAR DO TIME / Time cheio
 function _montKitLabelPadrao(k, cfg){
@@ -3732,7 +3781,7 @@ function montadorTimeHTML(cfg){
 function ligarMontadorTime(cfg){
   const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
   const bv = q('[data-voltar]'); if (bv) bv.onclick = () => cfg.aoVoltar();
-  qq('.dm-vaga__x[data-rem]').forEach(b => b.onclick = () => { const j = cfg.pick.indexOf(b.dataset.rem); if (j >= 0) cfg.pick.splice(j, 1); montDica = false; render(); });
+  qq('.dm-vaga[data-rem]').forEach(b => b.onclick = () => { const j = cfg.pick.indexOf(b.dataset.rem); if (j >= 0) cfg.pick.splice(j, 1); montDica = false; render(); });
   _montLigarGrade(stage, cfg);
   const time = _montTime(cfg), v = cfg.validar(time);
   const bc = q('#bcomecar'); if (bc && v.ok) bc.onclick = () => cfg.aoComecar(_montTime(cfg));
@@ -3744,22 +3793,16 @@ function ligarMontadorTime(cfg){
 // §342b: o nome CURTO do Domínio ("Domínio do Olimpo" → "Olimpo"; "de Asgard"→"Asgard"; "dos Céus"→"Céus").
 function _domNomeCurto(lad){ return String((lad && lad.nome) || '').replace(/^Dom[íi]nio\s+d[eoa]s?\s+/i, '') || String((lad && lad.cultura) || ''); }
 
-/* contexto do DOMÍNIO (bloco esquerdo): inimigos da cultura (≤4 + "+N"), chefe final, aviso de trava */
+/* contexto do DOMÍNIO (bloco esquerdo): chefe final + aviso de trava. §368: a lista de inimigos saiu p/ abrir espaço às 5 vagas. */
 function _domContextoHTML(lad){
   const trio = lad.trio || [];
-  const culturaGods = ROSTER.filter(e => e.faccao === lad.cultura).map(e => e.key);
-  const inimigos = culturaGods.filter(k => !trio.includes(k));
-  const mostra = inimigos.slice(0, 4), resto = inimigos.length - mostra.length;
-  const mini = k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
-    return `<span class="dm-ini"><span class="dm-ini__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 18)}</span><span class="dm-ini__n">${H(g.nome)}</span></span>`; };
   const chefe = k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
     return `<span class="dm-chefe"><span class="dm-chefe__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 22)}</span><span class="dm-chefe__n">${H(g.nome)}</span></span>`; };
+  // §368: compacto (abre espaço p/ as 5 vagas) — nome + trava + o trio do CHEFE FINAL (moldura vermelha). A lista de
+  // inimigos saiu da coluna; o formato "3 titulares + 2 reservas" vive na sublinha. Rótulo "CHEFE FINAL" via title.
   return `<h2 class="dm-ctx__t cin">${H(lad.nome)}</h2>
     <div class="dm-ctx__trava"><span class="dm-ctx__lock">🔒</span> Time travado na corrida.</div>
-    <div class="dm-ctx__rot">INIMIGOS DESTE DOMÍNIO</div>
-    <div class="dm-ctx__inis">${mostra.map(mini).join('')}${resto > 0 ? `<span class="dm-ini dm-ini--mais"><span class="dm-ini__p dm-ini__p--mais">+${resto}</span></span>` : ''}</div>
-    <div class="dm-ctx__rot">CHEFE FINAL</div>
-    <div class="dm-ctx__chefes">${trio.map(chefe).join('')}</div>`;
+    <div class="dm-ctx__chefes" title="Chefe final">${trio.map(chefe).join('')}</div>`;
 }
 
 /* ---------- §325/§342: MONTAR TIME antes da corrida (rota 'dominiomontar', params.cultura) ----------
@@ -3771,12 +3814,16 @@ function renderDominioMontarTime(){
   if (!lad){ sairDominio(); ir('dominios', {}, { substituir: true }); render(); return; }
   const total = domTotalNiveis(lad) || 40;
   const cfg = {
-    id: 'dominio', cultura: c, pick: domTimePick,
+    id: 'dominio', cultura: c, pick: domTimePick, klass: 'dm--dom5',   // §368: classe p/ o layout de 5 vagas (não afeta PvP/outros)
     titulo: 'MONTE SEU TIME',
-    sublinha: `DOMÍNIO · ${_domNomeCurto(lad).toUpperCase()} · NÍVEL 1/${total}`,   // §342b: o NOME do Domínio (Olimpo, Asgard, Duat…), não a cultura
+    sublinha: `DOMÍNIO · ${_domNomeCurto(lad).toUpperCase()} · 3 TITULARES + 2 RESERVAS`,   // §342b/§368: NOME do Domínio + o formato do time
     contextoHTML: _domContextoHTML(lad),
-    vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
-    validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.`, porDeus: {} }; },
+    // §368: 5 vagas = 3 TITULARES (na ordem das vagas) + 2 RESERVAS (ordenados). Todas LIVRES (o jogador monta).
+    vagas: [
+      { tipo: 'livre', rotulo: 'Titular 1' }, { tipo: 'livre', rotulo: 'Titular 2' }, { tipo: 'livre', rotulo: 'Titular 3' },
+      { tipo: 'livre', rotulo: 'Reserva 1', reserva: true }, { tipo: 'livre', rotulo: 'Reserva 2', reserva: true },
+    ],
+    validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 5, motivo: n === 5 ? '' : `Escolha mais ${5 - n} deus${5 - n > 1 ? 'es' : ''} (3 titulares + 2 reservas).`, porDeus: {} }; },
     textoBotao: 'COMEÇAR CORRIDA',
     aoComecar: (t) => iniciarCorridaDominio(c, t.slice()),
     aoVoltar: () => { montKitAberto = null; ir('dominio', { cultura: c }, { substituir: true }); render(); },   // §325: Voltar → HUB
@@ -3794,19 +3841,19 @@ function iniciarNivelDominio(cultura){
   dominioFim = null;
   prova = null; provaFim = null; provaLances = 0; campanha = null; campanhaFim = null;
   vsCPU = true;
-  const timeRun = (run.time && run.time.length === 3) ? run.time : escada.trio;   // §325: níveis/replay do TIME do jogador
-  const nvDom = niveisTimeLocal(timeRun);   // §323 P2: níveis do jogador no SEU time (não no trio inimigo)
+  const timeRun = (run.time && run.time.length >= 3) ? run.time : escada.trio;   // §325/§368: níveis/replay do TIME do jogador (5)
+  const nvDom = niveisTimeLocal(timeRun);   // §323 P2: níveis do jogador no SEU time (não no trio inimigo) — vale p/ titulares E reservas
   if (typeof definirNiveisBatalha === 'function') definirNiveisBatalha(nvDom);
   st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1, niveis: nvDom ? [nvDom, {}] : null });
-  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, time: (run.time || []).slice(), vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2 + §325 P4: estado da corrida ANTES do nível (inclui o TIME p/ a re-simulação do servidor)
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, time: (run.time || []).slice(), campo: (run.campo || []).slice(), vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2 + §325 P4 + §368: estado da corrida ANTES do nível (TIME de 5 + CAMPO p/ a re-simulação do servidor)
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('dominio'));   // §322 P3: Domínios usam v2 (sem solução fixa)
   ir('batalha', {}, { substituir: true });
   render();
 }
-function escolherPremioDominio(cultura, tipo){
+function escolherPremioDominio(cultura, tipo, alvo){
   const c = String(cultura).toLowerCase(), lad = dominioPorCultura(c), run = dominioRun(c);
   if (!lad || !run || !run.aguardandoPremio) return;
-  domAplicarPremio(run, lad, tipo);
+  domAplicarPremio(run, lad, tipo, alvo);   // §368: alvo = índice do caído escolhido (REVIVER)
   salvarRunDominio(c, run);
   render();   // o hub re-renderiza: agora mostra "Descer ao nível N+1"
 }
@@ -3834,8 +3881,8 @@ function atualizarDominio(){
   const c = dominio.cultura, run = dominioRun(c);
   if (!run){ dominioFim = { venceu: false, nivel: 0, profundidade: 0 }; pararRelogio(); return; }
   const nivelJogado = run.nivel;
-  const r = domResolverBatalha(run, dominio.escada, st);   // muta a corrida (carrega vida, marca rede gasta, avança/aguarda prêmio, detecta superação)
-  dominioFim = { venceu: r.venceu, chefe: r.chefe, completou: r.completou, superou: !!r.superou, nivel: nivelJogado, profundidade: run.profundidade, marca: run.marcaAnterior || 0 };
+  const r = domResolverBatalha(run, dominio.escada, st);   // muta a corrida (carrega vida, marca rede gasta, avança/aguarda prêmio/retoma, detecta superação)
+  dominioFim = { venceu: r.venceu, chefe: r.chefe, completou: r.completou, superou: !!r.superou, retomar: !!r.retomar, morreu: !!r.morreu, nivel: nivelJogado, profundidade: run.profundidade, marca: run.marcaAnterior || 0 };
   pararRelogio();
   salvarRunDominio(c, run);   // PERSISTE por-domínio: recorde da semana + melhor de sempre, a cada nível — nunca se perde ao sair da tela
   // §318 F2 E2: nível LIMPO → envia o replay (o servidor credita Essência por nível, tetado por corrida/dia); derrota → descarta.
@@ -3847,14 +3894,18 @@ function dominioResultadoOverlay(){
   if (!dominio || !dominioFim) return '';
   const f = dominioFim, lad = dominio.ladder, run = dominioRun(dominio.cultura);
   const total = (dominio.escada && dominio.escada.niveis.length) || domTotalNiveis(lad);
-  const timeRun = (run && run.time && run.time.length === 3) ? run.time : (run ? lad.trio : null);   // §325: a vida final é do TIME do jogador
+  const timeRun = (run && run.time && run.time.length >= 3) ? run.time : (run ? lad.trio : null);   // §325/§368: a vida final é do TIME do jogador (5)
   const vidaHTML = run ? `<div class="domtrio domtrio--result">${timeRun.map((k, i) => dominioFichaHTML(k, run.vida[i])).join('')}</div>` : '';
   let selo, titulo, msg, acoes, cls = f.venceu ? 'venceu' : 'hp';
   if (f.completou){
     selo = H(lad.nome); titulo = 'DOMÍNIO CONQUISTADO'; msg = 'Você desceu os ' + total + ' níveis da semana. A corrida se encerra no topo.';
     acoes = '<button class="b b--primary b--md" id="dfhub">Voltar ao Domínio</button>';
+  } else if (f.retomar){   // §368: derrota com RESERVA vivo — o reserva assume a vaga; o nível é REFEITO (corrida segue)
+    cls = 'venceu'; selo = 'Nível ' + f.nivel; titulo = 'UM RESERVA ASSUME';
+    msg = 'Seus deuses no campo tombaram, mas um reserva entra na vaga e a corrida continua. Refaça o nível ' + f.nivel + '.';
+    acoes = '<button class="b b--primary b--md" id="drefazer">Refazer o nível ›</button>';
   } else if (!f.venceu){
-    selo = 'Nível ' + f.nivel; titulo = 'DERROTA'; msg = 'A corrida termina no nível ' + f.profundidade + '. O recorde fica; recomece quando quiser.';
+    selo = 'Nível ' + f.nivel; titulo = 'DERROTA'; msg = 'Os 5 deuses tombaram. A corrida termina no nível ' + f.profundidade + '. O recorde fica; recomece quando quiser.';
     acoes = '<button class="b b--primary b--md" id="dfhub">Voltar ao Domínio</button>';
   } else if (f.chefe){   // chefe vencido com prêmio a escolher
     selo = 'Chefe · nível ' + f.nivel; titulo = 'CHEFE VENCIDO'; msg = 'Reivindique a recompensa da corrida antes de descer.';
@@ -3884,6 +3935,7 @@ function ligarDominioFim(){
   const hub = q('#dfhub'); if (hub) hub.onclick = () => sairParaHubDominio();
   const pr = q('#dfpremio'); if (pr) pr.onclick = () => sairParaHubDominio();   // vai ao hub para escolher o prêmio (§240: a escolha vive no hub, com saída)
   const px = q('#dfprox'); if (px) px.onclick = () => iniciarNivelDominio(dominio.cultura);
+  const rf = q('#drefazer'); if (rf) rf.onclick = () => iniciarNivelDominio(dominio.cultura);   // §368: reserva assumiu — refaz o MESMO nível
 }
 function sairDominio(){ dominio = null; dominioFim = null; }
 function sairParaHubDominio(){ const c = dominio && dominio.cultura; sairDominio(); ir('dominio', { cultura: c }, { substituir: true }); render(); }

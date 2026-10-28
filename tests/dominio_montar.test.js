@@ -33,19 +33,22 @@ console.log('== §342 escolher / tirar / tirar pelo X ==');
   $(`.dm-card[data-pick="${k0}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   $(`.dm-card[data-pick="${k1}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval('domTimePick.length') === 2, 'dois escolhidos');
-  $(`.dm-vaga__x[data-rem="${k0}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('domTimePick.length') === 1 && w.eval('domTimePick[0]') === k1, 'o X da vaga remove e o 2º vira o 1º');
+  $(`.dm-vaga[data-rem="${k0}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));   // §368: a LINHA da vaga é o botão de remover
+  ok(w.eval('domTimePick.length') === 1 && w.eval('domTimePick[0]') === k1, 'remover a vaga tira o deus e o 2º vira o 1º');
 }
 
-console.log('\n== §342 as 3 vagas cheias bloqueiam o 4º e mostram a dica ==');
+console.log('\n== §368 as 5 vagas cheias (3 titulares + 2 reservas) bloqueiam o 6º e mostram a dica ==');
 { const { w, $, $$ } = sessao();
   const cards = $$('.dm-card[data-pick]');
-  for (let i = 0; i < 3; i++) $(`.dm-card[data-pick="${cards[i].dataset.pick}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('domTimePick.length') === 3, 'três escolhidos enchem as vagas');
-  const quarto = cards[3].dataset.pick;
-  $(`.dm-card[data-pick="${quarto}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('domTimePick.length') === 3 && !w.eval(`domTimePick.includes(${JSON.stringify(quarto)})`), 'um 4º não entra (vagas cheias)');
+  for (let i = 0; i < 5; i++) $(`.dm-card[data-pick="${cards[i].dataset.pick}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(w.eval('domTimePick.length') === 5, 'cinco escolhidos enchem as vagas (3 titulares + 2 reservas)');
+  const sexto = cards[5].dataset.pick;
+  $(`.dm-card[data-pick="${sexto}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(w.eval('domTimePick.length') === 5 && !w.eval(`domTimePick.includes(${JSON.stringify(sexto)})`), 'um 6º não entra (vagas cheias)');
   ok(!!$('#dmdica'), 'mostra a dica "Tire um deus para trocar"');
+  // os rótulos das vagas: Titular 1-3 + Reserva 1-2
+  const rots = $$('.dm-vaga__num').map(n => n.textContent.trim());
+  ok(rots.join('|') === 'Titular 1|Titular 2|Titular 3|Reserva 1|Reserva 2', 'as vagas rotulam 3 titulares + 2 reservas (' + rots.join('|') + ')');
 }
 
 console.log('\n== §342 filtros (elemento · função · busca) combinam e a contagem bate ==');
@@ -93,19 +96,18 @@ console.log('\n== §342 painel de kit: 4 habilidades com custo/GRÁTIS e nível;
   ok(!$('#dmkit') && w.eval("rotaAtual()") === 'dominiomontar', 'o voltar do Android fecha o painel e permanece no montar');
 }
 
-console.log('\n== §342 COMEÇAR só com 3 chama iniciarCorridaDominio com o time NA ORDEM ==');
+console.log('\n== §368 COMEÇAR só com 5 chama iniciarCorridaDominio com o time NA ORDEM (3 titulares + 2 reservas) ==');
 { const { w, $, $$ } = sessao();
   ok($('#bcomecar').disabled, 'COMEÇAR começa travado (0 deuses)');
   w.eval("globalThis.__ini=null; iniciarCorridaDominio=(cult,time)=>{__ini={cult,time};};");
-  const cards = $$('.dm-card[data-pick]'), a = cards[0].dataset.pick, b = cards[1].dataset.pick, cc = cards[2].dataset.pick;
-  $(`.dm-card[data-pick="${a}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  $(`.dm-card[data-pick="${b}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok($('#bcomecar').disabled, 'com 2 ainda travado');
-  $(`.dm-card[data-pick="${cc}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(!$('#bcomecar').disabled, 'com 3 habilita');
+  const cards = $$('.dm-card[data-pick]'), ks = cards.slice(0, 5).map(c => c.dataset.pick);
+  ks.slice(0, 4).forEach(k => $(`.dm-card[data-pick="${k}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true })));
+  ok($('#bcomecar').disabled, 'com 4 ainda travado (faltam 5)');
+  $(`.dm-card[data-pick="${ks[4]}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(!$('#bcomecar').disabled, 'com 5 habilita');
   $('#bcomecar').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval('__ini && __ini.cult') === 'grega', 'COMEÇAR chama iniciarCorridaDominio(cultura, time)');
-  ok(w.eval(`JSON.stringify(__ini.time)`) === JSON.stringify([a, b, cc]), 'o time vai na ORDEM das vagas (1,2,3)');
+  ok(w.eval(`JSON.stringify(__ini.time)`) === JSON.stringify(ks), 'o time vai na ORDEM das vagas (titulares 1-3 + reservas 1-2)');
 }
 
 console.log('\n== §342 VOLTAR volta ao hub do Domínio ==');
@@ -178,8 +180,8 @@ console.log('\n== §342b o destaque de palavra-chave casa a PALAVRA INTEIRA (ace
     ok(perto(m.df.w, 780) && perto(m.df.h, 360), `#dommontar é 780×360 (${Math.round(m.df.w)}×${Math.round(m.df.h)})`);
     ok(m.voltar && perto(m.voltar.x, 8) && perto(m.voltar.w, 80) && m.voltar.h >= 39.5, `VOLTAR x8 w80 h≥40 (${Math.round(m.voltar.x)}/${Math.round(m.voltar.w)}/${Math.round(m.voltar.h)})`);
     ok(m.titulo && perto(m.titulo.x, 96), `título em x96 (${m.titulo && Math.round(m.titulo.x)})`);
-    ok(m.ctx && perto(m.ctx.x, 8) && perto(m.ctx.y, 48) && perto(m.ctx.w, 192) && perto(m.ctx.h, 154), `contexto x8 y48 192×154 (${m.ctx && [m.ctx.x, m.ctx.y, m.ctx.w, m.ctx.h].map(Math.round).join('/')})`);
-    ok(m.time && perto(m.time.x, 8) && perto(m.time.y, 204) && perto(m.time.w, 192) && perto(m.time.h, 152), `seu time x8 y204 192×152 (${m.time && [m.time.x, m.time.y, m.time.w, m.time.h].map(Math.round).join('/')})`);
+    ok(m.ctx && perto(m.ctx.x, 8) && perto(m.ctx.y, 46) && perto(m.ctx.w, 192) && perto(m.ctx.h, 70), `§368: contexto compacto x8 y46 192×70 (${m.ctx && [m.ctx.x, m.ctx.y, m.ctx.w, m.ctx.h].map(Math.round).join('/')})`);
+    ok(m.time && perto(m.time.x, 8) && perto(m.time.y, 120) && perto(m.time.w, 192) && perto(m.time.h, 236), `§368: seu time (5 vagas) x8 y120 192×236 (${m.time && [m.time.x, m.time.y, m.time.w, m.time.h].map(Math.round).join('/')})`);
     ok(m.dir && perto(m.dir.x, 208) && perto(m.dir.y, 50) && perto(m.dir.w, 564) && perto(m.dir.h, 268), `seus deuses x208 y50 564×268 (${m.dir && [m.dir.x, m.dir.y, m.dir.w, m.dir.h].map(Math.round).join('/')})`);
     ok(m.comecar && m.comecar.h >= 39.5 && perto(m.comecar.y, 320, 6) && m.comecar.x > 400, `COMEÇAR CORRIDA à direita, y≈320, h≥40 (y${Math.round(m.comecar.y)} h${Math.round(m.comecar.h)})`);
     console.log(`  @780×360: menor botão ${m.btn.mn}px (${m.btn.who}) · menor corpo ${m.body.mn}px (${m.body.who}) · nome ${m.nome.mn}px`);

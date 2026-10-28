@@ -2,7 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §355 · Acabamento das artes de habilidade (moldura) + nomes das cartas da revelação
+## ★ §368 · DOMÍNIOS mais justos: reservas (5) + cura fração + recalibragem reportada
+- **Reservas:** a corrida monta 5 deuses = 3 titulares + 2 reservas. `run.time`(5) + `run.campo`(3 índices das vagas,
+  começa `[0,1,2]`). O 1º reserva vivo assume a vaga do titular caído no próximo nível (`domSubstituirReservas`); joga com
+  até 3 vivos; a corrida só acaba com os **5 caídos** (derrota com reserva vivo = `retomar`, refaz o nível). REVIVER escolhe
+  qualquer dos 5 (`domAplicarPremio('reviver', índice)`).
+- **Cura = FRAÇÃO** da vida máxima (`curaPorNivel` 25 HP → `0.25`; `domCurarParcial` = round(maxHp×fr); guarda 0..1).
+- **Recalibragem (item 3): metas NÃO alcançáveis** com os botões permitidos (cura 15–35% + danoMult uniforme) — INICIAL e
+  FORTE pedem danoMult opostos e as culturas têm dureza incompatível (Nórdica/Egípcia ~40, Chinesa ~9–16). Conforme o item
+  3: **não forçou**, **danoMult inalterado**, tabela completa + recomendação em `docs/dominios-368.md`. Cura entregue 0.25.
+- **Servidor/perfil:** `pve` aceita time de 5 (reserva não possuído recusa) + `campo`; perfil **v8** (corrida antiga de 3
+  encerra, recorde preservado).
+- **Telas (780×360, a=b=c=d=e=0):** montador 5 vagas (`dm--dom5`, só o Domínio), hub com 3 titulares + 2 reservas (vida em
+  número colorido; "entra ▶"), REVIVER com escolha do caído, ajuda "?" e overlay "reserva assume" novos.
+- **Provas:** `dominio_reservas` (novo) + `dominios`/`dominio_montar`/`dominio_hub`/`acessibilidade_telas` atualizados.
+  Capturas `368-{montador-5,hub-reservas,premio-reviver}-{780,1846}`. Economia inalterada (2/nível, tetos 30/90).
+
+## §355 · Acabamento das artes de habilidade (moldura) + nomes das cartas da revelação
 - **Moldura da arte de habilidade:** toda arte de habilidade (`slot('skill-…')` — batalha, miniaturas, kit "i", ficha,
   Níveis, guia) ganha moldura de ~1,5px na **cor da energia** (orbe de custo dominante; livre→cinza) a ~55%, com **filete
   escuro** de 1px por dentro, cantos do botão. `corEnergia(cost)` (base.js) → 6º arg do `slot()` → `.slot--sk` + `--sk-en`;

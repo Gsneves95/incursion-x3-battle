@@ -6,6 +6,70 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §368 · DOMÍNIOS mais justos: RESERVAS no time + cura como FRAÇÃO + recalibragem por metas (reportada)
+
+Queixa do dono (jogando): a torre de 40 níveis está dura demais; com um time só é impossível avançar vários níveis
+(o §325b já previra o piso ~1 e deixou a calibragem final "à mão do dono").
+
+**1. RESERVAS (entregue).** A corrida monta **5 deuses** = 3 TITULARES (na ordem das vagas) + 2 RESERVAS (ordenados),
+escolhidos no montador (5 vagas, rótulos "Titular 1–3"/"Reserva 1–2"). O time trava pela corrida. Modelo no motor
+(`src/dominios.js`): `run.time` (5) + `run.campo` (3 índices = quem está nas VAGAS; começa `[0,1,2]`). Quando a vaga de
+um titular caído abre, no **começo do próximo nível** o **primeiro reserva vivo fora do campo** (menor índice = a ordem
+se mantém) assume a vaga (`domSubstituirReservas`, chamado em `domAvancar` e após derrota). O nível joga com **até 3
+vivos**; se só sobram 1–2 no total, joga com eles (o campo sempre tem 3 unidades, as vagas sem deus vivo entram mortas —
+o mesmo padrão do §325). A corrida só **ACABA quando os 5 estão caídos**: uma derrota do campo com reserva vivo **NÃO**
+encerra — o reserva assume e o nível é **refeito** (`domResolverBatalha` devolve `retomar`; a UI mostra "UM RESERVA
+ASSUME · Refazer o nível"). REVIVER escolhe **qualquer** dos 5 caídos (`domAplicarPremio('reviver', alvoÍndice)`;
+`domAvancar`→`domSubstituirReservas` recoloca o revivido numa vaga vazia, senão ele fica de reserva).
+- **Alternativa recusada:** a derrota encerrar na hora (como no §325). Recusada: contradiz "acaba quando os 5 caídos" —
+  com reserva vivo a corrida tem de continuar (o reserva retenta o nível). Limite: cada derrota mata o campo, então no
+  máximo poucas retentativas antes dos 5 caírem (sem laço infinito).
+
+**2. CURA como FRAÇÃO (entregue).** `curaPorNivel` deixou de ser HP absoluto (25) e virou **FRAÇÃO da vida máxima**
+(`0.25` = 25%, aplicada a todos os vivos — titulares E reservas — após cada nível vencido; `domCurarParcial` = `round(maxHp
+× fração)`). "Mais cura" (≈30 HP num deus de 120, antes 25) e proporcional ao máximo de cada deus. Guarda de build nova:
+`curaPorNivel ∈ [0,1]` (`domValidarLadder`).
+
+**3. RECALIBRAGEM POR METAS — reportada, NÃO forçada (decisão do item 3).** Simulação `tools/sim_dominios_368.js`
+(corrida de produção com reservas+cura, IA v2 dos dois lados). Metas por cultura: INICIAL mediana ≈10 (8–12), FORTE ≈20
+(17–24) com <10% chegando ao 40. Passo (a) cura 15–35% com danoMult inalterado: **não basta** (INICIAL ~1–2 — o piso ~1
+do §325b; a escada derruba os iniciais por BURST no nível 2, a cura quase não morde). Passo (b) varredura danoMult×cura
+(fator uniforme, mesmo método nas 5 culturas): **nenhuma combinação bate as metas** — elas pedem danoMult **opostos**
+(INICIAL só chega a 8–12 em danoMult 0.35/cura 35%, onde o FORTE estoura a 40; o FORTE só cabe em 17–24 por volta de
+danoMult 0.5, onde o INICIAL afunda a ~4–5) **e** as culturas têm dureza intrínseca incompatível (Nórdica/Egípcia sempre
+~40 no FORTE; Chinesa nunca passa de ~9–16 — outlier dos dois lados, "propriedade do dado" do §325). Conforme o item 3
+("se nenhuma combinação bater as metas, NÃO force: reporte a tabela e pare antes de aplicar"), **danoMult ficou
+INALTERADO** (rampa 1.00/1.05/1.10/1.15) e a escolha da dificuldade fica para a **decisão do dono** — a tabela completa
+(cura × danoMult × mediana por time e cultura) + a recomendação estão em `docs/dominios-368.md`. Cura entregue = **0.25**
+(mais cura que os 25 HP anteriores, sem forçar as metas).
+- **Alternativa recusada:** afinar o danoMult por cultura, ou abrir a whitelist/relaxar as metas por conta própria.
+  Recusada pelo item 3 (mesmo método nas 5 culturas; não forçar) — a decisão é do dono.
+
+**4. SERVIDOR + PERFIL.** `server/pve.js`: `_timeDominioValido` aceita time de **5** (ou 3 legado), todos
+possuídos/emprestáveis (um reserva não possuído recusa o crédito); `_montarDominio` reconstrói a corrida com `time`(5) +
+`campo`(3, saneado) + `vida`(5). Perfil **v7→v8**: uma corrida do formato antigo (3 deuses, sem `run.campo`) **encerra**
+na migração (não é retomável sem reservas), preservando `melhorSempre` e `semanas`; uma corrida já no formato novo (5 +
+campo) é mantida.
+
+**5. TELAS (§357, 780×360, a=b=c=d=e=0).** Montador do Domínio com **5 vagas** (classe `dm--dom5` — só o Domínio; PvP e os
+outros montadores seguem com o layout de 3 vagas intacto): contexto compacto (só o chefe final) em cima, bloco do time
+cresce, a LINHA da vaga é o alvo de toque p/ remover (o ✕ virou ícone). Hub mostra os **3 titulares + 2 reservas** (vida
+como número colorido no lugar da barra, p/ caber 5 linhas; selo "entra ▶" no reserva pronto a assumir). Cartão **REVIVER**
+vira ESCOLHA (um chip por caído) quando há mais de um caído. Ajuda "?" atualizada (reservas + cura). Overlay "UM RESERVA
+ASSUME · Refazer o nível" na derrota com reserva vivo.
+
+**PROVAS.** `dominio_reservas.test.js` (novo, engine): reserva entra na vaga do caído; acaba só com 5 caídos
+(derrota+reserva=retoma); cura aplica a fração; REVIVER escolhe o caído; migração v7→v8. `dominios.test.js`: replay com
+reserva não possuído recusado; corrida grava 5 + campo `[0,1,2]`. `dominio_montar.test.js`: 5 vagas, rótulos, 6º bloqueado,
+COMEÇAR só com 5. `dominio_hub.test.js`: 5 vagas vazias na nova, REVIVER-escolha com 2 caídos. `acessibilidade_telas.test.js`:
+montador 5 vagas, hub com reservas (1 titular caído, reserva pronto), prêmio com escolha — a=b=c=d=e=0 a 780×360.
+Capturas `368-{montador-5,hub-reservas,premio-reviver}-{780,1846}`. Relatório `docs/dominios-368.md`.
+
+**NÃO MUDOU:** outros modos, kits, regras de batalha, valores de economia (`data/economia.json` — Essência 2/nível,
+tetos 30/corrida e 90/dia inalterados; o ganho médio continua ~2–4 por corrida, o teto segura com folga).
+
+---
+
 ## §355 · Acabamento das artes de habilidade (moldura fina) + nomes das cartas da revelação
 
 **1. MOLDURA fina da arte de habilidade (na cor da energia).** Desde o §353b a arte de habilidade é quadrada e CHEIA, até

@@ -24,8 +24,8 @@ console.log('== §344 CAMPANHA (montartime): escolher/tirar/4º, filtros+busca, 
   $(`.dm-card[data-pick="${q}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval('campTimePick.length') === 3 && !!$('#dmdica'), 'o 4º é bloqueado e a dica aparece');
   // tirar pelo X
-  $(`.dm-vaga__x[data-rem="${a}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('campTimePick.length') === 2, 'o X da vaga remove');
+  $(`.dm-vaga[data-rem="${a}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));   // §368: a LINHA da vaga remove
+  ok(w.eval('campTimePick.length') === 2, 'a vaga remove ao tocar');
   // filtros + busca
   $('[data-func="Atacante"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok($$('.dm-card[data-pick],.dm-card--off').length === w.eval("_montJogaveis().filter(k=>HRM[k].funcao==='Atacante').length"), 'filtro de função conta certo');

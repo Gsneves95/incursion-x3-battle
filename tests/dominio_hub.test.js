@@ -24,16 +24,16 @@ function semear(w, estado, over){
   return w.eval(`(function(){
     var c = Object.keys(DOMINIOS)[0], lad = DOMINIOS[c], sem = semanaInfo(lad), tot = domTotalNiveis(lad);
     perfil = novoPerfil(0,0);
-    var team = ['zeus','ogum','tyr'];
-    var vida = [{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false}];
+    var team = ['zeus','ogum','tyr','sobek','brigid'];   // §368: 3 titulares + 2 reservas
+    var vida = [{hp:84,vivo:true},{hp:37,vivo:true},{hp:0,vivo:false},{hp:120,vivo:true},{hp:120,vivo:true}];
     var prog = { run:null, melhorSempre:24, semanas:{} };
     prog.semanas[sem.chave]=11; prog.semanas[sem.chaveAnt]=18;
-    function mk(o){ var r={cultura:lad.cultura,time:team.slice(),semanaIdx:sem.idx,semana:sem.chave,marcaAnterior:18,superou:false,nivel:12,vida:vida.map(function(v){return Object.assign({},v)}),bonus:0.2,reviveGasto:[],profundidade:11,status:'ativo',aguardandoPremio:false,id:'dom_t'}; for(var k in (o||{})) r[k]=o[k]; return r; }
+    function mk(o){ var r={cultura:lad.cultura,time:team.slice(),campo:[0,1,2],semanaIdx:sem.idx,semana:sem.chave,marcaAnterior:18,superou:false,nivel:12,vida:vida.map(function(v){return Object.assign({},v)}),bonus:0.2,reviveGasto:[],profundidade:11,status:'ativo',aguardandoPremio:false,id:'dom_t'}; for(var k in (o||{})) r[k]=o[k]; return r; }
     var E = ${JSON.stringify(estado)}, O = ${JSON.stringify(over || {})};
     if(E==='andamento') prog.run=mk(O);
-    else if(E==='premio') prog.run=mk(Object.assign({nivel:20,profundidade:20,aguardandoPremio:true},O));
+    else if(E==='premio') prog.run=mk(Object.assign({nivel:20,profundidade:20,aguardandoPremio:true,campo:[0,3,2],vida:[{hp:60,vivo:true},{hp:0,vivo:false},{hp:0,vivo:false},{hp:90,vivo:true},{hp:120,vivo:true}]},O));
     else if(E==='morto') prog.run=mk(Object.assign({status:'morto',nivel:12,profundidade:11},O));
-    else if(E==='completo') prog.run=mk(Object.assign({status:'completo',nivel:tot,profundidade:tot,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:50,vivo:true}]},O));
+    else if(E==='completo') prog.run=mk(Object.assign({status:'completo',nivel:tot,profundidade:tot,vida:[{hp:84,vivo:true},{hp:37,vivo:true},{hp:50,vivo:true},{hp:120,vivo:true},{hp:120,vivo:true}]},O));
     else prog.run=null;
     perfil.dominios.porDominio[c]=prog;
     ir('dominio',{cultura:c},{substituir:true}); render();
@@ -47,7 +47,7 @@ console.log('== §348 — HUB DO DOMÍNIO: estados, botões, handlers ==');
   const { w, d } = mkDom();
   semear(w, 'nova');
   ok(!!d.querySelector('#domhub[data-estado="nova"]'), 'nova: o hub marca data-estado="nova"');
-  ok(d.querySelectorAll('.dh-un--vazia').length === 3, 'nova: 3 vagas vazias na esquerda ("Você monta o time ao começar")');
+  ok(d.querySelectorAll('.dh-un--vazia').length === 5, 'nova: 5 vagas vazias na esquerda (3 titulares + 2 reservas, "Você monta o time ao começar")');
   ok(/Você monta o time ao começar/.test(d.querySelector('.dh-col--time').textContent), 'nova: a dica de montar aparece');
   ok(/PRIMEIRO NÍVEL/.test(d.querySelector('.dh-meio__t').textContent), 'nova: o meio diz "PRIMEIRO NÍVEL"');
   ok(!!d.querySelector('#dentrar') && !d.querySelector('#ddescer'), 'nova: o botão é "MONTAR TIME E COMEÇAR" (#dentrar), não descer');
@@ -85,12 +85,15 @@ console.log('== §348 — HUB DO DOMÍNIO: estados, botões, handlers ==');
   semear(w, 'premio');
   ok(!!d.querySelector('#domhub[data-estado="premio"]'), 'premio: data-estado="premio"');
   ok(/CHEFE VENCIDO — NÍVEL 20/.test(d.querySelector('.dh-meio__t').textContent), 'premio: "CHEFE VENCIDO — NÍVEL 20"');
-  ok(!!d.querySelector('.dh-premio[data-premio="cura"]') && !!d.querySelector('.dh-premio[data-premio="reviver"]') && !!d.querySelector('.dh-premio[data-premio="bonus"]'), 'premio: os 3 cartões (cura/reviver/bônus) disponíveis');
-  // (3) REVIVER usa o DEUS DO TIME (run.time[caído]=tyr), não o trio inimigo (lad.trio)
-  const revTxt = d.querySelector('.dh-premio[data-premio="reviver"]').textContent;
-  const nomeTime = w.eval(`domNomeDeus('tyr')`), nomeTrio = w.eval(`domNomeDeus(DOMINIOS[Object.keys(DOMINIOS)[0]].trio[2])`);
-  ok(revTxt.indexOf(nomeTime) >= 0, `premio: REVIVER mostra o deus do TIME caído ("${nomeTime}")`);
-  ok(nomeTime === nomeTrio || revTxt.indexOf(nomeTrio) < 0, 'premio: REVIVER NÃO usa o nome do trio inimigo (lad.trio)');
+  ok(!!d.querySelector('.dh-premio[data-premio="cura"]') && !!d.querySelector('[data-premio="reviver"]') && !!d.querySelector('.dh-premio[data-premio="bonus"]'), 'premio: os 3 cartões (cura/reviver/bônus) disponíveis');
+  // §368: com 2 caídos (ogum=idx1, tyr=idx2), o REVIVER vira ESCOLHA — um chip por caído, do TIME do jogador.
+  const chips = [...d.querySelectorAll('.dh-revop[data-premio="reviver"]')];
+  ok(chips.length === 2, 'premio: REVIVER mostra a ESCOLHA do caído (2 chips, pois há 2 caídos)');
+  ok(chips.some(ch => ch.getAttribute('data-alvo') === '1') && chips.some(ch => ch.getAttribute('data-alvo') === '2'), 'premio: os chips levam o índice (data-alvo) dos caídos (1 e 2)');
+  const revTxt = (d.querySelector('.dh-premio--rev') || {}).textContent || '';
+  const nomeTyr = w.eval(`domNomeDeus('tyr')`), nomeOgum = w.eval(`domNomeDeus('ogum')`), nomeTrio = w.eval(`domNomeDeus(DOMINIOS[Object.keys(DOMINIOS)[0]].trio[2])`);
+  ok(revTxt.indexOf(nomeTyr) >= 0 && revTxt.indexOf(nomeOgum) >= 0, `premio: a escolha lista os caídos do TIME ("${nomeTyr}", "${nomeOgum}")`);
+  ok(nomeTyr === nomeTrio || revTxt.indexOf(nomeTrio) < 0, 'premio: REVIVER NÃO usa o nome do trio inimigo (lad.trio)');
   // a sublinha da trilha é a de prêmio
   ok(/Chefe vencido no nível 20 · escolha uma recompensa/.test(d.querySelector('.dh-trilha__cap').textContent), 'premio: a legenda da trilha pede a recompensa');
   // clicar BÔNUS → escolherPremioDominio (bonus sobe, aguardandoPremio sai)
@@ -146,14 +149,14 @@ function acharChromium(){
     return await page.evaluate((estado) => {
       const c = 'grega', lad = DOMINIOS[c], sem = semanaInfo(lad), tot = domTotalNiveis(lad);
       perfil = novoPerfil(0, 0);
-      const team = ['zeus', 'ogum', 'tyr'], vida = [{ hp: 84, vivo: true }, { hp: 37, vivo: true }, { hp: 0, vivo: false }];
+      const team = ['zeus', 'ogum', 'tyr', 'sobek', 'brigid'], vida = [{ hp: 84, vivo: true }, { hp: 37, vivo: true }, { hp: 0, vivo: false }, { hp: 120, vivo: true }, { hp: 120, vivo: true }];   // §368: 5 (3 titulares + 2 reservas)
       const prog = { run: null, melhorSempre: 24, semanas: {} }; prog.semanas[sem.chave] = 11; prog.semanas[sem.chaveAnt] = 18;
-      const mk = o => Object.assign({ cultura: 'Grega', time: team.slice(), semanaIdx: sem.idx, semana: sem.chave, marcaAnterior: 18, superou: false, nivel: 12, vida: vida.map(v => Object.assign({}, v)), bonus: 0.2, reviveGasto: [], profundidade: 11, status: 'ativo', aguardandoPremio: false, id: 'dom_c' }, o);
+      const mk = o => Object.assign({ cultura: 'Grega', time: team.slice(), campo: [0, 1, 2], semanaIdx: sem.idx, semana: sem.chave, marcaAnterior: 18, superou: false, nivel: 12, vida: vida.map(v => Object.assign({}, v)), bonus: 0.2, reviveGasto: [], profundidade: 11, status: 'ativo', aguardandoPremio: false, id: 'dom_c' }, o);
       if (estado === 'andamento') prog.run = mk({});
-      else if (estado === 'premio') prog.run = mk({ nivel: 20, profundidade: 20, aguardandoPremio: true });
+      else if (estado === 'premio') prog.run = mk({ nivel: 20, profundidade: 20, aguardandoPremio: true, campo: [0, 3, 2], vida: [{ hp: 60, vivo: true }, { hp: 0, vivo: false }, { hp: 0, vivo: false }, { hp: 90, vivo: true }, { hp: 120, vivo: true }] });
       else if (estado === 'nova') prog.run = null;
       else if (estado === 'morto') prog.run = mk({ status: 'morto', nivel: 12, profundidade: 11 });
-      else if (estado === 'completo') prog.run = mk({ status: 'completo', nivel: tot, profundidade: tot, vida: [{ hp: 84, vivo: true }, { hp: 37, vivo: true }, { hp: 50, vivo: true }] });
+      else if (estado === 'completo') prog.run = mk({ status: 'completo', nivel: tot, profundidade: tot, vida: [{ hp: 84, vivo: true }, { hp: 37, vivo: true }, { hp: 50, vivo: true }, { hp: 120, vivo: true }, { hp: 120, vivo: true }] });
       perfil.dominios.porDominio[c] = prog;
       ir('dominio', { cultura: c }, { substituir: true }); render();
       const g = document.getElementById('gsplash'); if (g) g.remove();

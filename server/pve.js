@@ -58,12 +58,13 @@ function _timeValido(conta, time) {
   if (new Set(time).size !== 3) return false;
   return time.every(k => typeof k === 'string' && _possui(conta, k));
 }
-// §325 P4: o time de um Domínio é LIVRE (o jogador monta). Cada slot é POSSUÍDO ou EMPRESTADO (starter) —
-// o mesmo mecanismo da campanha (nenhuma corrida é impossível de abrir com coleção vazia). Um deus
-// nem possuído nem emprestável recusa o crédito (replay forjado com deus que o jogador não tem).
+// §325 P4 / §368: o time de um Domínio é LIVRE (o jogador monta). §368: agora são 5 (3 titulares + 2 reservas);
+// cada slot é POSSUÍDO ou EMPRESTADO (starter) — o mesmo mecanismo da campanha (nenhuma corrida é impossível de
+// abrir com coleção vazia). Um deus nem possuído nem emprestável recusa o crédito (replay forjado). Aceita 3
+// (corrida antiga/fila offline) ou 5 (novo), todos distintos e possuídos/emprestáveis.
 function _timeDominioValido(conta, time) {
-  if (!Array.isArray(time) || time.length !== 3) return false;
-  if (new Set(time).size !== 3) return false;
+  if (!Array.isArray(time) || (time.length !== 3 && time.length !== 5)) return false;
+  if (new Set(time).size !== time.length) return false;
   return time.every(k => typeof k === 'string' && (_possui(conta, k) || EMPRESTAVEL.has(k)));
 }
 
@@ -218,16 +219,24 @@ function _montarDominio(conta, r) {
   const totalNiveis = (escada.niveis || []).length;
   const nivel = r.run && r.run.nivel;
   if (!(nivel >= 1 && nivel <= totalNiveis)) return { erro: 'dominio_nivel_invalido' };
-  // §325 P4: o TIME do jogador vem do replay e é validado por POSSE/EMPRÉSTIMO. A re-simulação usa ESTE
-  // time (run.time); sem ele, domMontarBatalha cairia no trio icônico INIMIGO — não bate com o cliente.
+  // §325 P4 / §368: o TIME do jogador (3 ou 5) vem do replay e é validado por POSSE/EMPRÉSTIMO. A re-simulação
+  // usa ESTE time + o CAMPO (quais 3 estavam nas vagas neste nível); sem ele, domMontarBatalha cairia no trio
+  // icônico INIMIGO — não bate com o cliente.
   const time = r.run && r.run.time;
   if (!_timeDominioValido(conta, time)) return { erro: 'time_invalido' };
+  const nTime = time.length;
+  // §368: o CAMPO são 3 índices distintos no time (quais deuses nas vagas). Saneado (bounds); default = 3 primeiros.
+  let campo = (r.run && Array.isArray(r.run.campo)) ? r.run.campo.filter(i => Number.isInteger(i) && i >= 0 && i < nTime) : [];
+  campo = [...new Set(campo)].slice(0, DOM.DOM_TITULARES);
+  if (campo.length !== DOM.DOM_TITULARES) campo = [0, 1, 2].filter(i => i < nTime);
   // saneia a corrida que o cliente traz (bounds — só pode PIORAR, nunca criar vantagem além do teto)
+  const vidaCli = (r.run && Array.isArray(r.run.vida)) ? r.run.vida : null;
   const run = {
     time: time.slice(),
+    campo,
     nivel,
     bonus: Math.max(0, Math.min(DOM.DOM_TETO_BONUS, (r.run && r.run.bonus) || 0)),
-    vida: (r.run && Array.isArray(r.run.vida)) ? r.run.vida.slice(0, 3).map(c => ({ hp: Math.max(0, (c && c.hp) || 0), vivo: !!(c && c.vivo) })) : [{ hp: 999, vivo: true }, { hp: 999, vivo: true }, { hp: 999, vivo: true }],
+    vida: vidaCli ? time.map((_, i) => { const c = vidaCli[i]; return { hp: Math.max(0, (c && c.hp) || 0), vivo: !!(c && c.vivo) }; }) : time.map(() => ({ hp: 999, vivo: true })),
     reviveGasto: (r.run && Array.isArray(r.run.reviveGasto)) ? r.run.reviveGasto.filter(k => typeof k === 'string') : [],
   };
   const seed = (nivel * 7919) >>> 0 || 1;
