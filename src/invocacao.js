@@ -198,7 +198,7 @@ const INV = (function () {
   // em montar() e após cada mutação. Sem perfil (preview isolado), fica em 0 e não invoca pago.
   // §302: UM contador de pity (S.pity, espelho de perfil.invocacao.desdeUltimoSS) — não há mais um
   // pity por banner (o "padrao" saiu; o iniciante não usa pity). Só sobrou a marca de "grátis já usado".
-  let S = { gemas: 0, pity: 0, iniciante: { used: false },
+  let S = { gemas: 0, pity: 0, bilhetes: 0, iniciante: { used: false },
     owned: {}, stats: { SS: 0, S: 0, A: 0, total: 0, fSS: 0 } };
   // Sincroniza a tela com o perfil REAL (saldo + pity). Chamada em montar(): no load o
   // perfil ainda é null (o boot carrega depois), então ler aqui, na abertura da tela, é
@@ -213,6 +213,7 @@ const INV = (function () {
     S.gemas = m ? (m.gema || 0) : 0;
     S.essencia = m ? (m.essencia || 0) : 0;
     S.pity = (ca && typeof ca.pity === 'number') ? ca.pity : 0;
+    S.bilhetes = (ca && typeof ca.bilhetes === 'number') ? ca.bilhetes : 0;   // §371: saldo de bilhetes (da conta)
     if (ca && ca.inicianteUsado) S.iniciante.used = true;
   }
 
@@ -231,6 +232,7 @@ const INV = (function () {
     }
     if (r.saldo) { S.gemas = r.saldo.gema; S.essencia = r.saldo.essencia; S._online = true; }   // §318b: resposta do servidor ⇒ online
     if (typeof r.pity === 'number') S.pity = r.pity;
+    if (typeof r.bilhetes === 'number') S.bilhetes = r.bilhetes;   // §371: o servidor devolve o saldo de bilhetes após usar
     if (r.inicianteUsado) S.iniciante.used = true;
     const out = (r.resultados || []).map(o => ({
       u: byKey[o.key] || { key: o.key, nome: o.key, funcao: 'Guardião', elem: 'raio' },
@@ -262,7 +264,10 @@ const INV = (function () {
     if (S._invocando) return;   // uma invocação por vez (a resposta é do servidor)
     S._invocando = true; _marcarInvocando(true);
     const gratis = bkey === 'iniciante';
-    const msg = gratis ? envelope('invocar', { token, iniciante: true }) : envelope('invocar', { token, pacote: n === 10 });
+    const bilhete = bkey === 'bilhete';   // §371: usa 1 bilhete (grátis, conta p/ o pity) em vez de gema
+    const msg = gratis ? envelope('invocar', { token, iniciante: true })
+      : bilhete ? envelope('invocar', { token, bilhete: true })
+      : envelope('invocar', { token, pacote: n === 10 });
     // §318b — todo pedido tem tempo limite no transporte: estourou/caiu → {tipo:'semResposta',codigo:'sem_conexao'},
     // nunca pendura. Aqui liberamos o botão e mostramos a mensagem — jamais "nada acontece".
     Promise.resolve(tx.pedir(msg)).then((r) => {
@@ -270,6 +275,7 @@ const INV = (function () {
       if (!r || r.tipo === 'recusado' || r.tipo === 'semResposta' || !r.resultados) {
         const cod = r && (r.codigo || r.erro);
         flash(cod === 'gemas_insuficientes' ? 'Gemas insuficientes — use o + (DEV) para recarregar.'
+          : cod === 'sem_bilhete' ? 'Você não tem bilhetes.'
           : cod === 'iniciante_ja_usado' ? 'Bênção do Iniciante já usada.'
           : (cod === 'sem_conexao' || !r) ? 'Sem conexão com o servidor. Tente de novo.'
           : cod === 'token_invalido' ? 'Sessão expirada — reabra o aplicativo.'
@@ -277,8 +283,42 @@ const INV = (function () {
         render();
         return;
       }
-      _aplicarInvocado(r, n, gratis);
+      _aplicarInvocado(r, n, gratis || bilhete);   // §371: no bilhete, esconde "invocar mais" (seria pago)
     }).catch(() => { S._invocando = false; _marcarInvocando(false); flash('Sem conexão com o servidor. Tente de novo.'); });
+  }
+
+  // §371 — USAR BILHETE (1 bilhete = 1 invocação grátis que conta p/ o pity) e INVOCAÇÃO GRÁTIS DIÁRIA por anúncio.
+  let _gratisSeq = 0;
+  function usarBilhete() { if ((S.bilhetes || 0) < 1) { flash('Você não tem bilhetes.'); return; } executar('bilhete', 1); }
+  function invocacaoGratisAnuncio() {
+    if (typeof LOJA !== 'undefined' && LOJA.confirmar) LOJA.confirmar({ kind: 'anuncio', linha: 'Invocação grátis diária', onSim: _pedirGratis });
+    else _pedirGratis();
+  }
+  function _pedirGratis() {
+    const tx = _tx(), token = _token();
+    if (!tx || !token) { flash('Sem conexão com o servidor.'); return; }
+    if (S._invocando) return; S._invocando = true; _marcarInvocando(true);
+    const id = 'g' + Date.now().toString(36) + '-' + (++_gratisSeq);   // id único do crédito (contador, não sorteio — o sorteio é do servidor)
+    Promise.resolve(tx.pedir(envelope('lojaAnuncio', { token, anuncio: 'invocacaoGratis', id, confirmacao: { simulado: true } }))).then((r) => {
+      S._invocando = false; _marcarInvocando(false);
+      if (!r || r.tipo === 'recusado' || r.tipo === 'semResposta') {
+        const cod = r && (r.codigo || r.erro);
+        flash(cod === 'limite_tipo' ? 'Invocação grátis já usada hoje.'
+          : cod === 'teto_diario' ? 'Limite de anúncios do dia atingido.'
+          : cod === 'pagamento_indisponivel' ? 'Indisponível no momento.'
+          : 'Invocação grátis recusada.');
+        return;
+      }
+      if (typeof contaAtual !== 'undefined' && r.conta) contaAtual = r.conta;
+      const inv = r.premio && r.premio.invocacao;
+      sincronizarCarteira();
+      if (inv) {
+        const out = [{ u: byKey[inv.key] || { key: inv.key, nome: inv.key, funcao: 'Guardião', elem: 'Aurora' }, r: inv.raridade, novo: inv.novo, essencia: inv.essencia || 0, pontos: inv.pontos || 0 }];
+        out.forEach(o => { S.stats[o.r] = (S.stats[o.r] || 0) + 1; S.stats.total++; S.owned[o.u.key] = (S.owned[o.u.key] || 0) + 1; });
+        showReveal(out, true);
+      }
+      render();
+    }).catch(() => { S._invocando = false; _marcarInvocando(false); flash('Sem conexão com o servidor.'); });
   }
 
   function showReveal(out, gratis) {
@@ -415,7 +455,25 @@ const INV = (function () {
         <div class="iv-pbar iv-pity__bar"><span style="width:${Math.min(100, S.pity / PITY * 100)}%"></span></div>
         <b class="iv-pity__num">${S.pity}/${PITY}</b>
         <button class="iv-pity__q" onclick="INV.openAudit()" title="Como funciona a garantia">?</button></div>`;
+
+    // §371: os botões de invocar são montados aqui (p/ incluir USAR BILHETE e a INVOCAÇÃO GRÁTIS por anúncio quando cabem,
+    // na MESMA linha — sem alterar a altura da base da tela §367). ×1 e ×10 sempre; bilhete só com saldo; grátis só online.
+    const pb = document.getElementById('iv-pullbtns');
+    if (pb) {
+      let h = `<button class="iv-pb iv-x1" onclick="INV.pull(1)"><span class="iv-pb__t">Invocação ×1</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.avulso}</span></button>
+        <button class="iv-pb iv-x10" onclick="INV.pull(10)"><span class="iv-off">10% OFF</span><span class="iv-pb__t">Invocação ×10</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.pacote10.toLocaleString('pt-BR')}</span></button>`;
+      if (S._online && (S.bilhetes || 0) > 0) h += `<button class="iv-pb iv-bilhete" onclick="INV.usarBilhete()"><span class="iv-pb__t">Usar bilhete</span><span class="iv-cost">🎫 ${S.bilhetes}</span></button>`;
+      if (S._online) h += `<button class="iv-pb iv-gratis" onclick="INV.invocacaoGratisAnuncio()"><span class="iv-pb__t">▶ Grátis (anúncio)</span><span class="iv-cost">1/dia</span></button>`;
+      pb.innerHTML = h;
+    }
   }
+
+  // §371: a carta da revelação por CHAVE de deus (reusada pela Loja no SS do dia 30 do passe).
+  function cartaPorKey(key, largura, novo, copias, essencia) {
+    const u = byKey[key] || { key, nome: (typeof GODS !== 'undefined' && GODS[key] && GODS[key].nome) || key, funcao: 'Guardião', elem: 'Aurora' };
+    return gcard(u, largura, novo, copias, 0, essencia);
+  }
+  function ajustarCartas(root) { try { gfit(root); } catch (e) {} }
 
   const SKELETON = `
   <div id="iv">
@@ -436,10 +494,7 @@ const INV = (function () {
     <div class="iv-hero" id="iv-hero"></div>
     <div class="iv-base">
       <div class="iv-pity" id="iv-pity"></div>
-      <div class="iv-pullbtns">
-        <button class="iv-pb iv-x1" onclick="INV.pull(1)"><span class="iv-pb__t">Invocação ×1</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.avulso}</span></button>
-        <button class="iv-pb iv-x10" onclick="INV.pull(10)"><span class="iv-off">10% OFF</span><span class="iv-pb__t">Invocação ×10</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.pacote10.toLocaleString('pt-BR')}</span></button>
-      </div>
+      <div class="iv-pullbtns" id="iv-pullbtns"></div>
       <div class="iv-status" id="iv-status" aria-live="polite"></div>
     </div>
     <div class="iv-reveal" id="iv-reveal" onclick="INV.closeReveal()">
@@ -453,5 +508,5 @@ const INV = (function () {
   // §367: a INVOCAÇÃO passa ao canvas PEQUENO de 780×360 (px de design = px real). O #iv (inset:0) preenche o #invfix.
   function montar() { sincronizarCarteira(); document.getElementById('stage').innerHTML = '<div id="baselayer" class="inv2"><div id="invfix">' + SKELETON + '</div></div>'; render(); if (typeof fit === 'function') fit(); }
 
-  return { render, pull, claimIniciante, openAudit, topup, closeReveal, rollAgain, montar };
+  return { render, pull, claimIniciante, openAudit, topup, closeReveal, rollAgain, montar, usarBilhete, invocacaoGratisAnuncio, cartaPorKey, ajustarCartas };
 })();

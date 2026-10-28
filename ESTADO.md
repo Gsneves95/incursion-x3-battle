@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §371 · LOJA, parte 2: AS TELAS (5 abas + calendário + compra/anúncio simulados + bilhete na Invocação)
+- **Novo:** `src/loja.js` (IIFE `LOJA`), rota `loja` em `view.js`, canvas 780×360 (`emloja`/`#lojafix` em `base.js`+CSS). A
+  ilha "Loja" da home abre a rota (`data/mapa.json`: `rota:'loja'`, sem `emBreve`). O cliente só consome o §370; nunca soma.
+- **5 abas** (pelas 2 imagens do dono): Destaques (passe/Deus da Semana/oferta), Gemas (6 pacotes, selo "1ª em dobro",
+  lista rolável `.loja-grade`), Passe (calendário 30 dias: ✓ resgatado / ✕ perdido / HOJE com Resgatar / futuros com ícone;
+  "Também incluso…"), Deus da Semana (cartão grande + Assistir + Comprar 1.800), Outros (vaga de Provação + cosméticos = EM
+  BREVE — servidor já vende a vaga, mas o §314 só tem 1 Provação ativa, então não se vende aqui ainda).
+- **Compra/anúncio SIMULADOS:** modal "COMPRA/ANÚNCIO SIMULADO (modo de teste)" [Confirmar]/[Cancelar] → endpoint com id
+  único. "pagamento indisponível" → "Compras indisponíveis no momento"; limites travam o botão com o motivo.
+- **Invocação:** "Usar bilhete (N)" (invocar{bilhete}, conta p/ o pity) + "▶ Grátis (anúncio)" na mesma linha dos ×1/×10;
+  carta da revelação reusada (`INV.cartaPorKey`) no SS do dia 30 do passe.
+- **Decisões:** célula de HOJE ocupa 2 colunas (p/ "Resgatar" caber ≥12px/≥40px sem encobrir vizinha); modal/revelação são
+  camadas de tela cheia; artes ainda são placeholders (prontos p/ `web/loja/*.webp`).
+- **Provas:** `tests/loja_tela.test.js` (jsdom + servidor simulado, 24 ok) + 8 estados novos em `acessibilidade_telas`
+  (a=b=c=d=e=0). Capturas `371-*` 780×360 e 1846×852 em `docs/telas/`. Suíte + build verdes.
+
 ## ★ §370 · LOJA, parte 1: SERVIDOR + DADOS (sem telas — as telas são o §371)
 - **Dados:** bloco `loja` em `data/economia.json` (fonte única): pacotes (1ª em dobro), passe (calendário 30 dias),
   bilhete, anúncios (teto 8/dia + limite por tipo), Deus da Semana (S, janela 12, 5 marcas, 1.800), vaga Provação

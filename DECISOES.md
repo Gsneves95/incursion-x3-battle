@@ -6,6 +6,48 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §371 · LOJA, parte 2: AS TELAS (5 abas, calendário do passe, compra/anúncio SIMULADOS, bilhete na Invocação)
+
+As TELAS do §370 (o servidor já existia e só é consumido). Novo módulo `src/loja.js` (IIFE `LOJA`, como `src/invocacao.js`),
+rota `loja` (`view.js`), canvas 780×360 (padrão §357), e a ilha "Loja" da home deixou de ser "em breve" (`data/mapa.json`:
+`rota:'loja'`, sem `emBreve`). O cliente NUNCA soma: pede `lojaEstado` e desenha; cada ação chama o endpoint do §370.
+
+**5 ABAS** (seguindo as 2 imagens do dono): **Destaques** (passe + Deus da Semana + oferta do dia), **Gemas** (6 pacotes,
+selo "1ª compra em dobro" enquanto vale — a lista rola, lista branca `.loja-grade`), **Passe** (sem passe: explicação +
+Comprar; com passe: painel "DIA N DE 30 · Faltam X dias · o dia não resgatado é perdido · ✓ Passe ativo" + grade de 30 dias
+10×3: resgatado ✓, perdido ✕ apagado, HOJE em destaque com a recompensa + Resgatar, futuros com o ícone — gema; gema+🎫×3/×2
+nos marcos; selo SS no dia 30 — e "Também incluso: …"), **Deus da Semana** (cartão grande: arte, nome, raridade, 5 marcas,
+"termina em Xd Yh", Assistir, Comprar 1.800), **Outros** (vaga de Provação e cosméticos como **EM BREVE** — o servidor já
+vende a vaga, mas o jogo ainda só tem 1 Provação ativa (§314), então não se vende aqui até isso existir).
+
+**Decisões de layout (acessibilidade §357 manda, a=b=c=d=e=0 em todas as telas):**
+- **Célula de HOJE ocupa 2 colunas.** No calendário, "Resgatar" (toque ≥40px, texto ≥12px) não cabe numa célula de ~52px
+  sem estourar/encobrir a célula vizinha (o eixo d/e pegava o texto por baixo da fileira de baixo). A célula de hoje
+  `grid-column:span 2` dá largura ao botão; recusada a alternativa de encolher o texto (quebra o mínimo de 12px) ou
+  abreviar "Resgatar". O calendário rola (lista branca) quando a célula larga empurra para uma 4ª fileira.
+- **Confirmação e revelação são camadas de tela cheia** (a auditoria mede só a camada do topo, §359): o modal de
+  confirmação (`position:fixed` sobre o `#stage`) e a revelação do SS (reusa a carta da Invocação dentro de um `#iv`
+  próprio) cobrem a tela, então o fundo não entra na medição. A Loja repinta só o miolo (`#loja-root`); toast e revelação
+  vivem em `#loja-ov`, que o repaint não apaga.
+- **Arte ainda não existe:** o baú do passe/oferta e o retrato grande do Deus da Semana usam ícone/placeholder no estilo do
+  jogo (prontos para `web/loja/*.webp` / retratos quando existirem). Nenhum 404.
+
+**COMPRA e ANÚNCIO SIMULADOS.** Ao tocar em Comprar/Assistir abre a confirmação clara ("COMPRA SIMULADA (modo de teste) —
+nenhum valor será cobrado" / "ANÚNCIO SIMULADO (modo de teste)") com [Confirmar]/[Cancelar]; só então chama o endpoint com
+um `idCompra`/`id` único (idempotência). "pagamento indisponível" vira "Compras indisponíveis no momento"; os limites (anúncio
+por dia/teto, recompra do passe recusada, saldo) viram mensagem clara e o botão trava com o motivo.
+
+**INVOCAÇÃO.** `src/invocacao.js`: com bilhetes aparece **"Usar bilhete (N)"** ao lado do ×1 (envia `invocar{bilhete}`, 1
+bilhete = 1 invocação que conta p/ o pity); e **"▶ Grátis (anúncio)"** (o tipo `invocacaoGratis` do §370). Os botões entram na
+MESMA linha dos ×1/×10 (só quando online / há bilhete) p/ não mexer na altura tunada da tela §367 — que segue a=b=c=d=e=0.
+A carta da revelação virou API reutilizável (`INV.cartaPorKey`/`INV.ajustarCartas`) p/ o SS do dia 30 do passe.
+
+**Provas.** `tests/loja_tela.test.js` (jsdom + servidor simulado): a ilha abre a rota; comprar pacote (confirmação →
+envia); comprar passe + resgatar hoje; dia perdido aparece perdido; dia 30 revela; assistir marca o Deus da Semana; limites
+travam com motivo; "pagamento indisponível"; usar bilhete invoca e desconta (24 asserções). `acessibilidade_telas.test.js`
+ganhou 8 estados da Loja (5 abas + passe comprado dia 12 + confirmação + revelação) + Invocação com bilhete, todos
+a=b=c=d=e=0. Capturas `371-*` (780×360 e 1846×852) em `docs/telas/` via `tools/cap_loja_371.js`.
+
 ## §370 · LOJA, parte 1: SERVIDOR + DADOS (pacotes, passe, bilhetes, Deus da Semana, anúncios, compra SIMULADA)
 
 Implementa no **servidor** e nos **dados** todo o desenho aprovado no §369 — **sem telas** (as telas são o §371).

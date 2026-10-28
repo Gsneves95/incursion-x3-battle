@@ -237,6 +237,7 @@ registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });
+registrar('loja',      { render: ()=>LOJA.montar(),                            aoSair: ()=>{ if(typeof LOJA!=='undefined'&&LOJA.aoSair)LOJA.aoSair(); } });   // §371: a LOJA (canvas 780×360)
 registrar('pvp',       { render: renderPvP,        aoEntrar: ()=>{ if(typeof pvpReset==='function') pvpReset(); } });  // F5.3/§236: o lobby do PvP (apelido + time + fila)
 // §303: a arte dos selos NÃO acende nos selos pequenos (grade/resumo/painel/sobreposição/seleção/rota-deus).
 // A medição do dono provou que a 17–35px a arte vira confete e a LETRA DE HOJE LÊ MELHOR — recusada por LEITURA,

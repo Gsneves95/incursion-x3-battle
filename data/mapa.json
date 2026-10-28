@@ -1,14 +1,81 @@
 {
   "_nota": "§310/§311 — POSIÇÕES das ilhas do mapa inicial, como DADO (o dono ajusta sem tocar código). x/y são PERCENTUAIS DA ARTE (0-100), do CENTRO do ícone. Arte 2400×999 (2,40); a caixa preenche o palco (§310). No PISO (780) o corte é 24% (janela 12,1..87,9%): campanha e colecao ficam em 15,5% p/ sobreviver. §311: as três da esquerda desceram (campanha 18→26 p/ sair de debaixo do JOGADOR; colecao 49,5→54; loja 71→74), cada uma ainda sobre a sua ilha; ícone 48px. `contador` liga o dado vivo (§305b); `emBreve` desenha o indisponível; `rota`/`params` navegam. §311c — `fundoForte`: o fundo escuro atrás do rótulo é LEVE por padrão (a sombra do texto carrega); só as ilhas sobre arte CLARA marcam `fundoForte` e mantêm o fundo firme (campanha=cachoeira, invocacao=templo dourado, dominios=portal, loja=telhado aceso). É art-coupled: rever se a arte mudar.",
   "ilhas": [
-    { "chave": "campanha",  "rotulo": "Campanha",  "rota": "campanha",  "x": 15.5, "y": 26.0, "contador": "campanha",  "fundoForte": true },
-    { "chave": "provacoes", "rotulo": "Provações", "rota": "provacoes", "x": 29.0, "y": 22.0, "contador": "provacoes" },
-    { "chave": "desafios",  "rotulo": "Desafios",  "rota": "desafios",  "x": 66.5, "y": 28.0, "contador": "desafios" },
-    { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 82.0, "y": 24.0, "contador": "invocacao", "fundoForte": true },
-    { "chave": "colecao",   "rotulo": "Coleção",   "rota": "colecao",   "x": 15.5, "y": 54.0, "contador": "colecao" },
-    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 50.0, "y": 55.0, "fundoForte": true },
-    { "chave": "treino",    "rotulo": "Treino",    "rota": "selecao",   "x": 62.5, "y": 51.0, "params": { "novo": true } },
-    { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 18.0, "y": 80.0, "emBreve": true, "titulo": "Loja", "fundoForte": true },
-    { "chave": "pvp",       "rotulo": "PvP",       "rota": "pvp",       "x": 78.0, "y": 71.0 }
+    {
+      "chave": "campanha",
+      "rotulo": "Campanha",
+      "rota": "campanha",
+      "x": 15.5,
+      "y": 26,
+      "contador": "campanha",
+      "fundoForte": true
+    },
+    {
+      "chave": "provacoes",
+      "rotulo": "Provações",
+      "rota": "provacoes",
+      "x": 29,
+      "y": 22,
+      "contador": "provacoes"
+    },
+    {
+      "chave": "desafios",
+      "rotulo": "Desafios",
+      "rota": "desafios",
+      "x": 66.5,
+      "y": 28,
+      "contador": "desafios"
+    },
+    {
+      "chave": "invocacao",
+      "rotulo": "Invocação",
+      "rota": "invocacao",
+      "x": 82,
+      "y": 24,
+      "contador": "invocacao",
+      "fundoForte": true
+    },
+    {
+      "chave": "colecao",
+      "rotulo": "Coleção",
+      "rota": "colecao",
+      "x": 15.5,
+      "y": 54,
+      "contador": "colecao"
+    },
+    {
+      "chave": "dominios",
+      "rotulo": "Domínios",
+      "rota": "dominios",
+      "x": 50,
+      "y": 55,
+      "fundoForte": true
+    },
+    {
+      "chave": "treino",
+      "rotulo": "Treino",
+      "rota": "selecao",
+      "x": 62.5,
+      "y": 51,
+      "params": {
+        "novo": true
+      }
+    },
+    {
+      "chave": "loja",
+      "rotulo": "Loja",
+      "rota": "loja",
+      "x": 18,
+      "y": 80,
+      "titulo": "Loja",
+      "fundoForte": true
+    },
+    {
+      "chave": "pvp",
+      "rotulo": "PvP",
+      "rota": "pvp",
+      "x": 78,
+      "y": 71
+    }
   ]
 }

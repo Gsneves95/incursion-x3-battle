@@ -120,17 +120,13 @@ console.log('== 5. MAPA da home (§306/§326): os 9 ícones carregam (arquivo, n
   ok(semArquivo.length === 0, `todo ícone deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
   ok(comIcone === 9, `os 9 ícones deveriam ter arquivo em web/mapa/ (tem ${comIcone})`);
 
-  // (b) §326: só a Loja fica "em breve" (<div> sem data-dest), com a tag "em breve" e SEM vermelho/erro.
-  //     Os outros 8 (Domínios incluído, destravado no §326) navegam.
+  // (b) §371: a Loja foi destravada (parte 2, as telas) — NENHUMA ilha fica mais "em breve"; as 9 navegam.
+  //     (Domínios já havia sido destravado no §326; a Loja, agora no §371.)
   const breve = [...d.querySelectorAll('.ilha--breve')];
   const breveChaves = breve.map(x => x.querySelector('.ilha__nome').textContent).sort().join(',');
-  ok(breveChaves === 'Loja', `só a Loja deveria ser "em breve" (achei: ${breveChaves}) — §326 destravou Domínios`);
-  ok(breve.every(x => x.tagName === 'DIV' && !x.hasAttribute('data-dest')), 'a ilha "em breve" é <div> sem data-dest (não foca, não navega)');
-  ok(breve.every(x => !!x.querySelector('.ilha__breveTag')), 'a "em breve" mostra a tag · em breve');
-  const vermelho = breve.filter(x => { const c = w.getComputedStyle(x.querySelector('.ilha__breveTag')).color || ''; return /rgb\(2\d\d,\s*[0-5]?\d,/.test(c) || /red|crimson/i.test(c); });
-  ok(vermelho.length === 0, 'a tag "em breve" NUNCA é vermelha (§306: indisponível, não defeito)');
+  ok(breveChaves === '', `nenhuma ilha deveria ser "em breve" (achei: ${breveChaves}) — §371 destravou a Loja`);
   const navegaveis = [...d.querySelectorAll('.ilha[data-dest]')].map(x => x.dataset.dest).sort().join(',');
-  ok(navegaveis === 'campanha,colecao,desafios,dominios,invocacao,provacoes,pvp,treino', `os 8 destinos vivos deveriam navegar (achei: ${navegaveis})`);
+  ok(navegaveis === 'campanha,colecao,desafios,dominios,invocacao,loja,provacoes,pvp,treino', `os 9 destinos vivos deveriam navegar (achei: ${navegaveis})`);
 
   // (c) o LAYOUT do mapa NÃO muda com o tamanho da carteira: mesmas 9 ilhas, mesmas posições
   //     (left/top em % da arte). Só o DADO VIVO (contadores) muda — a estrutura, não.
@@ -143,7 +139,7 @@ console.log('== 5. MAPA da home (§306/§326): os 9 ícones carregam (arquivo, n
   // o DADO VIVO, esse sim, reflete a carteira (prova que os contadores leem o perfil)
   const contCol = d.querySelector('.ilha[data-dest="colecao"] .ilha__cont');
   ok(contCol && /\/100$/.test(contCol.textContent), `o contador da Coleção deveria mostrar x/100 (achei "${contCol ? contCol.textContent : 'nada'}")`);
-  console.log(`  9 ilhas (9 ícones em arquivo) · 0 base64 · 1 "em breve" inerte (só Loja) · posições estáveis (carteira vazia↔cheia) · contadores leem o perfil`);
+  console.log(`  9 ilhas (9 ícones em arquivo) · 0 base64 · 0 "em breve" (Loja destravada §371) · posições estáveis (carteira vazia↔cheia) · contadores leem o perfil`);
 
   // (d) FALLBACK §306: sem a arte do mapa, a home cai no CARROSSEL de hoje (sem 404, pacote não cresce).
   //     Como MAPA_ART é const, exercemos a FUNÇÃO de fallback direto (o galho que renderHome escolhe quando falta a arte).
@@ -184,7 +180,8 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     composicao:   "ir('composicao')",      // §213: lista de composição (sub-tela do hub)
     guia:         "ir('guia')",             // §352: folha de componentes (dev) — sai por ‹ VOLTAR → home
     desafiomontar:"ir('desafiomontar',{id:COMPOSICAO.desafios[0].id})",
-    embreve:      "ir('embreve',{titulo:'Loja'})",
+    embreve:      "ir('embreve',{titulo:'Em breve'})",
+    loja:         "ir('loja')",             // §371: a Loja — sai por ‹ Voltar (#bvoltar) → home
     selecao:      "ir('selecao',{novo:true})",
     invocacao:    "ir('invocacao')",
     pvp:          "ir('pvp')",              // §236: lobby do PvP (sai por ‹ Início)

@@ -136,7 +136,8 @@ async function provasLoja(contas, rotulo) {
     const a1 = await contas.creditarAnuncio(t, 'invocacaoGratis', 'ig1', SIM, {}, dia(1));
     ok(a1.ok && a1.premio.invocacao, 'anúncio de invocação grátis credita (simulado)');
     const pityDepois = a1.conta.pity;
-    ok(typeof pityDepois === 'number' && pityDepois >= 1, 'a invocação grátis avança o pity');
+    const inv1 = a1.premio.invocacao || {};
+    ok(typeof pityDepois === 'number' && (pityDepois >= 1 || (inv1.raridade === 'SS' && pityDepois === 0)), 'a invocação grátis avança o pity (SS zera, mas contou)');
     const a2 = await contas.creditarAnuncio(t, 'invocacaoGratis', 'ig2', SIM, {}, dia(1));
     ok(!a2.ok && a2.codigo === 'limite_tipo', 'invocação grátis: limite 1/dia');
     // teto 8/dia: dispara tipos distintos até bater 8 e o 9º recusa

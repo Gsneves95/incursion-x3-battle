@@ -26,7 +26,7 @@ console.log('== §306 MAPA — 1) 9 destinos, cada um abre o seu modo ==');
   ok(!!$('.mapa') && !$('.hscroll'), 'a home é o MAPA (não o carrossel): .mapa presente, .hscroll ausente');
   ok($$('.ilha').length === 9, `9 ilhas no mapa (tem ${$$('.ilha').length})`);
   // rota esperada por destino (a fonte é data/mapa.json; Treino = selecao com novo:true)
-  const espera = { campanha: 'campanha', provacoes: 'provacoes', desafios: 'desafios', invocacao: 'invocacao', colecao: 'colecao', dominios: 'dominios', treino: 'selecao', pvp: 'pvp' };   // §326: Domínios destravado
+  const espera = { campanha: 'campanha', provacoes: 'provacoes', desafios: 'desafios', invocacao: 'invocacao', colecao: 'colecao', dominios: 'dominios', treino: 'selecao', pvp: 'pvp', loja: 'loja' };   // §326: Domínios destravado · §371: Loja destravada
   for (const chave of Object.keys(espera)){
     home();
     const b = $(`.ilha[data-dest="${chave}"]`);
@@ -37,7 +37,7 @@ console.log('== §306 MAPA — 1) 9 destinos, cada um abre o seu modo ==');
     ok(r === espera[chave], `${chave} deveria abrir "${espera[chave]}" (abriu "${r}")`);
     if (chave === 'treino') ok(w.eval('!!paramsAtuais().novo'), 'Treino abre a seleção com novo:true (nova investida)');
   }
-  console.log('  9 ilhas · 8 navegam para o modo certo (Domínios destravado §326) · Treino=selecao{novo:true}');
+  console.log('  9 ilhas · 9 navegam para o modo certo (Domínios §326 + Loja §371 destravados) · Treino=selecao{novo:true}');
 }
 
 console.log('== §306 MAPA — 2) os 5 contadores mostram DADO REAL do perfil (não escrito no código) ==');
@@ -68,31 +68,22 @@ console.log('== §306 MAPA — 2) os 5 contadores mostram DADO REAL do perfil (n
   console.log(`  contadores leem o perfil: coleção 0→3/100, pity 0→17/${duro}, campanha 0→1 + barra, desafios=${acervo}`);
 }
 
-console.log('== §306/§326 MAPA — 3) só a Loja fica "em breve"; Domínios está DESTRAVADO e navegável ==');
+console.log('== §326/§371 MAPA — 3) NENHUMA ilha "em breve"; Domínios e a Loja estão DESTRAVADOS e navegáveis ==');
 {
   home();
   const breve = $$('.ilha--breve');
-  ok(breve.length === 1, `1 ilha "em breve" (tem ${breve.length}) — §326 destravou Domínios`);
-  const nomes = breve.map(x => x.querySelector('.ilha__nome').textContent).sort().join(',');
-  ok(nomes === 'Loja', `a única "em breve" é a Loja (achei: ${nomes})`);
-  ok(breve.every(x => x.tagName === 'DIV' && !x.hasAttribute('data-dest')), 'a "em breve" é <div> sem data-dest (não foca, não navega)');
-  ok(breve.every(x => !!x.querySelector('.ilha__breveTag')), 'a "em breve" tem a tag · em breve');
-  // NUNCA vermelho: a cor da tag não pode ser um vermelho de erro
-  const vermelhas = breve.filter(x => { const c = w.getComputedStyle(x.querySelector('.ilha__breveTag')).color || ''; return /\bred\b|crimson/i.test(c) || /rgb\(\s*(1[89]\d|2\d\d)\s*,\s*([0-5]?\d)\s*,/.test(c); });
-  ok(vermelhas.length === 0, 'a tag "em breve" NUNCA é vermelha (§306: indisponível, não defeito)');
-  // clicar na "em breve" (Loja) não muda a rota
-  w.eval("ir('home',{},{substituir:true}); render();");
-  breve[0].dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('rotaAtual()') === 'home', 'clicar na "em breve" NÃO navega (fica na home)');
-  // §326: a ilha de Domínios está NAVEGÁVEL — <button> com data-dest, sem a classe/tag de "em breve", ícone normal
+  ok(breve.length === 0, `nenhuma ilha "em breve" (tem ${breve.length}) — §326 destravou Domínios, §371 destravou a Loja`);
+  // §326/§371: Domínios E Loja estão NAVEGÁVEIS — <button> com data-dest, sem a classe/tag de "em breve", ícone normal
   home();
-  const dom = $('.ilha[data-dest="dominios"]');
-  ok(!!dom, 'a ilha de Domínios tem data-dest (é navegável)');
-  ok(dom && dom.tagName === 'BUTTON', 'a ilha de Domínios é um <button> (foca e navega)');
-  ok(dom && !dom.classList.contains('ilha--breve'), 'a ilha de Domínios NÃO tem a classe --breve (ícone sem o apagado/dessaturado)');
-  ok(dom && !dom.querySelector('.ilha__breveTag'), 'a ilha de Domínios NÃO tem a tag · em breve');
-  ok(dom && !!dom.querySelector('img.ilha__ic'), 'a ilha de Domínios mostra o ícone (mapa/dominios.webp)');
-  console.log('  só Loja em breve · Domínios: <button> data-dest, ícone normal, sem tag em breve');
+  for (const ch of ['dominios', 'loja']) {
+    const el = $(`.ilha[data-dest="${ch}"]`);
+    ok(!!el, `a ilha de ${ch} tem data-dest (é navegável)`);
+    ok(el && el.tagName === 'BUTTON', `a ilha de ${ch} é um <button> (foca e navega)`);
+    ok(el && !el.classList.contains('ilha--breve'), `a ilha de ${ch} NÃO tem a classe --breve`);
+    ok(el && !el.querySelector('.ilha__breveTag'), `a ilha de ${ch} NÃO tem a tag · em breve`);
+    ok(el && !!el.querySelector('img.ilha__ic'), `a ilha de ${ch} mostra o ícone (mapa/${ch}.webp)`);
+  }
+  console.log('  0 em breve · Domínios e Loja: <button> data-dest, ícone normal, sem tag em breve');
 }
 
 console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem das ilhas (780..1200) ==');

@@ -44,6 +44,9 @@ const DOMHUB = estado => `(function(){
   ir('dominio',{cultura:c},{substituir:true}); render();
 })();`;
 
+// §371 — LOJA: boot com um transporte simulado (lojaEstado) + um ajudante __loja(aba) que navega e pinta o estado.
+const LOJA_BOOT = `lerToken=function(){return 'tok';};contaAtual={perfil:{moedas:{gema:1240,essencia:180},deuses:{zeus:{copias:1}}},bilhetes:3,pity:10,inicianteUsado:true};window.__L={saldo:{gema:1240,essencia:180},bilhetes:3,pacotes:[{id:'p1',reais:4.90,gemas:450,primeira:true,emDobro:true},{id:'p2',reais:9.90,gemas:950,primeira:true,emDobro:true},{id:'p3',reais:24.90,gemas:2500,primeira:true,emDobro:true},{id:'p4',reais:49.90,gemas:5200,primeira:true,emDobro:true},{id:'p5',reais:99.90,gemas:10800,primeira:false,emDobro:false},{id:'p6',reais:249.90,gemas:28000,primeira:true,emDobro:true}],passe:{ativo:false,dias:[]},deusSemana:{deus:'baldur',raridade:'S',marcas:3,meta:5,dado:false,compraDireta:1800},anuncios:{total:0,teto:8,porTipo:{}},vagasProvacao:1};contaTransporte={pedir:function(m){return Promise.resolve({tipo:'lojaEstado',loja:window.__L,conta:contaAtual});}};function __loja(ab){ir('loja',{},{substituir:true});render();LOJA._setEstadoTeste(window.__L,ab);}`;
+
 const ESTADOS = {
   'Coleção — sem filtro': `colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();`,
   'Coleção — com filtro': `colF={busca:'',cultura:'',classe:'',funcao:'Controlador',elem:'Aurora',status:'tem',raridade:'',ordem:'nome'};ir('colecao',{},{substituir:true});render();`,
@@ -118,7 +121,15 @@ const ESTADOS = {
   'Home — o mapa': `ir('home',{},{substituir:true});render();`,
   'Invocação — destaque': `ir('invocacao',{},{substituir:true});INV.montar();`,
   'Invocação — Ver detalhes (chances)': `ir('invocacao',{},{substituir:true});INV.montar();INV.openAudit();`,
-  'Loja — "Em breve"': `ir('embreve',{titulo:'Loja'},{substituir:true});render();`,
+  // §371: a LOJA — as 5 abas + o passe comprado (dia 12, com perdidos) + a confirmação simulada + a revelação do SS do dia 30.
+  'Loja — Destaques': LOJA_BOOT + `__loja('destaques');`,
+  'Loja — Gemas': LOJA_BOOT + `__loja('gemas');`,
+  'Loja — Passe (comprado, dia 12 c/ perdidos)': LOJA_BOOT + `window.__L.passe={ativo:true,diaAtual:12,dias:(function(){var a=[];for(var i=1;i<=30;i++){var e=i<12?((i===4||i===9)?'perdido':'resgatado'):(i===12?'hoje':'futuro');var r=(i===30)?{ss:true}:((i===7||i===14||i===21)?{gema:150,bilhetes:3}:(i===28?{gema:150,bilhetes:2}:{gema:150}));a.push({dia:i,estado:e,recompensa:r});}return a;})()};__loja('passe');`,
+  'Loja — Deus da Semana': LOJA_BOOT + `__loja('deussemana');`,
+  'Loja — Outros': LOJA_BOOT + `__loja('outros');`,
+  'Loja — confirmação simulada': LOJA_BOOT + `__loja('gemas');LOJA.confirmar({kind:'compra',linha:'900 💎 por R$ 4,90 (1ª compra em dobro)',onSim:function(){}});`,
+  'Loja — revelação do SS (dia 30)': LOJA_BOOT + `__loja('passe');LOJA._revelarTeste({ok:true,key:'zeus',raridade:'SS',novo:true,pontos:0});`,
+  'Invocação — com bilhete': LOJA_BOOT + `ir('invocacao',{},{substituir:true});INV.montar();`,
   'Guia — folha de componentes': `ir('guia',{},{substituir:true});render();`,
 };
 // §363: os mesmos 10 estados da batalha também no modo RECOLHIDO (painel em barra fina; as ações de LER reabrem o painel).
