@@ -1,78 +1,140 @@
-# §343 · Plano de monetização
+# Monetização — plano (§343) + desenho final aprovado (§369)
 
-> **Documento de PLANO.** Não há código nem dado (`data/`) mudado por este arquivo. Ele registra o desenho da
-> monetização para quando o dono decidir implementar; os pré-requisitos e a ordem estão no fim (seção 5).
-> Quando entrar em código, os valores vivem em `data/economia.json` (fonte única) e as recompensas são creditadas
-> **pelo servidor**, como os tetos de hoje.
+> **Documento de PLANO.** Nada de código nem de dado (`data/`) muda por este arquivo. O §343 registrou o desenho
+> com partes em aberto; o **§369** fecha essas partes com os números aprovados pelo dono. Os valores só entram em
+> `data/economia.json` (fonte única) **quando a Loja for implementada** — e, como os tetos de hoje, toda recompensa é
+> **creditada pelo SERVIDOR**. Até lá, isto é só o acordo de desenho.
 
 ---
 
-## 1. Princípios
+## 1. Base de cálculo (economia atual, para referência)
 
-- **Anúncio é sempre OPCIONAL e sempre RECOMPENSADO (rewarded).** Nada de anúncio forçado ou de tela cheia entre
-  partidas, nada dentro da batalha, nada ao abrir o app.
+A régua de preço parte do que um jogador **ganha de graça** hoje (as fontes já no `data/economia.json`):
+
+- **F2P dedicado ≈ 1.900 gemas/semana** = PvP 15×10/dia (150) + treino/sandbox 20×5/dia (100) + Desafio da Semana 150;
+  `(150+100)×7 + 150 = 1.900`. A **≈ 13 invocações/semana** (avulso 150).
+- **Casual ≈ 1.000 gemas/semana** ≈ **7 invocações**.
+- **SS:** 1% por invocação, garantido na **60ª** (pity duro) → média de **~45 invocações por SS** ≈ **~6.800 gemas**.
+
+Esses números são o chão: nenhum pacote pago pode fazer o F2P se sentir enganado, e nenhum anúncio/compra dá vantagem
+no PvP (ver §8).
+
+---
+
+## 2. Pacotes de gemas
+
+Base ≈ **R$ 1,60 por invocação** (150 gemas). **A PRIMEIRA compra de cada pacote vem em DOBRO.** Os valores em reais
+serão **ajustados às faixas de preço da Play Store** no cadastro (a Play tem faixas fixas por país); a tabela abaixo é a
+intenção de desenho.
+
+| Preço (R$) | Gemas | 1ª compra (dobro) | Gemas por R$ |
+|---|---|---|---|
+| 4,90 | 450 | 900 | ~92 |
+| 9,90 | 950 | 1.900 | ~96 |
+| 24,90 | 2.500 | 5.000 | ~100 |
+| 49,90 | 5.200 | 10.400 | ~104 |
+| 99,90 | 10.800 | 21.600 | ~108 |
+| 249,90 | 28.000 | 56.000 | ~112 |
+
+(O "gemas por R$" sobe com o tamanho do pacote — desconto por volume, padrão do gênero; a 1ª-compra-em-dobro é o
+gancho de conversão.)
+
+---
+
+## 3. Passe mensal — R$ 29,90
+
+- **30 dias corridos a partir da compra** (não "dias logados"): o passe conta dias de **calendário**.
+- **Recompensa diária por login**, **um item por dia de calendário**. O **dia não resgatado é PERDIDO** (é preciso logar
+  no dia; o relógio é o do servidor, em UTC — ver §8).
+- **Calendário dos 30 dias:**
+
+  | Dias | Recompensa |
+  |---|---|
+  | comuns (1–6, 8–13, 15–20, 22–27, 29) — 23 dias | 150 gemas |
+  | 7, 14, 21 | 150 gemas + 3 bilhetes de invocação |
+  | 28 | 150 gemas + 2 bilhetes |
+  | **30** | **1 deus SS ALEATÓRIO** |
+
+  **Total:** 4.350 gemas + 11 bilhetes = **40 invocações** (29×150 gemas ÷ 150 = 29; + 11 bilhetes = 40) **+ o SS do dia 30**.
+- **O SS do dia 30 segue a MESMA regra da Invocação:** sorteado entre os SS da **faixa de ranque do jogador e abaixo**,
+  de preferência **um que ele ainda não tem**; se já tiver todos, vira os **pontos de duplicata** daquele deus (a mesma
+  conversão da Invocação).
+- O passe **também dá:** as recompensas dos anúncios **sem precisar assistir** (ver §5) e **2 marcas por dia** no Deus da
+  Semana (ver §6).
+
+**Valor para o jogador vs. preço:** 40 invocações + 1 SS garantido por R$ 29,90 — bem acima dos ~13/semana do F2P, sem
+tocar no PvP. O SS garantido mensal é o grande atrativo do passe.
+
+---
+
+## 4. Bilhete de invocação (item novo — resolve a pendência "bilhetes")
+
+- **Um bilhete vale 1 invocação grátis** (uma retirada do mesmo sorteio da Invocação, sem gastar gemas).
+- **Conta para a garantia de SS (pity 60):** uma invocação por bilhete incrementa o mesmo contador
+  (`invocacao.desdeUltimoSS`) e pode disparar o pity, igual a uma invocação paga.
+- Fontes de bilhete: o passe (§3) e, no futuro, eventos. **Fecha a pendência `_pendencias.bilhetes`** do
+  `data/economia.json` (o código já tinha "bilhetes" sem decisão): **sim, existem**, e são isto.
+
+---
+
+## 5. Anúncios (todos opcionais e recompensados; **teto total de 8 por dia**)
+
+Todos *rewarded* (nunca forçados/intersticiais; ver §8). O **teto total é 8 anúncios por dia** no relógio do servidor
+(UTC). Os limites por cenário abaixo somam a esse teto.
+
+| # | Cenário | Recompensa | Limite |
+|---|---|---|---|
+| 1 | Invocação diária grátis | 1 invocação (**conta para o pity 60**) | 1/dia |
+| 2 | Deus da Semana | 1 marca | 1/dia (5 de 7 ganha o deus — ver §6) |
+| 3 | Dobrar a recompensa do **Desafio da Semana** | 2× | 1/dia |
+| 4 | Dobrar a recompensa do **fim de corrida do Domínio** | 2× | 1/dia |
+| 5 | **Reviver extra** no Domínio | +1 reviver | 1/corrida |
+| 6 | **Acelerar a recarga** do Desafio por deus | −4 h | 2/dia |
+| 7 | **Oferta do dia** | 50 gemas **ou** 10 de Essência | até 3/dia |
+
+Decisões do §343 que o §369 fecha: a invocação grátis **conta** para o pity; o **teto total** é **8/dia**; os valores são
+os da tabela.
+
+---
+
+## 6. Deus da Semana
+
+- **Sempre de raridade S** (nunca SS — o SS vem só da Invocação e do dia 30 do passe, para não desvalorizar o gacha).
+- Um deus **só volta a ser Deus da Semana depois de no mínimo 12 semanas** (lista rotativa com janela de repetição).
+- **1 marca/dia** por anúncio (§5 #2); **5 marcas em 7 dias ganham o deus** (perdoa 2 faltas). O **passe dá 2 marcas/dia**.
+- Se o jogador **já tem** o deus, as marcas viram **pontos de duplicata** daquele deus (como a Invocação).
+- **Compra direta por 1.800 gemas** (≈ 12 invocações — um pouco abaixo da média de ~45 invocações/SS, coerente com ser S,
+  não SS).
+- O progresso ("Deus · 3/5") aparece na Loja e na home.
+
+---
+
+## 7. Outras compras
+
+- **+1 vaga de Provação permanente por 500 gemas** (até **2 vagas extras**).
+- **Cosméticos** (molduras e artes alternativas) de **R$ 9,90 a R$ 24,90** — **sem nenhuma vantagem** de jogo (só visual).
+
+---
+
+## 8. Princípios (mantidos do §343)
+
+- **Anúncio é sempre OPCIONAL e sempre RECOMPENSADO.** Nada de anúncio forçado, de tela cheia entre partidas, dentro da
+  batalha ou ao abrir o app.
 - **Nenhum anúncio nem compra dá vantagem no PvP.**
-- **A recompensa de anúncio só é creditada pelo SERVIDOR**, depois da confirmação da rede de anúncios (verificação do
-  lado do servidor — *server-side verification*, ex.: SSV do AdMob). Os limites diários e o progresso ficam no servidor,
-  como os tetos de hoje.
-- **Os valores ficam em `data/economia.json`** (fonte única), decididos pelo ganho semanal de um jogador que não paga.
-- **O "dia" e a "semana" viram em UTC**, a mesma regra do Desafio da Semana.
+- **A recompensa de anúncio só é creditada pelo SERVIDOR**, após a confirmação da rede (*server-side verification* — ex.:
+  SSV do AdMob). Limites diários e progresso vivem no servidor, como os tetos de hoje.
+- **Itens de sorteio pago mostram as chances** de cada raridade (exigência das lojas).
+- **O "dia" e a "semana" viram em UTC** (a mesma regra do Desafio da Semana).
+- **Os valores ficam em `data/economia.json`** (fonte única) quando entrarem em código.
 
 ---
 
-## 2. Deus da Semana por anúncio (cenário principal — prioridade ALTA)
+## 9. Ordem de implementação (para a fila)
 
-- Na Loja, um **deus de raridade alta** fica disponível por **7 dias**.
-- Cada dia, o jogador pode assistir **1 anúncio** e ganha **1 marca** (no máximo 1 por dia → 7 possíveis na semana).
-- Com **5 marcas** na semana, **ganha o deus** (perdoa 2 faltas).
-- Se **já tem** o deus, as marcas convertem em **cópias**, que viram **pontos/níveis de habilidade**.
-- O deus da semana sai de uma **lista ROTATIVA** que **exclui os lançamentos recentes** e só **repete cada deus depois de
-  um intervalo longo**, para não desvalorizar a Invocação. Os parâmetros ficam em `data/`.
-- **Atalhos pagos:** comprar o deus direto com **gemas**; o **passe** dá **2 marcas por dia**.
-- O **progresso** (ex.: "Odin · 3/5") aparece na **Loja** e na **home**.
+Pré-requisito já atendido: **persistência das contas (§274)** — sem ela não se vende nem se recompensa nada.
 
----
-
-## 3. Outros anúncios (todos com recompensa)
-
-| # | Cenário | Recompensa | Limite | Prioridade |
-|---|---------|------------|--------|------------|
-| 1 | Invocação diária grátis | 1 invocação | 1/dia | alta |
-| 2 | Dobrar a recompensa do Desafio da Semana e do fim de corrida do Domínio | 2× | 1/dia cada | média |
-| 3 | Reviver extra no Domínio | +1 reviver na corrida | 1/corrida | média |
-| 4 | Acelerar a recarga do Desafio por deus | −4 h | 2/dia | média |
-| 5 | Oferta do dia na Loja | pacote pequeno de gemas/Essência | 1–3/dia | média |
-| 6 | Recompensa diária em dobro (se existir prêmio de entrada) | 2× | 1/dia | baixa |
-
-**Decisões em aberto, para o dono:**
-- se a invocação grátis **conta para a garantia de raridade** (pity 60);
-- os **valores exatos**;
-- o **teto total de anúncios por dia**;
-- a **raridade** e o **intervalo de repetição** do Deus da Semana.
-
----
-
-## 4. Compras (Loja)
-
-- **Pacotes de gemas.**
-- Um **PASSE** (mensal ou permanente) que entrega as recompensas dos anúncios **sem assistir**, e **2 marcas/dia** no
-  Deus da Semana.
-- **Vagas extras de Provação.**
-- **Cosméticos** (molduras, artes alternativas).
-- O **Deus da Semana direto com gemas.**
-
-> Itens de **sorteio pago** precisam **mostrar as chances de cada raridade** (exigência das lojas; confirmar as regras
-> atuais na implementação).
-
----
-
-## 5. Pré-requisitos e ordem
-
-1. **Persistência das contas (§274)** — sem isso não se vende nem se recompensa nada.
-2. **Desenho da monetização** — o que vender, preços, passe, valores dos anúncios, a lista rotativa.
-3. **A tela da Loja.**
-4. **O app com o jogo guardado no celular** +
-   - **pagamento pela loja** (Google Play Billing / App Store),
-   - **SDK de anúncios** (ex.: AdMob via plugin do Capacitor),
-   - **tela de consentimento** (LGPD/GDPR),
-   - **formulário de dados da loja**.
+1. **Loja + bilhete + passe (com o calendário) + compra SIMULADA no modo de desenvolvimento** — para testar tudo (passe,
+   bilhetes, calendário, SS do dia 30, ofertas) **antes** da loja de verdade.
+2. **A nova Invocação:** invocação grátis diária e o Deus da Semana.
+3. **Integração real (junto da fase de publicação):** Google Play Billing / App Store, o AdMob com **verificação no
+   servidor**, e a **tela de consentimento** (LGPD/GDPR) + o formulário de dados da loja.

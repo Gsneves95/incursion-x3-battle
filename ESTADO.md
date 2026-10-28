@@ -2,6 +2,14 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §369 · Desenho da monetização APROVADO (só documentação)
+- `docs/monetizacao.md` atualizado com o desenho final do dono (fecha as partes em aberto do §343): pacotes de gemas
+  (1ª compra em dobro), passe mensal R$ 29,90 (calendário de 30 dias → 4.350 gemas + 11 bilhetes + 1 SS no dia 30),
+  bilhete de invocação (vale 1 invocação e conta p/ o pity — resolve a pendência "bilhetes"), anúncios rewarded (teto
+  8/dia), Deus da Semana (só S, repete após ≥12 semanas, 1.800 gemas), vaga de Provação (500 gemas, até +2), cosméticos.
+  NADA de código/`data/` mudou — os valores vão p/ `data/economia.json` só quando a Loja for implementada (ordem: (1) Loja
+  + bilhete + passe + compra simulada; (2) nova Invocação; (3) billing/AdMob/consentimento na publicação).
+
 ## ★ §368b · DOMÍNIOS: aplicada a dificuldade do dono (meio-termo)
 - **Decisão do dono:** `fatorDano` = **0,45** (fator UNIFORME sobre a rampa de dano, todas as faixas/culturas) +
   `curaPorNivel` = **0,35**. Aplicado SÓ no DADO (`data/dominios/*.json`): `"fatorDano":0.45` + `"curaPorNivel":0.35`.
